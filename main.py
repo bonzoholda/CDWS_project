@@ -18,8 +18,31 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+@app.post("/admin/login")
+async def login(request: Request, password: str = Form(...)):
+    # Get password from environment variable; it must be set in Railway or via environment variables
+    correct_password = os.getenv("ADMIN_PASSWORD")
+    
+    if not correct_password:
+        # If no password is set in the environment variables, return an error
+        return templates.TemplateResponse("login.html", {"request": request, "error": "Password environment variable is not set!"})
+
+    if password == correct_password:
+        request.session["admin_logged_in"] = True
+        return RedirectResponse(url="/admin", status_code=303)
+    
+    return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid password"})
+
+@app.get("/admin/logout")
+async def logout(request: Request):
+    request.session.clear()
+    return RedirectResponse(url="/", status_code=303)
+
+
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_dashboard(request: Request):
+     if not is_admin(request):
+        return RedirectResponse(url="/admin/login", status_code=303)
     conn = get_db_connection()
     summary = conn.execute("""
         SELECT user_id, user_name, user_address, SUM(bill_amount)
