@@ -33,6 +33,11 @@ async def login(request: Request, password: str = Form(...)):
     
     return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid password"})
 
+@app.get("/admin/login", response_class=HTMLResponse)
+async def login_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+
 @app.get("/admin/logout")
 async def logout(request: Request):
     request.session.clear()
