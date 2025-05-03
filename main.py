@@ -32,6 +32,11 @@ async def admin_dashboard(request: Request):
     conn.close()
     return templates.TemplateResponse("admin.html", {"request": request, "summary": summary, "bills": bills})
 
+@app.get("/", response_class=HTMLResponse)
+async def public_view(request: Request):
+    return templates.TemplateResponse("user.html", {"request": request})
+
+
 @app.post("/admin/upload")
 async def upload_csv(csv_file: UploadFile = File(...)):
     conn = get_db_connection()
