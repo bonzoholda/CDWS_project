@@ -41,8 +41,6 @@ async def logout(request: Request):
 
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_dashboard(request: Request):
-     if not is_admin(request):
-        return RedirectResponse(url="/admin/login", status_code=303)
     conn = get_db_connection()
     summary = conn.execute("""
         SELECT user_id, user_name, user_address, SUM(bill_amount)
