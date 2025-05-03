@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Invoice</title>
+</head>
+<body>
+    <h1>Invoice for {{ bills[0].user_name if bills else 'Unknown User' }}</h1>
+    <p>Address: {{ bills[0].user_address if bills else '' }}</p>
+    <hr>
+    <table border="1">
+        <tr>
+            <th>Pay Period</th>
+            <th>Usage</th>
+            <th>Bill Amount</th>
+        </tr>
+        {% for row in bills %}
+        <tr>
+            <td>{{ row.pay_period }}</td>
+            <td>{{ row.usage }}</td>
+            <td>{{ row.bill_amount }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h3>Total Due: {{ bills | map(attribute='bill_amount') | sum }}</h3>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Check My Bills</title>
+</head>
+<body>
+    <h1>Check Your Pending Bills</h1>
+    <form action="/user" method="get">
+        <label for="user_id">Enter Your User ID:</label>
+        <input type="text" name="user_id" required>
+        <button type="submit">Check</button>
+    </form>
+
+    {% if bills %}
+        <h2>Pending Bills for {{ bills[0].user_name }}</h2>
+        <ul>
+            {% for bill in bills %}
+                <li>{{ bill.pay_period }} — {{ bill.bill_amount }}</li>
+            {% endfor %}
+        </ul>
+        <h3>Total Due: {{ bills | map(attribute='bill_amount') | sum }}</h3>
+    {% elif user_id %}
+        <p>No unpaid bills found for user ID {{ user_id }}.</p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <form action="/admin/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="csv_file" accept=".csv" required>
+        <button type="submit">Upload CSV</button>
+    </form>
+
+    <h2>User Unpaid Summary</h2>
+    <ul>
+        {% for row in summary %}
+            <li><strong>{{ row.user_name }}</strong> ({{ row.user_id }}) — {{ row['SUM(bill_amount)'] }} unpaid - <a href="/admin/invoice/{{ row.user_id }}" target="_blank">Print Invoice</a></li>
+        {% endfor %}
+    </ul>
+
+    <h2>All Bills</h2>
+    <form action="/admin/update" method="post">
+        <table border="1">
+            <tr>
+                <th>Mark Paid</th>
+                <th>User</th>
+                <th>Period</th>
+                <th>Amount</th>
+                <th>Status</th>
+            </tr>
+            {% for bill in bills %}
+            <tr>
+                <td>{% if not bill.paid %}<input type="checkbox" name="bill_ids" value="{{ bill.id }}">{% endif %}</td>
+                <td>{{ bill.user_name }}</td>
+                <td>{{ bill.pay_period }}</td>
+                <td>{{ bill.bill_amount }}</td>
+                <td>{{ "PAID" if bill.paid else "UNPAID" }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <button type="submit">Update Selected as Paid</button>
+    </form>
+</body>
+</html>
