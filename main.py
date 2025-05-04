@@ -109,7 +109,7 @@ async def user_view(request: Request, user_id: str):
             })
 
         # Return the template with the fetched user data
-        return templates.TemplateResponse("user_view.html", {"request": request, "user_data": user_data})
+        return templates.TemplateResponse("user.html", {"request": request, "user_data": user_data})
 
     except sqlite3.Error as e:
         # Handle any database errors gracefully
