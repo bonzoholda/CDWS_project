@@ -27,12 +27,40 @@ def backup_db():
 def restore_db():
     ensure_backup_folder()
     backups = sorted(glob.glob(os.path.join(BACKUP_DIR, "bills_backup_*.db")), reverse=True)
+    
+    # Ensure the table is created after restoring or on the first initialization
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS bills (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT,
+            device_id TEXT,
+            user_name TEXT,
+            user_address TEXT,
+            pay_period TEXT,
+            meter_past INTEGER,
+            meter_now INTEGER,
+            usage INTEGER,
+            lv1_cost REAL,
+            lv2_cost REAL,
+            lv3_cost REAL,
+            lv4_cost REAL,
+            basic_cost REAL,
+            bill_amount REAL,
+            paid INTEGER DEFAULT 0
+        )
+    """)
+    conn.commit()
+
+    # Restore the most recent backup if available
     if backups:
         latest_backup = backups[0]
         shutil.copyfile(latest_backup, DB_PATH)
         print(f"✅ Database restored from: {latest_backup}")
     else:
         print("⚠️ No backups found. Starting with a fresh database.")
+
 
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
