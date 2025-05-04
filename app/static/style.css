@@ -100,7 +100,7 @@ h2, h3 {
 
   .bill-table td {
     position: relative;
-    padding-left: 40%;
+    padding-left: 21%;
     padding-right: 8px;
     border: none;
     border-bottom: 1px solid #eee;
@@ -113,7 +113,7 @@ h2, h3 {
     left: 10px;
     top: 10px;
     font-weight: bold;
-    width: 35%; /* reduce label width */
+    width: 20%; /* reduce label width */
     white-space: normal; /* allow wrapping */
   }
 
