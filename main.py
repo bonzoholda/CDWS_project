@@ -188,7 +188,7 @@ async def user_view(request: Request, user_id: str):
 
 # Admin upload CSV route (protected by login)
 @app.post("/admin/upload")
-async def upload_csv(csv_file: UploadFile = File(...), request: Request):
+async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
     check_admin_logged_in(request)  # Ensure admin is logged in
     conn = get_db_connection()
     cursor = conn.cursor()
