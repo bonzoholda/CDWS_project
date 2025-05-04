@@ -12,13 +12,19 @@ def ensure_backup_folder():
     os.makedirs(BACKUP_DIR, exist_ok=True)
 
 def backup_db():
-    os.makedirs(BACKUP_DIR, exist_ok=True)
+    ensure_backup_folder()
+
+    if not os.path.exists(DB_PATH):
+        print("⚠️ No database found to back up.")
+        return
+
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     backup_filename = f"bills_backup_{timestamp}.db"
     backup_path = os.path.join(BACKUP_DIR, backup_filename)
 
     shutil.copy2(DB_PATH, backup_path)
     print(f"✅ Backup created at: {backup_path}")
+
 
 def restore_db():
     ensure_backup_folder()
