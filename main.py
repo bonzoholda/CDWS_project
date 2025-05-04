@@ -133,7 +133,7 @@ async def update_bills(request: Request, bill_ids: list[int] = Form(...)):
 
 # Admin dashboard route (protected by login)
 @app.get("/admin", response_class=HTMLResponse)
-async def admin_page(request: Request, _=Depends(admin_required)):
+async def admin_page(request: Request):
     check_admin_logged_in(request)  # Check if admin is logged in
     conn = get_db_connection()
     conn.row_factory = sqlite3.Row
@@ -188,7 +188,7 @@ async def user_view(request: Request, user_id: str):
 
 # Admin upload CSV route (protected by login)
 @app.post("/admin/upload")
-async def upload_csv(csv_file: UploadFile = File(...), _=Depends(admin_required)):
+async def upload_csv(csv_file: UploadFile = File(...), request: Request):
     check_admin_logged_in(request)  # Ensure admin is logged in
     conn = get_db_connection()
     cursor = conn.cursor()
