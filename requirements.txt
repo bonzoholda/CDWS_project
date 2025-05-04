@@ -1,6 +1,7 @@
 fastapi
 uvicorn
 jinja2
-python-multipart 
+python-multipart
 python-dotenv
 itsdangerous
+starlette>=0.27.0
