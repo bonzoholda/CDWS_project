@@ -85,28 +85,26 @@ h2, h3 {
     display: none;
   }
 
-  .bill-table,
-  .bill-table tbody,
-  .bill-table tr,
-  .bill-table td {
+  .bill-table, .bill-table tbody, .bill-table tr, .bill-table td {
     display: block;
     width: 100%;
   }
 
   .bill-table tr {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    padding: 10px;
+    padding: 8px;
   }
 
   .bill-table td {
     position: relative;
-    padding-left: 50%;
+    padding-left: 40%;
+    padding-right: 8px;
     border: none;
     border-bottom: 1px solid #eee;
-    font-size: 14px;
+    word-wrap: break-word;
   }
 
   .bill-table td::before {
@@ -115,9 +113,16 @@ h2, h3 {
     left: 10px;
     top: 10px;
     font-weight: bold;
-    white-space: nowrap;
+    width: 35%; /* reduce label width */
+    white-space: normal; /* allow wrapping */
+  }
+
+  .bill-table td span {
+    display: block;
+    overflow-wrap: break-word;
   }
 }
+
 
 /* ------------ DESKTOP OVERRIDE: restore table layout ------------ */
 @media screen and (min-width: 769px) {
