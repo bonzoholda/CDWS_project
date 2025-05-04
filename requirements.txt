@@ -2,6 +2,5 @@ fastapi
 uvicorn
 jinja2
 python-multipart
-aiofiles
 sqlite3
 python-dotenv
