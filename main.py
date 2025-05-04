@@ -7,12 +7,22 @@ import csv
 import os
 from typing import List
 from starlette.middleware.sessions import SessionMiddleware
+from database_utils import restore_db
+from database_utils import backup_db
 
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SECRET_KEY", "default-secret"))
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
 
+@app.on_event("startup")
+def startup_event():
+    restore_db()
+
+@app.on_event("shutdown")
+async def on_shutdown():
+    print("Shutting down app... Backing up database.")
+    backup_db()
 
 DB_PATH = "app/db/bills.db"
 
@@ -142,8 +152,12 @@ async def upload_csv(csv_file: UploadFile = File(...)):
             row['basic_cost'], row['bill_amount']
         ))
 
+
     conn.commit()
     conn.close()
+    
+    backup_db()
+    
     return RedirectResponse(url="/admin", status_code=303)
 
 @app.post("/admin/update")
@@ -154,6 +168,9 @@ async def update_bills(request: Request, bill_ids: List[int] = Form(...)):
         cursor.execute("UPDATE bills SET paid = 1 WHERE id = ?", (bill_id,))
     conn.commit()
     conn.close()
+
+    backup_db()
+
     return RedirectResponse(url="/admin", status_code=303)
 
 @app.get("/admin/invoice/{user_id}", response_class=HTMLResponse)
