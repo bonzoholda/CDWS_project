@@ -85,7 +85,10 @@ h2, h3 {
     display: none;
   }
 
-  .bill-table, .bill-table tbody, .bill-table tr, .bill-table td {
+  .bill-table,
+  .bill-table tbody,
+  .bill-table tr,
+  .bill-table td {
     display: block;
     width: 100%;
   }
@@ -99,29 +102,30 @@ h2, h3 {
   }
 
   .bill-table td {
-    position: relative;
-    padding-left: 21%;
-    padding-right: 8px;
     border: none;
     border-bottom: 1px solid #eee;
-    word-wrap: break-word;
+    padding: 8px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    justify-content: space-between;
   }
 
   .bill-table td::before {
     content: attr(data-label);
-    position: absolute;
-    left: 10px;
-    top: 10px;
+    flex-shrink: 0;
     font-weight: bold;
-    width: 20%; /* reduce label width */
-    white-space: normal; /* allow wrapping */
+    width: auto;
+    white-space: nowrap;
   }
 
   .bill-table td span {
-    display: block;
+    flex: 1;
     overflow-wrap: break-word;
+    text-align: right;
   }
 }
+
 
 
 /* ------------ DESKTOP OVERRIDE: restore table layout ------------ */
