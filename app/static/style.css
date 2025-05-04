@@ -63,17 +63,19 @@ h2, h3 {
   border-collapse: collapse;
 }
 
-.bill-table th, .bill-table td {
+.bill-table td,
+.bill-table th {
+  font-size: clamp(12px, 1.5vw, 16px);  /* scales between 12px and 16px */
   padding: 10px;
-  text-align: left;
-  border: 1px solid #ddd;
 }
 
 /* Mobile styles: convert table to card view */
-@media screen and (max-width: 768px) {
-  .bill-table thead {
-    display: none;
+@media screen and (max-width: 480px) {
+  .bill-table td,
+  .bill-table th {
+    padding: 6px;
   }
+}
 
   .bill-table, .bill-table tbody, .bill-table tr, .bill-table td {
     display: block;
