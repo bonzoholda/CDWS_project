@@ -42,20 +42,43 @@
             <tbody>
                 {% for bill in user_data %}
                 <tr>
-                    <td data-label="Periode"><span>{{ bill.pay_period }}</span></td>
-                    <td data-label="Nomor SR"><span>{{ bill.device_id }}</span></td>
-                    <td data-label="Alamat"><span>{{ bill.user_address }}</span></td>
-                    <td data-label="Meter Lalu"><span>{{ bill.meter_past }}</span></td>
-                    <td data-label="Meter Sekarang"><span>{{ bill.meter_now }}</span></td>
-                    <td data-label="Pemakaian"><span>{{ bill.usage }}</span></td>
-                    <td data-label="Biaya 01-10"><span>{{ bill.lv1_cost }}</span></td>
-                    <td data-label="Biaya 11-20"><span>{{ bill.lv2_cost }}</span></td>
-                    <td data-label="Biaya 21-30"><span>{{ bill.lv3_cost }}</span></td>
-                    <td data-label="Biaya di atas 30"><span>{{ bill.lv4_cost }}</span></td>
-                    <td data-label="Beban Dasar"><span>{{ "{:,.0f}".format(bill.basic_cost) }}</span></td>
-                    <td data-label="Jumlah Tagihan">
-  <span>{{ "{:,.0f}".format(bill.bill_amount) }}</span>
-</td>
+                    <td class="right" data-label="Periode">
+                        <span>{{ "{:,.0f}".format(bill.pay_period) }}</span>
+                    </td>
+                    <td class="right" data-label="Nomor SR">
+                        <span>{{ "{:,.0f}".format(bill.device_id) }}</span>
+                    </td>
+                    <td class="right" data-label="Alamat">
+                        <span>{{ "{:,.0f}".format(bill.user_address) }}</span>
+                    </td>
+                    <td class="right" data-label="Meter Lalu">
+                        <span>{{ "{:,.0f}".format(bill.meter_past) }}</span>
+                    </td>
+                    <td class="right" data-label="Meter Sekarang">
+                        <span>{{ "{:,.0f}".format(bill.meter_now) }}</span>
+                    </td>
+                    <td class="right" data-label="Pemakaian">
+                        <span>{{ "{:,.0f}".format(bill.usage) }}</span>
+                    </td>
+                    <td class="right" data-label="Biaya 01-10">
+                        <span>{{ "{:,.0f}".format(bill.lv1_cost) }}</span>
+                    </td>
+                    <td class="right" data-label="Biaya 11-20">
+                        <span>{{ "{:,.0f}".format(bill.lv2_cost) }}</span>
+                    </td>
+                    <td class="right" data-label="Biaya 21-30">
+                        <span>{{ "{:,.0f}".format(bill.lv3_cost) }}</span>
+                    </td>
+                    <td class="right" data-label="Biaya di atas 30">
+                        <span>{{ "{:,.0f}".format(bill.lv4_cost) }}</span>
+                    </td>
+                    <td class="right" data-label="Beban Dasar">
+                        <span>{{ "{:,.0f}".format(bill.basic_cost) }}</span>
+                    </td>
+                    <td class="right" data-label="Jumlah Tagihan">
+                        <span>{{ "{:,.0f}".format(bill.bill_amount) }}</span>
+                    </td>
+
 
                 </tr>
                 {% endfor %}
