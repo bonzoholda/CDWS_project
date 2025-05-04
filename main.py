@@ -172,3 +172,8 @@ async def invoice(request: Request, user_id: str):
     rows = conn.execute("SELECT * FROM bills WHERE user_id = ? AND paid = 0", (user_id,)).fetchall()
     conn.close()
     return templates.TemplateResponse("invoice.html", {"request": request, "bills": rows})
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
