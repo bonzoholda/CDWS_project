@@ -8,7 +8,8 @@ import os
 from typing import List
 from starlette.middleware.sessions import SessionMiddleware
 from database_utils import restore_db
-from database_utils import backup_db
+import io
+from database_utils import backup_db, get_db_connection
 from fastapi import Depends, HTTPException, status
 
 app = FastAPI()
@@ -141,36 +142,44 @@ async def user_view(request: Request, user_id: str):
         conn.close()
 
 
-
-
 @app.post("/admin/upload")
 async def upload_csv(csv_file: UploadFile = File(...)):
     conn = get_db_connection()
     cursor = conn.cursor()
     contents = await csv_file.read()
-    decoded = contents.decode("utf-8").splitlines()
-    reader = csv.DictReader(decoded)
-
     
-        for row in reader:
+    # Decode and parse CSV
+    decoded = contents.decode("utf-8")
+    reader = csv.DictReader(io.StringIO(decoded))
+
+    inserted_count = 0
+    for row in reader:
+        try:
             cursor.execute("""
-                INSERT INTO bills (user_id, device_id, user_name, user_address, pay_period, meter_past, meter_now,
-                                   usage, lv1_cost, lv2_cost, lv3_cost, lv4_cost, basic_cost, bill_amount, paid)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+                INSERT INTO bills (
+                    user_id, device_id, user_name, user_address, pay_period, meter_past, meter_now,
+                    usage, lv1_cost, lv2_cost, lv3_cost, lv4_cost, basic_cost, bill_amount, paid
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
             """, (
                 row['user_id'], row['device_id'], row['user_name'], row['user_address'], row['pay_period'],
-                row['meter_past'], row['meter_now'], row['usage'],
-                row['lv1_cost'], row['lv2_cost'], row['lv3_cost'], row['lv4_cost'],
-                row['basic_cost'], row['bill_amount']
+                float(row['meter_past']), float(row['meter_now']), float(row['usage']),
+                float(row['lv1_cost']), float(row['lv2_cost']), float(row['lv3_cost']), float(row['lv4_cost']),
+                float(row['basic_cost']), float(row['bill_amount'])
             ))
-
+            inserted_count += 1
+        except Exception as e:
+            print(f"❌ Skipped row due to error: {e}")
+            continue
 
     conn.commit()
     conn.close()
+
+    print(f"✅ Inserted {inserted_count} rows from {csv_file.filename}")
     
     backup_db()
     
     return RedirectResponse(url="/admin", status_code=303)
+    
 
 @app.post("/admin/update")
 async def update_bills(request: Request, bill_ids: List[int] = Form(...)):
