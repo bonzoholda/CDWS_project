@@ -100,25 +100,25 @@ async def user_view(request: Request, user_id: str):
     try:
         # Query the bills table for the specific user_id and unpaid bills
         c.execute("SELECT * FROM bills WHERE user_id = ? AND paid = 0", (user_id,))
-        bills = c.fetchall()
+        user_data = c.fetchall()
 
-        # Pass both bills and user_id (bills can be empty)
         return templates.TemplateResponse("user.html", {
             "request": request,
             "user_id": user_id,
-            "bills": bills
+            "user_data": user_data  # must match what the template expects
         })
 
     except sqlite3.Error as e:
         return templates.TemplateResponse("user.html", {
             "request": request,
             "user_id": user_id,
-            "bills": [],
+            "user_data": [],
             "error": f"Database error: {str(e)}"
         })
 
     finally:
         conn.close()
+
 
 
 
