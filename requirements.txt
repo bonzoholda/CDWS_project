@@ -1,5 +1,4 @@
 fastapi
 uvicorn
 jinja2
-sqlite3
-python-dotenv
+python-multipart 
