@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Check My Bills</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="form-container">
     <h1>Check Your Pending Bills</h1>
     <form action="/user" method="get">
         <label for="user_id">Enter Your User ID:</label>
         <input type="text" name="user_id" required>
         <button type="submit">Check</button>
     </form>
-
+    </div>
+        
     {% if user_data %}
         <h2>Pending Bills for {{ user_data[0].user_name }}</h2>
         <table border="1">
