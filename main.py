@@ -39,11 +39,6 @@ def test_db_connection():
 test_db_connection()
 
 
-def admin_required(request: Request):
-    if not request.session.get("admin_logged_in"):
-        # Instead of raising HTTPException, raise an actual redirect
-        raise HTTPException(status_code=403, detail="Unauthorized")
-
 @app.middleware("http")
 async def enforce_admin_login(request: Request, call_next):
     # Allow access to login page itself
@@ -81,7 +76,7 @@ async def admin_logout(request: Request):
 
 
 @app.get("/admin", response_class=HTMLResponse)
-async def admin_page(request: Request, _=Depends(admin_required)):
+async def admin_page(request: Request):
     conn = get_db_connection()
     conn.row_factory = sqlite3.Row
 
@@ -135,7 +130,7 @@ async def user_view(request: Request, user_id: str):
 
 
 @app.post("/admin/upload")
-async def upload_csv(csv_file: UploadFile = File(...), _=Depends(admin_required)):
+async def upload_csv(csv_file: UploadFile = File(...)):
     conn = get_db_connection()
     cursor = conn.cursor()
     contents = await csv_file.read()
@@ -174,7 +169,7 @@ async def upload_csv(csv_file: UploadFile = File(...), _=Depends(admin_required)
     
 
 @app.post("/admin/update")
-async def update_bills(request: Request, bill_ids: List[int] = Form(...), _=Depends(admin_required)):
+async def update_bills(request: Request, bill_ids: List[int] = Form(...)):
     conn = get_db_connection()
     cursor = conn.cursor()
     for bill_id in bill_ids:
@@ -187,7 +182,7 @@ async def update_bills(request: Request, bill_ids: List[int] = Form(...), _=Depe
     return RedirectResponse(url="/admin", status_code=303)
 
 @app.get("/admin/invoice/{user_id}", response_class=HTMLResponse)
-async def invoice(request: Request, user_id: str, _=Depends(admin_required)):
+async def invoice(request: Request, user_id: str):
     conn = get_db_connection()
     rows = conn.execute("SELECT * FROM bills WHERE user_id = ? AND paid = 0", (user_id,)).fetchall()
     conn.close()
