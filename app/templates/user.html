@@ -1,69 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Layanan Periksa Tagihan</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="static/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layanan Periksa Tagihan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="form-container">
+  <div class="form-container">
     <h1>Lihat Tagihan Saya</h1>
     <form action="/user" method="get">
-        <label for="user_id">Masukkan ID Pelanggan:</label>
-        <input type="text" name="user_id" required>
-        <button type="submit">Periksa</button>
+      <label for="user_id">Masukkan ID Pelanggan:</label>
+      <input type="text" name="user_id" required>
+      <button type="submit">Periksa</button>
     </form>
+  </div>
+
+  {% if user_data %}
+    <h2>Tagihan: {{ user_data[0].user_name }}</h2>
+    <div class="table-wrapper">
+      <table class="bill-table">
+        <thead>
+          <tr>
+            <th>Periode</th>
+            <th>Nomor SR</th>
+            <th>Alamat</th>
+            <th>Meter Lalu</th>
+            <th>Meter Sekarang</th>
+            <th>Pemakaian</th>
+            <th>Biaya 01-10</th>
+            <th>Biaya 11-20</th>
+            <th>Biaya 21-30</th>
+            <th>Biaya di atas 30</th>
+            <th>Beban Dasar</th>
+            <th>Jumlah Tagihan</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for bill in user_data %}
+            <tr>
+              <td data-label="Periode">{{ bill.pay_period }}</td>
+              <td data-label="Nomor SR">{{ bill.device_id }}</td>
+              <td data-label="Alamat">{{ bill.user_address }}</td>
+              <td data-label="Meter Lalu">{{ "{:,.0f}".format(bill.meter_past|float) }}</td>
+              <td data-label="Meter Sekarang">{{ "{:,.0f}".format(bill.meter_now|float) }}</td>
+              <td data-label="Pemakaian">{{ "{:,.0f}".format(bill.usage|float) }}</td>
+              <td data-label="Biaya 01-10">{{ "{:,.0f}".format(bill.lv1_cost|float) }}</td>
+              <td data-label="Biaya 11-20">{{ "{:,.0f}".format(bill.lv2_cost|float) }}</td>
+              <td data-label="Biaya 21-30">{{ "{:,.0f}".format(bill.lv3_cost|float) }}</td>
+              <td data-label="Biaya di atas 30">{{ "{:,.0f}".format(bill.lv4_cost|float) }}</td>
+              <td data-label="Beban Dasar">{{ "{:,.0f}".format(bill.basic_cost|float) }}</td>
+              <td data-label="Jumlah Tagihan">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-        
-    {% if user_data %}
-        <h2>Tagihan: {{ user_data[0].user_name }}</h2>
-        <div class="table-wrapper">
-        <table class="bill-table">
-
-            <thead>
-                <tr>
-                    <th>Periode</th>
-                    <th>Nomor SR</th>
-                    <th>Alamat</th>
-                    <th>Meter Lalu</th>
-                    <th>Meter Sekarang</th>
-                    <th>Pemakaian</th>
-                    <th>Biaya 01-10</th>
-                    <th>Biaya 11-20</th>
-                    <th>Biaya 21-30</th>
-                    <th>Biaya di atas 30</th>
-                    <th>Beban Dasar</th>
-                    <th>Jumlah Tagihan</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {% for bill in user_data %}
-                  <tr>
-                    <td data-label="Periode">{{ bill.pay_period }}</td>
-                    <td data-label="Nomor SR">{{ bill.device_id }}</td>
-                    <td data-label="Alamat">{{ bill.user_address }}</td>
-                    <td data-label="Meter Lalu">{{ "{:,.0f}".format(bill.meter_past|float) }}</td>
-                    <td data-label="Meter Sekarang">{{ "{:,.0f}".format(bill.meter_now|float) }}</td>
-                    <td data-label="Pemakaian">{{ "{:,.0f}".format(bill.usage|float) }}</td>
-                    <td data-label="Biaya 01-10">{{ "{:,.0f}".format(bill.lv1_cost|float) }}</td>
-                    <td data-label="Biaya 11-20">{{ "{:,.0f}".format(bill.lv2_cost|float) }}</td>
-                    <td data-label="Biaya 21-30">{{ "{:,.0f}".format(bill.lv3_cost|float) }}</td>
-                    <td data-label="Biaya di atas 30">{{ "{:,.0f}".format(bill.lv4_cost|float) }}</td>
-                    <td data-label="Beban Dasar">{{ "{:,.0f}".format(bill.basic_cost|float) }}</td>
-                    <td data-label="Jumlah Tagihan">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
-                  </tr>
-
-                {% endfor %}
-            </tbody>
-
-        </table>
-        </div>
-        <h3>Total belum terbayar: {{ user_data | map(attribute='bill_amount') | sum }}</h3>
-    {% elif user_id %}
-        <p>Tagihan untuk pelanggan dengan ID {{ user_id }}.</p>
-    {% endif %}
+    <h3>Total belum terbayar: {{ user_data | map(attribute='bill_amount') | sum }}</h3>
+  {% elif user_id %}
+    <p>Tagihan untuk pelanggan dengan ID {{ user_id }} tidak ditemukan.</p>
+  {% endif %}
 </body>
 </html>
