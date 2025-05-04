@@ -41,58 +41,20 @@
 
             <tbody>
                 {% for bill in user_data %}
-                <tr class="card-row">
-                  <td>
-                    <div class="card-line">
-                      <span class="card-label">Periode</span>
-                      <span class="card-value">{{ bill.pay_period }}</span>
-                    </div>
-                    <div class="card-line">
-                      <span class="card-label">Nomor SR</span>
-                      <span class="card-value">{{ bill.device_id }}</span>
-                    </div>
-                    <div class="card-line">
-                      <span class="card-label">Alamat</span>
-                      <span class="card-value">{{ bill.user_address }}</span>
-                    </div>
-                    <div class="card-line">
-                      <span class="card-label">Meter Lalu</span>
-                      <span class="card-value">{{ "{:,.0f}".format(bill.meter_past|float) }}</span>
-                    </div>
-                    <div class="card-line">
-                      <span class="card-label">Meter Sekarang</span>
-                      <span class="card-value">{{ "{:,.0f}".format(bill.meter_now|float) }}</span>
-                    </div>
-                    <div class="card-line">
-                      <span class="card-label">Pemakaian</span>
-                      <span class="card-value">{{ "{:,.0f}".format(bill.usage|float) }}</span>
-                    </div>
-                    <div class="card-line">
-                      <span class="card-label">Biaya 01-10</span>
-                      <span class="card-value">{{ "{:,.0f}".format(bill.lv1_cost|float) }}</span>
-                    </div>
-                    <div class="card-line">
-                      <span class="card-label">Biaya 11-20</span>
-                      <span class="card-value">{{ "{:,.0f}".format(bill.lv2_cost|float) }}</span>
-                    </div>
-                    <div class="card-line">
-                      <span class="card-label">Biaya 21-30</span>
-                      <span class="card-value">{{ "{:,.0f}".format(bill.lv3_cost|float) }}</span>
-                    </div>
-                    <div class="card-line">
-                      <span class="card-label">Biaya di atas 30</span>
-                      <span class="card-value">{{ "{:,.0f}".format(bill.lv4_cost|float) }}</span>
-                    </div>
-                    <div class="card-line">
-                      <span class="card-label">Beban Dasar</span>
-                      <span class="card-value">{{ "{:,.0f}".format(bill.basic_cost|float) }}</span>
-                    </div>
-                    <div class="card-line">
-                      <span class="card-label">Jumlah Tagihan</span>
-                      <span class="card-value">{{ "{:,.0f}".format(bill.bill_amount|float) }}</span>
-                    </div>
-                  </td>
-                </tr>
+                  <tr>
+                    <td data-label="Periode">{{ bill.pay_period }}</td>
+                    <td data-label="Nomor SR">{{ bill.device_id }}</td>
+                    <td data-label="Alamat">{{ bill.user_address }}</td>
+                    <td data-label="Meter Lalu">{{ "{:,.0f}".format(bill.meter_past|float) }}</td>
+                    <td data-label="Meter Sekarang">{{ "{:,.0f}".format(bill.meter_now|float) }}</td>
+                    <td data-label="Pemakaian">{{ "{:,.0f}".format(bill.usage|float) }}</td>
+                    <td data-label="Biaya 01-10">{{ "{:,.0f}".format(bill.lv1_cost|float) }}</td>
+                    <td data-label="Biaya 11-20">{{ "{:,.0f}".format(bill.lv2_cost|float) }}</td>
+                    <td data-label="Biaya 21-30">{{ "{:,.0f}".format(bill.lv3_cost|float) }}</td>
+                    <td data-label="Biaya di atas 30">{{ "{:,.0f}".format(bill.lv4_cost|float) }}</td>
+                    <td data-label="Beban Dasar">{{ "{:,.0f}".format(bill.basic_cost|float) }}</td>
+                    <td data-label="Jumlah Tagihan">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
+                  </tr>
 
                 {% endfor %}
             </tbody>
