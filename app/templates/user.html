@@ -21,40 +21,26 @@
         <h2>Pending Bills for {{ user_data[0].user_name }}</h2>
         <div class="table-wrapper">
         <table class="bill-table">
-            <thead>
-                <tr>
-                    <th>Pay Period</th>
-                    <th>Device ID</th>
-                    <th>Address</th>
-                    <th>Meter Past</th>
-                    <th>Meter Now</th>
-                    <th>Usage</th>
-                    <th>Level 1</th>
-                    <th>Level 2</th>
-                    <th>Level 3</th>
-                    <th>Level 4</th>
-                    <th>Basic Cost</th>
-                    <th>Bill Amount</th>
-                </tr>
-            </thead>
+
             <tbody>
                 {% for bill in user_data %}
                 <tr>
-                    <td>{{ bill.pay_period }}</td>
-                    <td>{{ bill.device_id }}</td>
-                    <td>{{ bill.user_address }}</td>
-                    <td>{{ bill.meter_past }}</td>
-                    <td>{{ bill.meter_now }}</td>
-                    <td>{{ bill.usage }}</td>
-                    <td>{{ bill.lv1_cost }}</td>
-                    <td>{{ bill.lv2_cost }}</td>
-                    <td>{{ bill.lv3_cost }}</td>
-                    <td>{{ bill.lv4_cost }}</td>
-                    <td>{{ bill.basic_cost }}</td>
-                    <td>{{ bill.bill_amount }}</td>
+                    <td data-label="Pay Period"><span>{{ bill.pay_period }}</span></td>
+                    <td data-label="Device ID"><span>{{ bill.device_id }}</span></td>
+                    <td data-label="Address"><span>{{ bill.user_address }}</span></td>
+                    <td data-label="Meter Past"><span>{{ bill.meter_past }}</span></td>
+                    <td data-label="Meter Now"><span>{{ bill.meter_now }}</span></td>
+                    <td data-label="Usage"><span>{{ bill.usage }}</span></td>
+                    <td data-label="Level 1"><span>{{ bill.lv1_cost }}</span></td>
+                    <td data-label="Level 2"><span>{{ bill.lv2_cost }}</span></td>
+                    <td data-label="Level 3"><span>{{ bill.lv3_cost }}</span></td>
+                    <td data-label="Level 4"><span>{{ bill.lv4_cost }}</span></td>
+                    <td data-label="Basic Cost"><span>{{ bill.basic_cost }}</span></td>
+                    <td data-label="Bill Amount"><span>{{ bill.bill_amount }}</span></td>
                 </tr>
                 {% endfor %}
             </tbody>
+
         </table>
         </div>
         <h3>Total Due: {{ user_data | map(attribute='bill_amount') | sum }}</h3>
