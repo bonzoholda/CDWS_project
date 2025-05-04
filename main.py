@@ -9,6 +9,7 @@ from typing import List
 from starlette.middleware.sessions import SessionMiddleware
 from database_utils import restore_db
 from database_utils import backup_db
+from fastapi import Depends, HTTPException, status
 
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SECRET_KEY", "default-secret"))
@@ -25,6 +26,16 @@ async def on_shutdown():
     backup_db()
 
 DB_PATH = "app/db/bills.db"
+
+def admin_required(request: Request):
+    if not request.session.get("admin_logged_in"):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authorized")
+
+@app.get("/admin", dependencies=[Depends(admin_required)])
+async def admin_dashboard(request: Request):
+    # your existing admin dashboard logic
+    return templates.TemplateResponse("admin_dashboard.html", {"request": request})
+
 
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
