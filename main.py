@@ -187,7 +187,7 @@ async def user_view(request: Request, user_id: str):
         conn.close()
 
 @app.post("/admin/upload")
-async def upload_csv(csv_file: UploadFile = File(...)):
+async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
     check_admin_logged_in(request)  # Check if admin is logged in
     conn = get_db_connection()
     cursor = conn.cursor()
