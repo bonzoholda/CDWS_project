@@ -18,7 +18,7 @@
     </div>
         
     {% if user_data %}
-        <h2>Pending Bills for {{ user_data[0].user_name }}</h2>
+        <h2>Tagihan: {{ user_data[0].user_name }}</h2>
         <div class="table-wrapper">
         <table class="bill-table">
 
@@ -62,7 +62,7 @@
         </div>
         <h3>Total Due: {{ user_data | map(attribute='bill_amount') | sum }}</h3>
     {% elif user_id %}
-        <p>No unpaid bills found for user ID {{ user_id }}.</p>
+        <p>Tagihan untuk pelanggan dengan ID {{ user_id }}.</p>
     {% endif %}
 </body>
 </html>
