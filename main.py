@@ -106,19 +106,6 @@ async def user_view(request: Request, user_id: str):
         return templates.TemplateResponse("user.html", {
             "request": request,
             "user_id": user_id,
-            "meter#": device_id,
-            "pelanggan": user_name,
-            "alamat": user_address,
-            "periode": pay_period,
-            "bulan_lalu": meter_past,
-            "bulan_ini": meter_now,
-            "pemakaian": usage,
-            "biaya_01-10": lv1_cost,
-            "biaya_11-20": lv2_cost,
-            "biaya_21-30": lv3_cost,
-            "biaya >30": lv4_cost,
-            "beban/basic": basic_cost,
-            "total_tagihan": bill_amount,        
             "bills": bills
         })
 
@@ -132,6 +119,7 @@ async def user_view(request: Request, user_id: str):
 
     finally:
         conn.close()
+
 
 
 @app.post("/admin/upload")
