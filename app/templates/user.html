@@ -11,14 +11,46 @@
         <button type="submit">Check</button>
     </form>
 
-    {% if bills %}
-        <h2>Pending Bills for {{ bills[0].user_name }}</h2>
-        <ul>
-            {% for bill in bills %}
-                <li>{{ bill.pay_period }} — {{ bill.bill_amount }}</li>
-            {% endfor %}
-        </ul>
-        <h3>Total Due: {{ bills | map(attribute='bill_amount') | sum }}</h3>
+    {% if user_data %}
+        <h2>Pending Bills for {{ user_data[0].user_name }}</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Pay Period</th>
+                    <th>Device ID</th>
+                    <th>Address</th>
+                    <th>Meter Past</th>
+                    <th>Meter Now</th>
+                    <th>Usage</th>
+                    <th>Level 1</th>
+                    <th>Level 2</th>
+                    <th>Level 3</th>
+                    <th>Level 4</th>
+                    <th>Basic Cost</th>
+                    <th>Bill Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bill in user_data %}
+                <tr>
+                    <td>{{ bill.pay_period }}</td>
+                    <td>{{ bill.device_id }}</td>
+                    <td>{{ bill.user_address }}</td>
+                    <td>{{ bill.meter_past }}</td>
+                    <td>{{ bill.meter_now }}</td>
+                    <td>{{ bill.usage }}</td>
+                    <td>{{ bill.lv1_cost }}</td>
+                    <td>{{ bill.lv2_cost }}</td>
+                    <td>{{ bill.lv3_cost }}</td>
+                    <td>{{ bill.lv4_cost }}</td>
+                    <td>{{ bill.basic_cost }}</td>
+                    <td>{{ bill.bill_amount }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Total Due: {{ user_data | map(attribute='bill_amount') | sum }}</h3>
     {% elif user_id %}
         <p>No unpaid bills found for user ID {{ user_id }}.</p>
     {% endif %}
