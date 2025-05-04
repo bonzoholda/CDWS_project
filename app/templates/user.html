@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check My Bills</title>
+    <title>Layanan Periksa Tagihan</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
     <div class="form-container">
-    <h1>Check Your Pending Bills</h1>
+    <h1>Lihat Tagihan Saya</h1>
     <form action="/user" method="get">
-        <label for="user_id">Enter Your User ID:</label>
+        <label for="user_id">Masukkan ID Pelanggan:</label>
         <input type="text" name="user_id" required>
-        <button type="submit">Check</button>
+        <button type="submit">Periksa</button>
     </form>
     </div>
         
@@ -22,21 +22,38 @@
         <div class="table-wrapper">
         <table class="bill-table">
 
+            <thead>
+                <tr>
+                    <th>Periode</th>
+                    <th>SR#</th>
+                    <th>Alamat</th>
+                    <th>Meter_Lalu</th>
+                    <th>Meter_Sekarang</th>
+                    <th>Pemakaian</th>
+                    <th>Prog_01-10</th>
+                    <th>Prog_11-20</th>
+                    <th>Prog_21-30</th>
+                    <th>Prog_>30</th>
+                    <th>Beban_Dasar</th>
+                    <th>Jumlah_Tagihan</th>
+                </tr>
+            </thead>
+
             <tbody>
                 {% for bill in user_data %}
                 <tr>
-                    <td data-label="Pay Period"><span>{{ bill.pay_period }}</span></td>
-                    <td data-label="Device ID"><span>{{ bill.device_id }}</span></td>
-                    <td data-label="Address"><span>{{ bill.user_address }}</span></td>
-                    <td data-label="Meter Past"><span>{{ bill.meter_past }}</span></td>
-                    <td data-label="Meter Now"><span>{{ bill.meter_now }}</span></td>
-                    <td data-label="Usage"><span>{{ bill.usage }}</span></td>
-                    <td data-label="Level 1"><span>{{ bill.lv1_cost }}</span></td>
-                    <td data-label="Level 2"><span>{{ bill.lv2_cost }}</span></td>
-                    <td data-label="Level 3"><span>{{ bill.lv3_cost }}</span></td>
-                    <td data-label="Level 4"><span>{{ bill.lv4_cost }}</span></td>
-                    <td data-label="Basic Cost"><span>{{ bill.basic_cost }}</span></td>
-                    <td data-label="Bill Amount"><span>{{ bill.bill_amount }}</span></td>
+                    <td data-label="Periode"><span>{{ bill.pay_period }}</span></td>
+                    <td data-label="SR#"><span>{{ bill.device_id }}</span></td>
+                    <td data-label="Alamat"><span>{{ bill.user_address }}</span></td>
+                    <td data-label="Meter_Lalu"><span>{{ bill.meter_past }}</span></td>
+                    <td data-label="Meter_Sekarang"><span>{{ bill.meter_now }}</span></td>
+                    <td data-label="Pemakaian"><span>{{ bill.usage }}</span></td>
+                    <td data-label="Prog_01-10"><span>{{ bill.lv1_cost }}</span></td>
+                    <td data-label="Prog_11-20"><span>{{ bill.lv2_cost }}</span></td>
+                    <td data-label="Prog_21-30"><span>{{ bill.lv3_cost }}</span></td>
+                    <td data-label="Prog_>30"><span>{{ bill.lv4_cost }}</span></td>
+                    <td data-label="Beban_Dasar"><span>{{ bill.basic_cost }}</span></td>
+                    <td data-label="Jumlah_Tagihan"><span>{{ bill.bill_amount }}</span></td>
                 </tr>
                 {% endfor %}
             </tbody>
