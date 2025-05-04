@@ -90,27 +90,35 @@ async def admin_logout(request: Request):
     response.delete_cookie("admin_logged_in")  # Delete cookie on logout
     return response
 
-# Admin dashboard route (protected by login)
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_page(request: Request):
     check_admin_logged_in(request)  # Check if admin is logged in
-    
-    conn = sqlite3.connect("database.db")
-    cursor = conn.cursor()
+    conn = get_db_connection()
+    conn.row_factory = sqlite3.Row
 
-    # Fetch data from DB (example)
-    summary = cursor.execute("SELECT * FROM users WHERE unpaid_bills > 0").fetchall()
+    summary = conn.execute("""
+        SELECT user_name, user_id, SUM(bill_amount) 
+        FROM bills 
+        WHERE paid = 0 
+        GROUP BY user_id
+    """).fetchall()
 
+    bills = conn.execute("SELECT * FROM bills ORDER BY user_id, pay_period DESC").fetchall()
     conn.close()
-    
-    return templates.TemplateResponse("admin.html", {"request": request, "summary": summary})
+
+    return templates.TemplateResponse("admin.html", {
+        "request": request,
+        "summary": summary,
+        "bills": bills
+    })
+
 
 # Admin update bills route
 @app.post("/admin/update")
 async def update_bills(request: Request, bill_ids: list[int] = Form(...)):
     check_admin_logged_in(request)  # Ensure admin is logged in
     
-    conn = sqlite3.connect("database.db")
+    conn = get_db_connection()
     cursor = conn.cursor()
 
     # Update logic
