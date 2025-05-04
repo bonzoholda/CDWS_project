@@ -131,29 +131,6 @@ async def update_bills(request: Request, bill_ids: list[int] = Form(...)):
     return RedirectResponse(url="/admin", status_code=303)
 
 
-# Admin dashboard route (protected by login)
-@app.get("/admin", response_class=HTMLResponse)
-async def admin_page(request: Request):
-    check_admin_logged_in(request)  # Check if admin is logged in
-    conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
-
-    summary = conn.execute(""" 
-        SELECT user_name, user_id, SUM(bill_amount) 
-        FROM bills 
-        WHERE paid = 0 
-        GROUP BY user_id
-    """).fetchall()
-
-    bills = conn.execute("SELECT * FROM bills ORDER BY user_id, pay_period DESC").fetchall()
-    conn.close()
-
-    return templates.TemplateResponse("admin.html", {
-        "request": request,
-        "summary": summary,
-        "bills": bills
-    })
-
 # Public user view page
 @app.get("/", response_class=HTMLResponse)
 async def public_view(request: Request):
