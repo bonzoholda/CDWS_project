@@ -134,3 +134,61 @@ h1, h2 {
     color: #3b8fb0; /* Bluish color for headings */
 }
 
+/* Base table style (desktop) */
+.bill-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.bill-table th,
+.bill-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border: 1px solid #ccc;
+}
+
+/* Mobile portrait: convert table to block style */
+@media (max-width: 768px) {
+    .bill-table,
+    .bill-table thead,
+    .bill-table tbody,
+    .bill-table th,
+    .bill-table td,
+    .bill-table tr {
+        display: block;
+        width: 100%;
+    }
+
+    .bill-table thead {
+        display: none; /* hide header row */
+    }
+
+    .bill-table tr {
+        margin-bottom: 1.5rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        padding: 0.5rem;
+    }
+
+    .bill-table td {
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+    }
+
+    .bill-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        top: 0.75rem;
+        font-weight: bold;
+        color: #333;
+        width: 45%;
+        white-space: nowrap;
+    }
+}
