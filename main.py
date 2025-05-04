@@ -27,6 +27,17 @@ async def on_shutdown():
     print("Shutting down app... Backing up database.")
     backup_db()
 
+def test_db_connection():
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        print(f"Successfully connected to {DB_PATH}")
+        conn.close()
+    except sqlite3.OperationalError as e:
+        print(f"Error connecting to database: {e}")
+
+test_db_connection()
+
+
 def admin_required(request: Request):
     if not request.session.get("admin_logged_in"):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authorized")
