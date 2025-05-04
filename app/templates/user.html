@@ -25,17 +25,17 @@
             <thead>
                 <tr>
                     <th>Periode</th>
-                    <th>SR#</th>
+                    <th>Nomor SR</th>
                     <th>Alamat</th>
-                    <th>Meter_Lalu</th>
-                    <th>Meter_Sekarang</th>
+                    <th>Meter Lalu</th>
+                    <th>Meter Sekarang</th>
                     <th>Pemakaian</th>
-                    <th>Prog_01-10</th>
-                    <th>Prog_11-20</th>
-                    <th>Prog_21-30</th>
-                    <th>Prog_di-atas-30</th>
-                    <th>Beban_Dasar</th>
-                    <th>Jumlah_Tagihan</th>
+                    <th>Biaya 01-10</th>
+                    <th>Biaya 11-20</th>
+                    <th>Biaya 21-30</th>
+                    <th>Biaya di atas 30</th>
+                    <th>Beban Dasar</th>
+                    <th>Jumlah Tagihan</th>
                 </tr>
             </thead>
 
@@ -43,17 +43,17 @@
                 {% for bill in user_data %}
                 <tr>
                     <td data-label="Periode"><span>{{ bill.pay_period }}</span></td>
-                    <td data-label="SR#"><span>{{ bill.device_id }}</span></td>
+                    <td data-label="Nomor SR"><span>{{ bill.device_id }}</span></td>
                     <td data-label="Alamat"><span>{{ bill.user_address }}</span></td>
-                    <td data-label="Meter_Lalu"><span>{{ bill.meter_past }}</span></td>
-                    <td data-label="Meter_Sekarang"><span>{{ bill.meter_now }}</span></td>
+                    <td data-label="Meter Lalu"><span>{{ bill.meter_past }}</span></td>
+                    <td data-label="Meter Sekarang"><span>{{ bill.meter_now }}</span></td>
                     <td data-label="Pemakaian"><span>{{ bill.usage }}</span></td>
-                    <td data-label="Prog_01-10"><span>{{ bill.lv1_cost }}</span></td>
-                    <td data-label="Prog_11-20"><span>{{ bill.lv2_cost }}</span></td>
-                    <td data-label="Prog_21-30"><span>{{ bill.lv3_cost }}</span></td>
-                    <td data-label="Prog_di-atas-30"><span>{{ bill.lv4_cost }}</span></td>
-                    <td data-label="Beban_Dasar"><span>{{ bill.basic_cost }}</span></td>
-                    <td data-label="Jumlah_Tagihan"><span>{{ bill.bill_amount }}</span></td>
+                    <td data-label="Biaya 01-10"><span>{{ bill.lv1_cost }}</span></td>
+                    <td data-label="Biaya 11-20"><span>{{ bill.lv2_cost }}</span></td>
+                    <td data-label="Biaya 21-30"><span>{{ bill.lv3_cost }}</span></td>
+                    <td data-label="Biaya di atas 30"><span>{{ bill.lv4_cost }}</span></td>
+                    <td data-label="Beban Dasar"><span>{{ bill.basic_cost }}</span></td>
+                    <td data-label="Jumlah Tagihan"><span>{{ bill.bill_amount }}</span></td>
                 </tr>
                 {% endfor %}
             </tbody>
