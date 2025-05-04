@@ -75,18 +75,12 @@ async def logout(request: Request):
 
 
 @app.get("/admin", response_class=HTMLResponse)
-async def admin_dashboard(request: Request):
+async def admin_page(request: Request):
     conn = get_db_connection()
-    summary = conn.execute("""
-        SELECT user_id, user_name, user_address, SUM(bill_amount)
-        FROM bills
-        WHERE paid = 0
-        GROUP BY user_id
-    """).fetchall()
-
-    bills = conn.execute("SELECT * FROM bills").fetchall()
+    summary = conn.execute("SELECT * FROM bills WHERE paid = 0").fetchall()
     conn.close()
-    return templates.TemplateResponse("admin.html", {"request": request, "summary": summary, "bills": bills})
+    return templates.TemplateResponse("admin.html", {"request": request, "summary": summary})
+
 
 @app.get("/", response_class=HTMLResponse)
 async def public_view(request: Request):
