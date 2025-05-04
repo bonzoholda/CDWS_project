@@ -5,7 +5,7 @@ import glob
 import datetime
 import csv
 
-DB_PATH = "bills.db"
+DB_PATH = "app/db/bills.db"
 BACKUP_DIR = "backups"
 
 def ensure_backup_folder():
