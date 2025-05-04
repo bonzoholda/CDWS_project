@@ -52,8 +52,11 @@
                     <td data-label="Biaya 11-20"><span>{{ bill.lv2_cost }}</span></td>
                     <td data-label="Biaya 21-30"><span>{{ bill.lv3_cost }}</span></td>
                     <td data-label="Biaya di atas 30"><span>{{ bill.lv4_cost }}</span></td>
-                    <td data-label="Beban Dasar"><span>{{ bill.basic_cost }}</span></td>
-                    <td data-label="Jumlah Tagihan"><span>{{ bill.bill_amount }}</span></td>
+                    <td data-label="Beban Dasar"><span>{{ "{:,.0f}".format(bill.basic_cost) }}</span></td>
+                    <td data-label="Jumlah Tagihan">
+  <span>{{ "{:,.0f}".format(bill.bill_amount) }}</span>
+</td>
+
                 </tr>
                 {% endfor %}
             </tbody>
