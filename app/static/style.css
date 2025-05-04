@@ -136,68 +136,72 @@ h1, h2 {
 
 /* Base style (Desktop view) */
 .bill-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Roboto', sans-serif;
 }
 
 .bill-table thead {
-    background-color: #e0f0f8;
+  background-color: #e3f2fd;
 }
 
 .bill-table th, .bill-table td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: left;
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
 }
 
+/* Reset mobile overrides */
 .bill-table td span {
-    display: inline; /* default: just show value inline */
+  display: inline;
 }
 
-/* Mobile view (portrait display) */
+/* Responsive (mobile) styles */
 @media (max-width: 768px) {
-    .bill-table, 
-    .bill-table thead, 
-    .bill-table tbody, 
-    .bill-table th, 
-    .bill-table td, 
-    .bill-table tr {
-        display: block;
-    }
+  .bill-table,
+  .bill-table thead,
+  .bill-table tbody,
+  .bill-table th,
+  .bill-table td,
+  .bill-table tr {
+    display: block;
+    width: 100%;
+  }
 
-    .bill-table thead {
-        display: none;
-    }
+  .bill-table thead {
+    display: none;
+  }
 
-    .bill-table tr {
-        margin-bottom: 1rem;
-        background: #fff;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        border-radius: 6px;
-        overflow: hidden;
-        padding: 10px;
-    }
+  .bill-table tr {
+    margin-bottom: 1rem;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    overflow: hidden;
+    padding: 10px;
+  }
 
-    .bill-table td {
-        border: none;
-        position: relative;
-        padding-left: 50%;
-        text-align: left;
-    }
+  .bill-table td {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+    text-align: left;
+    box-sizing: border-box;
+    min-height: 40px;
+  }
 
-    .bill-table td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 10px;
-        top: 10px;
-        font-weight: bold;
-        width: 45%;
-        white-space: nowrap;
-    }
+  .bill-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    width: 45%;
+    font-weight: bold;
+    white-space: nowrap;
+  }
 
-    .bill-table td span {
-        display: block;
-        margin-top: 5px;
-    }
+  .bill-table td span {
+    display: block;
+    margin-top: 5px;
+  }
 }
