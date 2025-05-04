@@ -188,22 +188,31 @@ async def user_view(request: Request, user_id: str):
 
 @app.post("/admin/upload")
 async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
-    check_admin_logged_in(request)  # Check if admin is logged in
+    check_admin_logged_in(request)
     conn = get_db_connection()
     cursor = conn.cursor()
     contents = await csv_file.read()
-    
-    # Decode and parse CSV
+
     decoded = contents.decode("utf-8")
     reader = csv.DictReader(io.StringIO(decoded))
 
     inserted_count = 0
+    skipped_count = 0
     for row in reader:
         try:
+            # Check if a bill with same user_id and pay_period already exists
+            cursor.execute("SELECT 1 FROM bills WHERE user_id = ? AND pay_period = ?", (row['user_id'], row['pay_period']))
+            if cursor.fetchone():
+                print(f"⚠️ Skipped duplicate: user_id={row['user_id']} pay_period={row['pay_period']}")
+                skipped_count += 1
+                continue
+
             cursor.execute("""
                 INSERT INTO bills (
-                    user_id, device_id, user_name, user_address, pay_period, meter_past, meter_now,
-                    usage, lv1_cost, lv2_cost, lv3_cost, lv4_cost, basic_cost, bill_amount, paid
+                    user_id, device_id, user_name, user_address, pay_period,
+                    meter_past, meter_now, usage,
+                    lv1_cost, lv2_cost, lv3_cost, lv4_cost,
+                    basic_cost, bill_amount, paid
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
             """, (
                 row['user_id'], row['device_id'], row['user_name'], row['user_address'], row['pay_period'],
@@ -212,18 +221,18 @@ async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
                 float(row['basic_cost']), float(row['bill_amount'])
             ))
             inserted_count += 1
+
         except Exception as e:
-            print(f"❌ Skipped row due to error: {e}")
+            print(f"❌ Error inserting row: {e}")
             continue
 
     conn.commit()
     conn.close()
-
-    print(f"✅ Inserted {inserted_count} rows from {csv_file.filename}")
-    
     backup_db()
-    
+
+    print(f"✅ Inserted: {inserted_count}, ⚠️ Skipped duplicates: {skipped_count} from {csv_file.filename}")
     return RedirectResponse(url="/admin", status_code=303)
+
 
 # Admin update bills (mark bills as paid)
 @app.post("/admin/update")
