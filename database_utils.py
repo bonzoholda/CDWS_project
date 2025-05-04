@@ -5,32 +5,39 @@ import glob
 import datetime
 import csv
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "..", "db", "bills.db")
-
-#DB_PATH = "app/db/bills.db"
-
+DB_PATH = "app/db/bills.db"
 BACKUP_DIR = "backups"
 
 def ensure_backup_folder():
-    if not os.path.exists(BACKUP_DIR):
-        os.makedirs(BACKUP_DIR)
+    os.makedirs(BACKUP_DIR, exist_ok=True)
 
 def backup_db():
-    ensure_backup_folder()
-    if os.path.exists(DB_PATH):
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_file = os.path.join(BACKUP_DIR, f"bills_backup_{timestamp}.db")
-        shutil.copyfile(DB_PATH, backup_file)
-        print(f"✅ Backup created at: {backup_file}")
-    else:
-        print("❌ No database found to back up.")
+    os.makedirs(BACKUP_DIR, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    backup_filename = f"bills_backup_{timestamp}.db"
+    backup_path = os.path.join(BACKUP_DIR, backup_filename)
+
+    shutil.copy2(DB_PATH, backup_path)
+    print(f"✅ Backup created at: {backup_path}")
 
 def restore_db():
     ensure_backup_folder()
-    backups = sorted(glob.glob(os.path.join(BACKUP_DIR, "bills_backup_*.db")), reverse=True)
-    
-    # Ensure the table is created after restoring or on the first initialization
+
+    # Get sorted list of backup files from relative BACKUP_DIR
+    backups = sorted(
+        glob.glob(os.path.join(BACKUP_DIR, "bills_backup_*.db")),
+        reverse=True
+    )
+
+    # Restore the most recent backup if available
+    if backups:
+        latest_backup = backups[0]
+        shutil.copyfile(latest_backup, DB_PATH)
+        print(f"✅ Database restored from: {latest_backup}")
+    else:
+        print("⚠️ No backups found. Starting with a fresh database.")
+
+    # Ensure the table structure is present (fresh DB or restored one)
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
@@ -54,14 +61,7 @@ def restore_db():
         )
     """)
     conn.commit()
-
-    # Restore the most recent backup if available
-    if backups:
-        latest_backup = backups[0]
-        shutil.copyfile(latest_backup, DB_PATH)
-        print(f"✅ Database restored from: {latest_backup}")
-    else:
-        print("⚠️ No backups found. Starting with a fresh database.")
+    conn.close()
 
 
 def get_db_connection():
