@@ -41,8 +41,18 @@ test_db_connection()
 
 def admin_required(request: Request):
     if not request.session.get("admin_logged_in"):
-        # Properly raise a redirect response
-        raise HTTPException(status_code=307, detail="Redirecting to login", headers={"Location": "/admin/login"})
+        # Instead of raising HTTPException, raise an actual redirect
+        raise HTTPException(status_code=403, detail="Unauthorized")
+
+@app.middleware("http")
+async def enforce_admin_login(request: Request, call_next):
+    # Allow access to login page itself
+    if request.url.path.startswith("/admin") and not request.url.path.startswith("/admin/login"):
+        if not request.session.get("admin_logged_in"):
+            return RedirectResponse(url="/admin/login", status_code=303)
+    response = await call_next(request)
+    return response
+
 
 @app.post("/admin/login")
 async def login(request: Request, password: str = Form(...)):
