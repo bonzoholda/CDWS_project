@@ -165,25 +165,33 @@ async def user_view(request: Request, user_id: str):
 
 @app.post("/admin/upload")
 async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
-    check_admin_logged_in(request)  # Check if admin is logged in
+    check_admin_logged_in(request)
     conn = get_db_connection()
     cursor = conn.cursor()
     contents = await csv_file.read()
-    
-    # Decode and parse CSV
+
     decoded = contents.decode("utf-8")
     reader = csv.DictReader(io.StringIO(decoded))
 
     inserted_count = 0
     for row in reader:
         try:
+            user_id = row['user_id'].strip()
+            pay_period = row['pay_period'].strip()
+
+            # Check for duplicate entry
+            cursor.execute("SELECT 1 FROM bills WHERE user_id = ? AND pay_period = ?", (user_id, pay_period))
+            if cursor.fetchone():
+                print(f"⚠️ Skipping duplicate: user_id={user_id}, pay_period={pay_period}")
+                continue
+
             cursor.execute("""
                 INSERT INTO bills (
                     user_id, device_id, user_name, user_address, pay_period, meter_past, meter_now,
                     usage, lv1_cost, lv2_cost, lv3_cost, lv4_cost, basic_cost, bill_amount, paid
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
             """, (
-                row['user_id'], row['device_id'], row['user_name'], row['user_address'], row['pay_period'],
+                user_id, row['device_id'], row['user_name'], row['user_address'], pay_period,
                 float(row['meter_past']), float(row['meter_now']), float(row['usage']),
                 float(row['lv1_cost']), float(row['lv2_cost']), float(row['lv3_cost']), float(row['lv4_cost']),
                 float(row['basic_cost']), float(row['bill_amount'])
@@ -196,11 +204,11 @@ async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
     conn.commit()
     conn.close()
 
-    print(f"✅ Inserted {inserted_count} rows from {csv_file.filename}")
-    
+    print(f"✅ Inserted {inserted_count} new rows from {csv_file.filename}")
     backup_db()
     
     return RedirectResponse(url="/admin", status_code=303)
+
 
 
 # Admin update bills (mark bills as paid)
