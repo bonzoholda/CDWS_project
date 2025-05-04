@@ -17,35 +17,35 @@ templates = Jinja2Templates(directory="app/templates")
 DB_PATH = "app/db/bills.db"
 
 def get_db_connection():
-    db_exists = os.path.exists(DB_PATH)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
 
-    if not db_exists:
-        cursor = conn.cursor()
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS bills (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id TEXT,
-                device_id TEXT,
-                user_name TEXT,
-                user_address TEXT,
-                pay_period TEXT,
-                meter_past INTEGER,
-                meter_now INTEGER,
-                usage INTEGER,
-                lv1_cost REAL,
-                lv2_cost REAL,
-                lv3_cost REAL,
-                lv4_cost REAL,
-                basic_cost REAL,
-                bill_amount REAL,
-                paid INTEGER DEFAULT 0
-            )
-        """)
-        conn.commit()
+    # Ensure the bills table exists (safe even if it already exists)
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS bills (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT,
+            device_id TEXT,
+            user_name TEXT,
+            user_address TEXT,
+            pay_period TEXT,
+            meter_past INTEGER,
+            meter_now INTEGER,
+            usage INTEGER,
+            lv1_cost REAL,
+            lv2_cost REAL,
+            lv3_cost REAL,
+            lv4_cost REAL,
+            basic_cost REAL,
+            bill_amount REAL,
+            paid INTEGER DEFAULT 0
+        )
+    """)
+    conn.commit()
 
     return conn
+
 
 
 @app.post("/admin/login")
