@@ -42,12 +42,6 @@ def admin_required(request: Request):
     if not request.session.get("admin_logged_in"):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authorized")
 
-@app.get("/admin", dependencies=[Depends(admin_required)])
-async def admin_dashboard(request: Request):
-    # your existing admin dashboard logic
-    return templates.TemplateResponse("admin.html", {"request": request})
-
-
 @app.post("/admin/login")
 async def login(request: Request, password: str = Form(...)):
     # Get password from environment variable; it must be set in Railway or via environment variables
@@ -75,11 +69,16 @@ async def logout(request: Request):
 
 
 @app.get("/admin", response_class=HTMLResponse)
-async def admin_page(request: Request):
+async def admin_dashboard(request: Request):
+    if not request.session.get("admin_logged_in"):
+        raise HTTPException(status_code=401, detail="Not authorized")
+    
     conn = get_db_connection()
     summary = conn.execute("SELECT * FROM bills WHERE paid = 0").fetchall()
     conn.close()
+    
     return templates.TemplateResponse("admin.html", {"request": request, "summary": summary})
+
 
 
 @app.get("/", response_class=HTMLResponse)
