@@ -10,7 +10,6 @@
 /* Global Styles */
 body {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
   background-color: #f7f9fc;
   padding: 20px;
   color: #333;
@@ -64,60 +63,66 @@ h2, h3 {
   font-size: 16px;
 }
 
-.bill-table th, .bill-table td {
+.bill-table th,
+.bill-table td {
   padding: 10px;
   text-align: left;
   border: 1px solid #ddd;
 }
 
-.bill-table td span {
-  display: inline;
+.bill-table th {
+  background-color: #f1f1f1;
 }
 
-.bill-table td.right, .bill-table th.right {
+.bill-table td.right,
+.bill-table th.right {
   text-align: right;
 }
 
-
 /* ------------ MOBILE STYLE (card format) ------------ */
 @media (max-width: 768px) {
-  table,
-  thead,
-  tbody,
-  th,
-  td,
-  tr {
+  .bill-table,
+  .bill-table thead,
+  .bill-table tbody,
+  .bill-table th,
+  .bill-table td,
+  .bill-table tr {
     display: block;
+    width: 100%;
   }
 
-  thead {
+  .bill-table thead {
     display: none;
   }
 
-  tr {
-    margin-bottom: 1rem;
-    border-bottom: 1px solid #ccc;
+  .bill-table tr {
+    margin-bottom: 1.5rem;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 10px;
   }
 
-  td {
+  .bill-table td {
     position: relative;
-    padding-left: 45%;
+    padding-left: 50%;
     text-align: left;
     border: none;
     border-bottom: 1px solid #eee;
+    min-height: 40px;
+    box-sizing: border-box;
   }
 
-  td::before {
+  .bill-table td::before {
     content: attr(data-label);
     position: absolute;
-    left: 0;
-    width: 42%;
-    padding-left: 10px;
-    font-weight: bold;
+    top: 10px;
+    left: 10px;
+    width: 45%;
+    padding-right: 10px;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-weight: 500;
+    color: #555;
   }
 }
-
-
