@@ -74,6 +74,11 @@ h2, h3 {
   display: inline;
 }
 
+.bill-table td.right, .bill-table th.right {
+  text-align: right;
+}
+
+
 /* ------------ MOBILE STYLE (card format) ------------ */
 @media screen and (max-width: 768px) {
   .bill-table thead {
