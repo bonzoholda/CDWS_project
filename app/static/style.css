@@ -9,185 +9,90 @@
 
 /* Global Styles */
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f4f7fb; /* Light bluish background */
-    color: #333;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    flex-direction: column;
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f7f9fc;
+  padding: 20px;
+  color: #333;
 }
 
-/* Header Styles */
-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-/* Form Container */
 .form-container {
-    background-color: #ffffff; /* Light background for the form */
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow effect */
-    max-width: 400px;
-    width: 100%;
-    margin: 20px;
-    box-sizing: border-box;
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Form Inputs and Button */
-input[type="file"],
-button {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
+input, button {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 10px;
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
 }
 
-/* Button Styling */
 button {
-    background-color: #3b8fb0; /* Bluish theme for button */
-    color: white;
-    cursor: pointer;
-    border: none;
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 button:hover {
-    background-color: #316f8b; /* Darker bluish hover effect */
+  background-color: #005fa3;
 }
 
-/* Input Styling */
-input[type="file"] {
-    background-color: #f9fafb;
-    border-color: #ccc;
+h2, h3 {
+  text-align: center;
+  margin-top: 30px;
 }
 
-/* Table Styles */
-table {
-    width: 100%;
-    margin-top: 30px;
-    border-collapse: collapse;
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.table-wrapper {
+  overflow-x: auto;
+  margin-top: 20px;
 }
 
-/* Table Header */
-th {
-    background-color: #3b8fb0; /* Bluish background for header */
-    color: white;
-    padding: 12px;
-    text-align: left;
-    font-size: 16px;
-}
-
-/* Table Data */
-td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-td[data-label] {
-    display: block;
-    text-align: right;
-    font-weight: bold;
-}
-
-/* Mobile Responsive Styles */
-@media (max-width: 768px) {
-    .form-container {
-        padding: 20px;
-    }
-
-    table {
-        width: 100%;
-    }
-
-    td[data-label] {
-        text-align: left;
-        display: block;
-        border-bottom: 1px solid #ddd;
-    }
-
-    table th,
-    table td {
-        font-size: 14px;
-    }
-
-    body {
-        padding: 20px;
-        justify-content: flex-start; /* For better spacing on mobile */
-    }
-}
-
-/* To add some subtle accent colors for the whole page */
-h1, h2 {
-    color: #3b8fb0; /* Bluish color for headings */
-}
-
-/* Base style (Desktop view) */
 .bill-table {
   width: 100%;
   border-collapse: collapse;
-  font-family: 'Roboto', sans-serif;
-}
-
-.bill-table thead {
-  background-color: #e3f2fd;
 }
 
 .bill-table th, .bill-table td {
-  border: 1px solid #ccc;
-  padding: 8px;
+  padding: 10px;
   text-align: left;
+  border: 1px solid #ddd;
 }
 
-/* Reset mobile overrides */
-.bill-table td span {
-  display: inline;
-}
-
-/* Responsive (mobile) styles */
-@media (max-width: 768px) {
-  .bill-table,
-  .bill-table thead,
-  .bill-table tbody,
-  .bill-table th,
-  .bill-table td,
-  .bill-table tr {
-    display: block;
-    width: 100%;
-  }
-
+/* Mobile styles: convert table to card view */
+@media screen and (max-width: 768px) {
   .bill-table thead {
     display: none;
   }
 
+  .bill-table, .bill-table tbody, .bill-table tr, .bill-table td {
+    display: block;
+    width: 100%;
+  }
+
   .bill-table tr {
-    margin-bottom: 1rem;
-    background: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    border-radius: 6px;
-    overflow: hidden;
+    margin-bottom: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     padding: 10px;
   }
 
   .bill-table td {
-    border: none;
     position: relative;
     padding-left: 50%;
-    text-align: left;
-    box-sizing: border-box;
-    min-height: 40px;
+    border: none;
+    border-bottom: 1px solid #eee;
   }
 
   .bill-table td::before {
@@ -195,13 +100,11 @@ h1, h2 {
     position: absolute;
     left: 10px;
     top: 10px;
-    width: 45%;
     font-weight: bold;
     white-space: nowrap;
   }
 
   .bill-table td span {
     display: block;
-    margin-top: 5px;
   }
 }
