@@ -9,12 +9,18 @@ import io
 from typing import List
 from starlette.middleware.sessions import SessionMiddleware
 from database_utils import restore_db, backup_db, get_db_connection, DB_PATH
-from starlette.responses import RedirectResponse
+
 
 app = FastAPI()
 
 # Add session middleware to store admin login state
-app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SECRET_KEY", "default-secret"))
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.environ.get("SECRET_KEY", "default-secret"),
+    same_site="lax",  # 👈 optional but safer
+    max_age=86400     # 👈 1 day session timeout
+)
+
 
 # Mount static files directory (for CSS/JS images)
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
