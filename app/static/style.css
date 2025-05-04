@@ -134,24 +134,36 @@ h1, h2 {
     color: #3b8fb0; /* Bluish color for headings */
 }
 
-/* Base table style (desktop) */
+/* Base style (Desktop view) */
 .bill-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 1rem 0;
+    font-size: 14px;
 }
 
-.bill-table th,
-.bill-table td {
-    padding: 0.75rem;
-    text-align: left;
+.bill-table thead {
+    background-color: #e0f0f8;
+}
+
+.bill-table th, .bill-table td {
     border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
 }
 
-/* Mobile portrait: convert table to block style */
+.bill-table td span {
+    display: inline; /* default: just show value inline */
+}
+
+/* Mobile view (portrait display) */
 @media (max-width: 768px) {
-    .bill-table {
-        border: none;
+    .bill-table, 
+    .bill-table thead, 
+    .bill-table tbody, 
+    .bill-table th, 
+    .bill-table td, 
+    .bill-table tr {
+        display: block;
     }
 
     .bill-table thead {
@@ -159,42 +171,33 @@ h1, h2 {
     }
 
     .bill-table tr {
-        display: block;
-        margin-bottom: 1.5rem;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: #fff;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        padding: 1rem;
+        margin-bottom: 1rem;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border-radius: 6px;
+        overflow: hidden;
+        padding: 10px;
     }
 
     .bill-table td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem 0;
         border: none;
-        border-bottom: 1px solid #eee;
-        font-size: 0.95rem;
-        word-wrap: break-word;
-    }
-
-    .bill-table td:last-child {
-        border-bottom: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
     }
 
     .bill-table td::before {
         content: attr(data-label);
-        font-weight: 600;
-        flex: 1 1 45%;
-        color: #333;
-        padding-right: 1rem;
-        text-align: left;
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        font-weight: bold;
+        width: 45%;
+        white-space: nowrap;
     }
 
     .bill-table td span {
-        flex: 1 1 55%;
-        text-align: right;
+        display: block;
+        margin-top: 5px;
     }
 }
-
