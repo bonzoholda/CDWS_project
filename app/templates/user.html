@@ -41,52 +41,65 @@
 
             <tbody>
                 {% for bill in user_data %}
-                <tr>
-                    <td class="right" data-label="Periode">
-                        <span>{{ bill.pay_period }}</span>
-                    </td>
-                    <td class="right" data-label="Nomor SR">
-                        <span>{{ bill.device_id }}</span>
-                    </td>
-                    <td class="right" data-label="Alamat">
-                        <span>{{ bill.user_address }}</span>
-                    </td>
-                    <td class="right" data-label="Meter Lalu">
-                        <span>{{ "{:,.0f}".format(bill.meter_past) }}</span>
-                    </td>
-                    <td class="right" data-label="Meter Sekarang">
-                        <span>{{ "{:,.0f}".format(bill.meter_now) }}</span>
-                    </td>
-                    <td class="right" data-label="Pemakaian">
-                        <span>{{ "{:,.0f}".format(bill.usage) }}</span>
-                    </td>
-                    <td class="right" data-label="Biaya 01-10">
-                        <span>{{ "{:,.0f}".format(bill.lv1_cost) }}</span>
-                    </td>
-                    <td class="right" data-label="Biaya 11-20">
-                        <span>{{ "{:,.0f}".format(bill.lv2_cost) }}</span>
-                    </td>
-                    <td class="right" data-label="Biaya 21-30">
-                        <span>{{ "{:,.0f}".format(bill.lv3_cost) }}</span>
-                    </td>
-                    <td class="right" data-label="Biaya di atas 30">
-                        <span>{{ "{:,.0f}".format(bill.lv4_cost) }}</span>
-                    </td>
-                    <td class="right" data-label="Beban Dasar">
-                        <span>{{ "{:,.0f}".format(bill.basic_cost) }}</span>
-                    </td>
-                    <td class="right" data-label="Jumlah Tagihan">
-                        <span>{{ "{:,.0f}".format(bill.bill_amount) }}</span>
-                    </td>
-
-
+                <tr class="card-row">
+                  <td>
+                    <div class="card-line">
+                      <span class="card-label">Periode</span>
+                      <span class="card-value">{{ bill.pay_period }}</span>
+                    </div>
+                    <div class="card-line">
+                      <span class="card-label">Nomor SR</span>
+                      <span class="card-value">{{ bill.device_id }}</span>
+                    </div>
+                    <div class="card-line">
+                      <span class="card-label">Alamat</span>
+                      <span class="card-value">{{ bill.user_address }}</span>
+                    </div>
+                    <div class="card-line">
+                      <span class="card-label">Meter Lalu</span>
+                      <span class="card-value">{{ "{:,.0f}".format(bill.meter_past|float) }}</span>
+                    </div>
+                    <div class="card-line">
+                      <span class="card-label">Meter Sekarang</span>
+                      <span class="card-value">{{ "{:,.0f}".format(bill.meter_now|float) }}</span>
+                    </div>
+                    <div class="card-line">
+                      <span class="card-label">Pemakaian</span>
+                      <span class="card-value">{{ "{:,.0f}".format(bill.usage|float) }}</span>
+                    </div>
+                    <div class="card-line">
+                      <span class="card-label">Biaya 01-10</span>
+                      <span class="card-value">{{ "{:,.0f}".format(bill.lv1_cost|float) }}</span>
+                    </div>
+                    <div class="card-line">
+                      <span class="card-label">Biaya 11-20</span>
+                      <span class="card-value">{{ "{:,.0f}".format(bill.lv2_cost|float) }}</span>
+                    </div>
+                    <div class="card-line">
+                      <span class="card-label">Biaya 21-30</span>
+                      <span class="card-value">{{ "{:,.0f}".format(bill.lv3_cost|float) }}</span>
+                    </div>
+                    <div class="card-line">
+                      <span class="card-label">Biaya di atas 30</span>
+                      <span class="card-value">{{ "{:,.0f}".format(bill.lv4_cost|float) }}</span>
+                    </div>
+                    <div class="card-line">
+                      <span class="card-label">Beban Dasar</span>
+                      <span class="card-value">{{ "{:,.0f}".format(bill.basic_cost|float) }}</span>
+                    </div>
+                    <div class="card-line">
+                      <span class="card-label">Jumlah Tagihan</span>
+                      <span class="card-value">{{ "{:,.0f}".format(bill.bill_amount|float) }}</span>
+                    </div>
+                  </td>
                 </tr>
+
                 {% endfor %}
             </tbody>
 
         </table>
         </div>
-        <h3>Total Due: {{ user_data | map(attribute='bill_amount') | sum }}</h3>
+        <h3>Total belum terbayar: {{ user_data | map(attribute='bill_amount') | sum }}</h3>
     {% elif user_id %}
         <p>Tagihan untuk pelanggan dengan ID {{ user_id }}.</p>
     {% endif %}
