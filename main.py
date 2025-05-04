@@ -151,8 +151,6 @@ async def upload_csv(csv_file: UploadFile = File(...)):
     decoded = contents.decode("utf-8").splitlines()
     reader = csv.DictReader(decoded)
 
-    with open(file_path, newline='', encoding='utf-8') as csvfile:
-        reader = csv.DictReader(csvfile)
     
         for row in reader:
             cursor.execute("""
