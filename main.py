@@ -13,16 +13,6 @@ from database_utils import restore_db, backup_db, get_db_connection, DB_PATH
 
 app = FastAPI()
 
-# Add session middleware to store admin login state
-app.add_middleware(
-    SessionMiddleware,
-    secret_key=os.environ.get("SECRET_KEY", "default-secret"),
-    session_cookie="session",
-    same_site="lax",  # 👈 optional but safer
-    max_age=86400     # 👈 1 day session timeout
-)
-
-
 # Mount static files directory (for CSS/JS images)
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
@@ -50,23 +40,6 @@ def test_db_connection():
 
 test_db_connection()
 
-# Middleware to enforce admin login
-@app.middleware("http")
-async def enforce_admin_login(request: Request, call_next):
-    try:
-        path = request.url.path
-        # Skip checks for login page and static files
-        if path.startswith("/admin") and not path.startswith("/admin/login") and not path.startswith("/static"):
-            if not request.session.get("admin_logged_in"):
-                return RedirectResponse(url="/admin/login", status_code=303)
-
-        response = await call_next(request)
-        return response
-
-    except Exception as e:
-        # Log error for easier debugging
-        print(f"🔥 Middleware error: {e}")
-        return HTMLResponse(content="Internal Server Error", status_code=500)
 
 # Admin login required check (use this in routes you want to protect)
 def admin_required(request: Request):
