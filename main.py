@@ -69,16 +69,25 @@ async def logout(request: Request):
 
 
 @app.get("/admin", response_class=HTMLResponse)
-async def admin_dashboard(request: Request):
-    if not request.session.get("admin_logged_in"):
-        raise HTTPException(status_code=401, detail="Not authorized")
-    
+async def admin_page(request: Request):
     conn = get_db_connection()
-    summary = conn.execute("SELECT * FROM bills WHERE paid = 0").fetchall()
-    conn.close()
-    
-    return templates.TemplateResponse("admin.html", {"request": request, "summary": summary})
+    conn.row_factory = sqlite3.Row
 
+    summary = conn.execute("""
+        SELECT user_name, user_id, SUM(bill_amount) 
+        FROM bills 
+        WHERE paid = 0 
+        GROUP BY user_id
+    """).fetchall()
+
+    bills = conn.execute("SELECT * FROM bills ORDER BY user_id, pay_period DESC").fetchall()
+    conn.close()
+
+    return templates.TemplateResponse("admin.html", {
+        "request": request,
+        "summary": summary,
+        "bills": bills
+    })
 
 
 @app.get("/", response_class=HTMLResponse)
