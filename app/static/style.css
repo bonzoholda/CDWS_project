@@ -116,33 +116,39 @@ h2, h3 {
 
 /* ------------ DESKTOP OVERRIDE: restore table layout ------------ */
 @media screen and (min-width: 769px) {
-  .bill-table,
-  .bill-table tbody,
-  .bill-table tr,
-  .bill-table td {
+  .bill-table {
     display: table;
+    width: 100%;
+    border-collapse: collapse;
   }
 
   .bill-table thead {
     display: table-header-group;
   }
 
-  .bill-table tr {
-    display: table-row;
-    background-color: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 0;
+  .bill-table tbody {
+    display: table-row-group;
   }
 
-  .bill-table td {
-    position: static;
+  .bill-table tr {
+    display: table-row;
+  }
+
+  .bill-table td,
+  .bill-table th {
+    display: table-cell;
     padding: 10px;
     border: 1px solid #ddd;
+    text-align: left;
     font-size: 16px;
+    position: static;
   }
 
   .bill-table td::before {
     display: none;
+  }
+
+  .bill-table td span {
+    display: inline;
   }
 }
