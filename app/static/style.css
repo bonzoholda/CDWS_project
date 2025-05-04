@@ -10,7 +10,7 @@
 /* Global Styles */
 body {
   margin: 0;
-  font-family: 'Exo', sans-serif;
+  font-family: 'Roboto', sans-serif;
   background-color: #f7f9fc;
   padding: 20px;
   color: #333;
@@ -58,69 +58,65 @@ h2, h3 {
   margin-top: 20px;
 }
 
-/* Base table styling (Desktop layout) */
 .bill-table {
   width: 100%;
   border-collapse: collapse;
-  margin: 1em 0;
   font-size: 16px;
 }
 
-.bill-table thead {
-  background-color: #e0f0ff;
-  font-weight: bold;
-}
-
-.bill-table th,
-.bill-table td {
-  border: 1px solid #ccc;
+.bill-table th, .bill-table td {
   padding: 10px;
   text-align: left;
+  border: 1px solid #ddd;
 }
 
-/* Hide data-labels for desktop */
+/* By default (desktop), show real content, hide the span */
 .bill-table td span {
   display: none;
 }
 
-/* ----------- MOBILE VIEWPORTS ----------- */
+/* ------------ MOBILE STYLE (responsive table as card) ------------ */
 @media screen and (max-width: 768px) {
+  .bill-table {
+    border: 0;
+  }
+
   .bill-table thead {
     display: none;
   }
 
-  .bill-table,
-  .bill-table tbody,
-  .bill-table tr,
-  .bill-table td {
+  .bill-table, .bill-table tbody, .bill-table tr, .bill-table td {
     display: block;
     width: 100%;
   }
 
   .bill-table tr {
-    margin-bottom: 1em;
-    border: 1px solid #ccc;
+    margin-bottom: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     padding: 10px;
-    border-radius: 10px;
-    background-color: #f5faff;
   }
 
   .bill-table td {
-    border: none;
-    border-bottom: 1px solid #eee;
     position: relative;
     padding-left: 50%;
-    text-align: left;
+    border: none;
+    border-bottom: 1px solid #eee;
     font-size: 14px;
   }
 
-  .bill-table td span {
+  .bill-table td::before {
+    content: attr(data-label);
     position: absolute;
     left: 10px;
     top: 10px;
-    width: 45%;
     font-weight: bold;
-    display: block;
+    white-space: nowrap;
+  }
+
+  /* Now show only span inside td in mobile */
+  .bill-table td span {
+    display: inline;
   }
 }
-
