@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS -->
 </head>
 <body>
+    <div class="form-container">
     <h1>Admin Dashboard</h1>
     <form action="/admin/upload" method="post" enctype="multipart/form-data">
         <input type="file" name="csv_file" accept=".csv" required>
@@ -43,6 +48,6 @@
     <form action="/admin/logout" method="get">
         <button type="submit">Logout</button>
     </form>
-
+    </div>
 </body>
 </html>
