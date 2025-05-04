@@ -17,6 +17,7 @@ app = FastAPI()
 app.add_middleware(
     SessionMiddleware,
     secret_key=os.environ.get("SECRET_KEY", "default-secret"),
+    session_cookie="session",
     same_site="lax",  # 👈 optional but safer
     max_age=86400     # 👈 1 day session timeout
 )
