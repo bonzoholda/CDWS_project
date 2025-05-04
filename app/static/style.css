@@ -1,11 +1,11 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
+
 /* --- Global Font Styling --- */
 * {
   font-family: 'Roboto', sans-serif !important;
-  font-weight: 200;
+  font-weight: 300;
 }
-
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
 
 /* Global Styles */
 body {
