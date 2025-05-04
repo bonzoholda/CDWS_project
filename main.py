@@ -151,17 +151,20 @@ async def upload_csv(csv_file: UploadFile = File(...)):
     decoded = contents.decode("utf-8").splitlines()
     reader = csv.DictReader(decoded)
 
-    for row in reader:
-        cursor.execute("""
-            INSERT INTO bills (user_id, device_id, user_name, user_address, pay_period, meter_past, meter_now,
-                               usage, lv1_cost, lv2_cost, lv3_cost, lv4_cost, basic_cost, bill_amount, paid)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
-        """, (
-            row['user_id'], row['device_id'], row['user_name'], row['user_address'], row['pay_period'],
-            row['meter_past'], row['meter_now'], row['usage'],
-            row['lv1_cost'], row['lv2_cost'], row['lv3_cost'], row['lv4_cost'],
-            row['basic_cost'], row['bill_amount']
-        ))
+    with open(file_path, newline='', encoding='utf-8') as csvfile:
+        reader = csv.DictReader(csvfile)
+    
+        for row in reader:
+            cursor.execute("""
+                INSERT INTO bills (user_id, device_id, user_name, user_address, pay_period, meter_past, meter_now,
+                                   usage, lv1_cost, lv2_cost, lv3_cost, lv4_cost, basic_cost, bill_amount, paid)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+            """, (
+                row['user_id'], row['device_id'], row['user_name'], row['user_address'], row['pay_period'],
+                row['meter_past'], row['meter_now'], row['usage'],
+                row['lv1_cost'], row['lv2_cost'], row['lv3_cost'], row['lv4_cost'],
+                row['basic_cost'], row['bill_amount']
+            ))
 
 
     conn.commit()
