@@ -28,6 +28,16 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 # Set up templates directory for HTML rendering
 templates = Jinja2Templates(directory="app/templates")
 
+# Session management: Helper to set and check cookies manually
+def set_admin_cookie(response: Response):
+    expires = datetime.utcnow() + timedelta(days=7)
+    response.set_cookie("admin_logged_in", "true", expires=expires)
+
+def check_admin_logged_in(request: Request):
+    if request.cookies.get("admin_logged_in") != "true":
+        raise HTTPException(status_code=307, detail="Redirecting to login", headers={"Location": "/admin/login"})
+
+
 # Database restore and backup functions at startup and shutdown events
 @app.on_event("startup")
 def startup_event():
@@ -59,13 +69,11 @@ def admin_required(request: Request):
 @app.post("/admin/login")
 async def login(request: Request, password: str = Form(...)):
     correct_password = os.getenv("ADMIN_PASSWORD")
-    
-    if not correct_password:
-        return templates.TemplateResponse("login.html", {"request": request, "error": "Password environment variable is not set!"})
 
     if password == correct_password:
-        request.session["admin_logged_in"] = True
-        return RedirectResponse(url="/admin", status_code=303)
+        response = RedirectResponse(url="/admin", status_code=303)
+        set_admin_cookie(response)  # Set cookie on successful login
+        return response
     
     return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid password"})
 
@@ -74,15 +82,50 @@ async def login(request: Request, password: str = Form(...)):
 async def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
-# Admin logout route (clear session)
+# Admin logout route (clear cookie)
 @app.get("/admin/logout")
 async def admin_logout(request: Request):
-    request.session.clear()
-    return RedirectResponse(url="/admin/login", status_code=303)
+    response = RedirectResponse(url="/admin/login", status_code=303)
+    response.delete_cookie("admin_logged_in")  # Delete cookie on logout
+    return response
+
+# Admin dashboard route (protected by login)
+@app.get("/admin", response_class=HTMLResponse)
+async def admin_page(request: Request):
+    check_admin_logged_in(request)  # Check if admin is logged in
+    
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    # Fetch data from DB (example)
+    summary = cursor.execute("SELECT * FROM users WHERE unpaid_bills > 0").fetchall()
+
+    conn.close()
+    
+    return templates.TemplateResponse("admin.html", {"request": request, "summary": summary})
+
+# Admin update bills route
+@app.post("/admin/update")
+async def update_bills(request: Request, bill_ids: list[int] = Form(...)):
+    check_admin_logged_in(request)  # Ensure admin is logged in
+    
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    # Update logic
+    for bill_id in bill_ids:
+        cursor.execute("UPDATE bills SET paid = 1 WHERE id = ?", (bill_id,))
+    
+    conn.commit()
+    conn.close()
+
+    return RedirectResponse(url="/admin", status_code=303)
+
 
 # Admin dashboard route (protected by login)
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_page(request: Request, _=Depends(admin_required)):
+    check_admin_logged_in(request)  # Check if admin is logged in
     conn = get_db_connection()
     conn.row_factory = sqlite3.Row
 
@@ -137,6 +180,7 @@ async def user_view(request: Request, user_id: str):
 # Admin upload CSV route (protected by login)
 @app.post("/admin/upload")
 async def upload_csv(csv_file: UploadFile = File(...), _=Depends(admin_required)):
+    check_admin_logged_in(request)  # Ensure admin is logged in
     conn = get_db_connection()
     cursor = conn.cursor()
     contents = await csv_file.read()
@@ -175,6 +219,7 @@ async def upload_csv(csv_file: UploadFile = File(...), _=Depends(admin_required)
 # Admin update bills (mark bills as paid)
 @app.post("/admin/update")
 async def update_bills(request: Request, bill_ids: List[int] = Form(...), _=Depends(admin_required)):
+    check_admin_logged_in(request)  # Ensure admin is logged in
     conn = get_db_connection()
     cursor = conn.cursor()
     for bill_id in bill_ids:
@@ -189,6 +234,7 @@ async def update_bills(request: Request, bill_ids: List[int] = Form(...), _=Depe
 # Admin invoice route (view and print invoices)
 @app.get("/admin/invoice/{user_id}", response_class=HTMLResponse)
 async def invoice(request: Request, user_id: str, _=Depends(admin_required)):
+    check_admin_logged_in(request)  # Ensure admin is logged in
     conn = get_db_connection()
     rows = conn.execute("SELECT * FROM bills WHERE user_id = ? AND paid = 0", (user_id,)).fetchall()
     conn.close()
