@@ -92,6 +92,21 @@ async def admin_dashboard(request: Request):
 async def public_view(request: Request):
     return templates.TemplateResponse("user.html", {"request": request})
 
+@app.get("/user", response_class=HTMLResponse)
+async def user_view(request: Request, user_id: str):
+    conn = sqlite3.connect("bills.db")
+    c = conn.cursor()
+    c.execute("SELECT * FROM bills WHERE user_id = ?", (user_id,))
+    bills = c.fetchall()
+    conn.close()
+    if not bills:
+        return HTMLResponse(content="No bills found for this user.", status_code=404)
+    return templates.TemplateResponse("user.html", {
+        "request": request,
+        "user_id": user_id,
+        "bills": bills
+    })
+
 
 @app.post("/admin/upload")
 async def upload_csv(csv_file: UploadFile = File(...)):
