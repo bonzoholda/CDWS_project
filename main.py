@@ -34,7 +34,7 @@ def admin_required(request: Request):
 @app.get("/admin", dependencies=[Depends(admin_required)])
 async def admin_dashboard(request: Request):
     # your existing admin dashboard logic
-    return templates.TemplateResponse("admin_dashboard.html", {"request": request})
+    return templates.TemplateResponse("admin.html", {"request": request})
 
 
 def get_db_connection():
