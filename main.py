@@ -94,7 +94,7 @@ async def public_view(request: Request):
 
 @app.get("/user", response_class=HTMLResponse)
 async def user_view(request: Request, user_id: str):
-    conn = sqlite3.connect("bills.db")
+    conn = get_db_connection()
     c = conn.cursor()
     c.execute("SELECT * FROM bills WHERE user_id = ?", (user_id,))
     bills = c.fetchall()
