@@ -12,6 +12,7 @@ import io
 from database_utils import backup_db, get_db_connection
 from database_utils import DB_PATH
 from fastapi import Depends, HTTPException, status
+from starlette.responses import RedirectResponse
 
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SECRET_KEY", "default-secret"))
@@ -40,7 +41,8 @@ test_db_connection()
 
 def admin_required(request: Request):
     if not request.session.get("admin_logged_in"):
-        return RedirectResponse(url="/admin/login", status_code=303)
+        # Properly raise a redirect response
+        raise HTTPException(status_code=307, detail="Redirecting to login", headers={"Location": "/admin/login"})
 
 @app.post("/admin/login")
 async def login(request: Request, password: str = Form(...)):
@@ -63,13 +65,13 @@ async def login_page(request: Request):
 
 
 @app.get("/admin/logout")
-async def logout(request: Request):
+async def admin_logout(request: Request):
     request.session.clear()
-    return RedirectResponse(url="/", status_code=303)
+    return RedirectResponse(url="/admin/login", status_code=303)
 
 
-@app.get("/admin", response_class=HTMLResponse, dependencies=[Depends(admin_required)])
-async def admin_page(request: Request):
+@app.get("/admin", response_class=HTMLResponse)
+async def admin_page(request: Request, _=Depends(admin_required)):
     conn = get_db_connection()
     conn.row_factory = sqlite3.Row
 
@@ -122,8 +124,8 @@ async def user_view(request: Request, user_id: str):
         conn.close()
 
 
-@app.post("/admin/upload", dependencies=[Depends(admin_required)])
-async def upload_csv(csv_file: UploadFile = File(...)):
+@app.post("/admin/upload")
+async def upload_csv(csv_file: UploadFile = File(...), _=Depends(admin_required)):
     conn = get_db_connection()
     cursor = conn.cursor()
     contents = await csv_file.read()
@@ -161,8 +163,8 @@ async def upload_csv(csv_file: UploadFile = File(...)):
     return RedirectResponse(url="/admin", status_code=303)
     
 
-@app.post("/admin/update", dependencies=[Depends(admin_required)])
-async def update_bills(request: Request, bill_ids: List[int] = Form(...)):
+@app.post("/admin/update")
+async def update_bills(request: Request, bill_ids: List[int] = Form(...), _=Depends(admin_required)):
     conn = get_db_connection()
     cursor = conn.cursor()
     for bill_id in bill_ids:
@@ -174,8 +176,8 @@ async def update_bills(request: Request, bill_ids: List[int] = Form(...)):
 
     return RedirectResponse(url="/admin", status_code=303)
 
-@app.get("/admin/invoice/{user_id}", response_class=HTMLResponse, dependencies=[Depends(admin_required)])
-async def invoice(request: Request, user_id: str):
+@app.get("/admin/invoice/{user_id}", response_class=HTMLResponse)
+async def invoice(request: Request, user_id: str, _=Depends(admin_required)):
     conn = get_db_connection()
     rows = conn.execute("SELECT * FROM bills WHERE user_id = ? AND paid = 0", (user_id,)).fetchall()
     conn.close()
