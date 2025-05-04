@@ -80,51 +80,44 @@ h2, h3 {
 
 
 /* ------------ MOBILE STYLE (card format) ------------ */
-/* Base table layout (still works on desktop) */
-.bill-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.bill-table td {
-  padding: 0;
-  border: none;
-}
-
-.card-row {
-  margin-bottom: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.card-line {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 12px;
-  border-bottom: 1px solid #eee;
-  word-break: break-word;
-}
-
-.card-label {
-  flex: 0 0 auto;
-  font-weight: 600;
-  color: #444;
-  max-width: 45%;
-  white-space: normal;
-}
-
-.card-value {
-  flex: 1 1 auto;
-  text-align: right;
-  color: #000;
-  overflow-wrap: break-word;
-}
-
-/* Mobile-first layout, no override needed */
-@media screen and (min-width: 769px) {
-  .bill-table {
+@media (max-width: 768px) {
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
     display: block;
   }
+
+  thead {
+    display: none;
+  }
+
+  tr {
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #ccc;
+  }
+
+  td {
+    position: relative;
+    padding-left: 45%;
+    text-align: left;
+    border: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 42%;
+    padding-left: 10px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
+
 
