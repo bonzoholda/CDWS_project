@@ -53,6 +53,7 @@ test_db_connection()
 def admin_required(request: Request):
     if not request.session.get("admin_logged_in"):
         raise HTTPException(status_code=307, detail="Redirecting to login", headers={"Location": "/admin/login"})
+    return True
 
 # Admin login route
 @app.post("/admin/login")
