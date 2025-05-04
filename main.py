@@ -10,10 +10,9 @@ from typing import List
 from starlette.middleware.sessions import SessionMiddleware
 import os
 
-app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SECRET_KEY", "default-secret"))
-
 
 app = FastAPI()
+app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SECRET_KEY", "default-secret"))
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
 
