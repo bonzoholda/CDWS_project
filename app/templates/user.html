@@ -19,7 +19,8 @@
         
     {% if user_data %}
         <h2>Pending Bills for {{ user_data[0].user_name }}</h2>
-        <table border="1">
+        <div class="table-wrapper">
+        <table class="bill-table">
             <thead>
                 <tr>
                     <th>Pay Period</th>
@@ -55,7 +56,7 @@
                 {% endfor %}
             </tbody>
         </table>
-
+        </div>
         <h3>Total Due: {{ user_data | map(attribute='bill_amount') | sum }}</h3>
     {% elif user_id %}
         <p>No unpaid bills found for user ID {{ user_id }}.</p>
