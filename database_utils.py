@@ -2,7 +2,7 @@ import os
 import sqlite3
 import shutil
 import glob
-from datetime import datetime
+import datetime
 import csv
 
 DB_PATH = "app/db/bills.db"
@@ -18,7 +18,8 @@ def backup_db():
         print("⚠️ No database found to back up.")
         return
 
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
     backup_filename = f"bills_backup_{timestamp}.db"
     backup_path = os.path.join(BACKUP_DIR, backup_filename)
 
