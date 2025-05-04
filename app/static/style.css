@@ -150,45 +150,51 @@ h1, h2 {
 
 /* Mobile portrait: convert table to block style */
 @media (max-width: 768px) {
-    .bill-table,
-    .bill-table thead,
-    .bill-table tbody,
-    .bill-table th,
-    .bill-table td,
-    .bill-table tr {
-        display: block;
-        width: 100%;
+    .bill-table {
+        border: none;
     }
 
     .bill-table thead {
-        display: none; /* hide header row */
+        display: none;
     }
 
     .bill-table tr {
+        display: block;
         margin-bottom: 1.5rem;
         border: 1px solid #ddd;
         border-radius: 8px;
-        background: #fff;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        padding: 0.5rem;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
     }
 
     .bill-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
         border: none;
         border-bottom: 1px solid #eee;
-        position: relative;
-        padding-left: 50%;
-        text-align: left;
+        font-size: 0.95rem;
+        word-wrap: break-word;
+    }
+
+    .bill-table td:last-child {
+        border-bottom: none;
     }
 
     .bill-table td::before {
         content: attr(data-label);
-        position: absolute;
-        left: 1rem;
-        top: 0.75rem;
-        font-weight: bold;
+        font-weight: 600;
+        flex: 1 1 45%;
         color: #333;
-        width: 45%;
-        white-space: nowrap;
+        padding-right: 1rem;
+        text-align: left;
+    }
+
+    .bill-table td span {
+        flex: 1 1 55%;
+        text-align: right;
     }
 }
+
