@@ -70,22 +70,20 @@ h2, h3 {
   border: 1px solid #ddd;
 }
 
-/* By default (desktop), show real content, hide the span */
 .bill-table td span {
-  display: none;
+  display: inline;
 }
 
-/* ------------ MOBILE STYLE (responsive table as card) ------------ */
+/* ------------ MOBILE STYLE (card format) ------------ */
 @media screen and (max-width: 768px) {
-  .bill-table {
-    border: 0;
-  }
-
   .bill-table thead {
     display: none;
   }
 
-  .bill-table, .bill-table tbody, .bill-table tr, .bill-table td {
+  .bill-table,
+  .bill-table tbody,
+  .bill-table tr,
+  .bill-table td {
     display: block;
     width: 100%;
   }
@@ -114,9 +112,37 @@ h2, h3 {
     font-weight: bold;
     white-space: nowrap;
   }
+}
 
-  /* Now show only span inside td in mobile */
-  .bill-table td span {
-    display: inline;
+/* ------------ DESKTOP OVERRIDE: restore table layout ------------ */
+@media screen and (min-width: 769px) {
+  .bill-table,
+  .bill-table tbody,
+  .bill-table tr,
+  .bill-table td {
+    display: table;
+  }
+
+  .bill-table thead {
+    display: table-header-group;
+  }
+
+  .bill-table tr {
+    display: table-row;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .bill-table td {
+    position: static;
+    padding: 10px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+  }
+
+  .bill-table td::before {
+    display: none;
   }
 }
