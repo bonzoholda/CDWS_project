@@ -9,8 +9,7 @@ import io
 from typing import List
 from starlette.middleware.sessions import SessionMiddleware
 from database_utils import restore_db, backup_db, get_db_connection, DB_PATH
-from datetime import datetime, timedelta
-
+import datetime
 
 
 app = FastAPI()
@@ -32,7 +31,7 @@ templates = Jinja2Templates(directory="app/templates")
 
 # Session management: Helper to set and check cookies manually
 def set_admin_cookie(response: Response):
-    expires = datetime.utcnow() + timedelta(days=7)
+    expires = datetime.datetime.utcnow() + datetime.timedelta(days=7)
     response.set_cookie("admin_logged_in", "true", expires=expires)
 
 def check_admin_logged_in(request: Request):
