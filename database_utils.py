@@ -2,7 +2,7 @@ import os
 import sqlite3
 import shutil
 import glob
-import datetime
+from datetime import datetime
 import csv
 
 DB_PATH = "app/db/bills.db"
