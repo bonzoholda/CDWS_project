@@ -80,89 +80,51 @@ h2, h3 {
 
 
 /* ------------ MOBILE STYLE (card format) ------------ */
-@media screen and (max-width: 768px) {
-  .bill-table thead {
-    display: none;
-  }
-
-  .bill-table,
-  .bill-table tbody,
-  .bill-table tr,
-  .bill-table td {
-    display: block;
-    width: 100%;
-  }
-
-  .bill-table tr {
-    margin-bottom: 16px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    padding: 0;
-  }
-
-  .bill-table td {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 8px 12px;
-    border: none;
-    border-bottom: 1px solid #eee;
-    word-break: break-word;
-  }
-
-  .bill-table td::before {
-    content: attr(data-label);
-    flex: 0 0 auto;
-    font-weight: bold;
-    margin-right: 12px;
-    max-width: 30%;
-    white-space: normal;
-    overflow-wrap: break-word;
-  }
-
-  .bill-table td span {
-    flex: 1 1 auto;
-    text-align: right;
-  }
+/* Base table layout (still works on desktop) */
+.bill-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
+.bill-table td {
+  padding: 0;
+  border: none;
+}
 
-/* ------------ DESKTOP OVERRIDE: restore table layout ------------ */
+.card-row {
+  margin-bottom: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.card-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+  word-break: break-word;
+}
+
+.card-label {
+  flex: 0 0 auto;
+  font-weight: 600;
+  color: #444;
+  max-width: 45%;
+  white-space: normal;
+}
+
+.card-value {
+  flex: 1 1 auto;
+  text-align: right;
+  color: #000;
+  overflow-wrap: break-word;
+}
+
+/* Mobile-first layout, no override needed */
 @media screen and (min-width: 769px) {
   .bill-table {
-    display: table;
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  .bill-table thead {
-    display: table-header-group;
-  }
-
-  .bill-table tbody {
-    display: table-row-group;
-  }
-
-  .bill-table tr {
-    display: table-row;
-  }
-
-  .bill-table td,
-  .bill-table th {
-    display: table-cell;
-    padding: 10px;
-    border: 1px solid #ddd;
-    text-align: left;
-    font-size: 16px;
-    position: static;
-  }
-
-  .bill-table td::before {
-    display: none;
-  }
-
-  .bill-table td span {
-    display: inline;
+    display: block;
   }
 }
+
