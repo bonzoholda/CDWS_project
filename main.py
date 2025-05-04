@@ -94,18 +94,29 @@ async def public_view(request: Request):
 
 @app.get("/user", response_class=HTMLResponse)
 async def user_view(request: Request, user_id: str):
-    conn = get_db_connection()
+    conn = get_db_connection()  # Use your existing function to get the connection
     c = conn.cursor()
-    c.execute("SELECT * FROM bills WHERE user_id = ?", (user_id,))
-    bills = c.fetchall()
-    conn.close()
-    if not bills:
-        return HTMLResponse(content="No bills found for this user.", status_code=404)
-    return templates.TemplateResponse("user.html", {
-        "request": request,
-        "user_id": user_id,
-        "bills": bills
-    })
+
+    try:
+        # Query the bills table for the specific user_id
+        c.execute("SELECT * FROM bills WHERE user_id = ?", (user_id,))
+        user_data = c.fetchall()
+
+        if not user_data:
+            return templates.TemplateResponse("user_view.html", {
+                "request": request,
+                "message": f"No bills found for user {user_id}."
+            })
+
+        # Return the template with the fetched user data
+        return templates.TemplateResponse("user_view.html", {"request": request, "user_data": user_data})
+
+    except sqlite3.Error as e:
+        # Handle any database errors gracefully
+        return {"error": f"Database error: {str(e)}"}
+    finally:
+        conn.close()  # Always close the connection after usage
+
 
 
 @app.post("/admin/upload")
