@@ -13,6 +13,15 @@ from database_utils import restore_db, backup_db, get_db_connection, DB_PATH
 
 app = FastAPI()
 
+# Add SessionMiddleware to handle session management
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.getenv("SECRET_KEY", "default-secret"),  # Replace with a secure key
+    session_cookie="session",
+    same_site="lax",
+    max_age=86400  # Set the session expiration time (in seconds)
+)
+
 # Mount static files directory (for CSS/JS images)
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
@@ -39,7 +48,6 @@ def test_db_connection():
         print(f"Error connecting to database: {e}")
 
 test_db_connection()
-
 
 # Admin login required check (use this in routes you want to protect)
 def admin_required(request: Request):
@@ -77,7 +85,7 @@ async def admin_page(request: Request, _=Depends(admin_required)):
     conn = get_db_connection()
     conn.row_factory = sqlite3.Row
 
-    summary = conn.execute("""
+    summary = conn.execute(""" 
         SELECT user_name, user_id, SUM(bill_amount) 
         FROM bills 
         WHERE paid = 0 
