@@ -5,10 +5,10 @@ import glob
 import datetime
 import csv
 
-#BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-#DB_PATH = os.path.join(BASE_DIR, "..", "db", "bills.db")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "..", "db", "bills.db")
 
-DB_PATH = "app/db/bills.db"
+#DB_PATH = "app/db/bills.db"
 
 BACKUP_DIR = "backups"
 
