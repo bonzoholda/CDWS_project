@@ -88,7 +88,7 @@ async def login_page(request: Request):
 async def admin_logout(request: Request):
     try:
         # Upload bills.db to Google Drive as bills_backup.db
-        upload_to_drive("bills.db", "bills_backup.db")
+        upload_to_drive(DB_PATH, "bills_backup.db")
         print("✅ Database uploaded to Google Drive on logout.")
     except Exception as e:
         print(f"⚠️ Failed to upload to Google Drive: {e}")
