@@ -143,7 +143,7 @@ h2, h3 {
   }
 
   .logo {
-    max-width: 240px;
+    max-width: 300px;
     width: auto;
     height: auto;
     transition: all 0.3s ease;
@@ -152,12 +152,12 @@ h2, h3 {
   }
 
   .logo.small {
-    max-width: 120px;
+    max-width: 150px;
     opacity: 0.5; /* fade to 50% */
   }
 
   .content {
-    margin-top: 260px; /* <-- Enough space to move below the logo */
+    margin-top: 200px; /* <-- Enough space to move below the logo */
     text-align: center;
   }
 
