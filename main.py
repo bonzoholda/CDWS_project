@@ -10,7 +10,7 @@ from typing import List
 from starlette.middleware.sessions import SessionMiddleware
 from database_utils import restore_db, backup_db, get_db_connection, DB_PATH
 from datetime import datetime, timedelta, timezone
-
+from drive_uploader import upload_to_drive
 
 app = FastAPI()
 
@@ -83,12 +83,20 @@ async def login(request: Request, password: str = Form(...)):
 async def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
-# Admin logout route (clear cookie)
+# Admin logout route (clear cookie and upload database)
 @app.get("/admin/logout")
 async def admin_logout(request: Request):
+    try:
+        # Upload bills.db to Google Drive as bills_backup.db
+        upload_to_drive("bills.db", "bills_backup.db")
+        print("✅ Database uploaded to Google Drive on logout.")
+    except Exception as e:
+        print(f"⚠️ Failed to upload to Google Drive: {e}")
+
     response = RedirectResponse(url="/admin/login", status_code=303)
     response.delete_cookie("admin_logged_in")  # Delete cookie on logout
     return response
+
 
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_page(request: Request):
