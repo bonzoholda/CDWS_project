@@ -63,13 +63,13 @@
         </tbody>
       </table>
     </div>
-    <h3>Total belum terbayar: {{ "{:,.0f}".format(user_data | map(attribute='bill_amount') | sum) }}</h3>
+    <h3 class="totaldue">Total belum terbayar: {{ "{:,.0f}".format(user_data | map(attribute='bill_amount') | sum) }}</h3>
   {% elif user_id %}
     <p>Tagihan untuk pelanggan dengan ID {{ user_id }} tidak ditemukan.</p>
   {% endif %}
 
 </div>
-    	<footer class="text-center text-sm text-zinc-500 py-8 px-4 font-light">
+    	<footer class="copyright">
     		&copy; 2025 ShitBot Labs for HIPPAM BARU
     	</footer>
   
