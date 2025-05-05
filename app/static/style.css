@@ -157,6 +157,19 @@ h2, h3 {
   }
 
   .content {
-    margin-top: 300px; /* <-- Enough space to move below the logo */
+    margin-top: 260px; /* <-- Enough space to move below the logo */
     text-align: center;
   }
+
+/*----bottom----*/
+  .totaldue {
+    font-weight: 400;
+    margin-bottom: 4rem;
+  }
+
+  .copyright {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 1rem;
+  }  
