@@ -8,6 +8,11 @@
   <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
+
+    <div class="logo-container">
+  	  <img src="app/static/images/hb-logo-sm.png" alt="Logo" class="logo">
+  	</div>
+  
   <div class="form-container">
     <h1>Lihat Tagihan Saya</h1>
     <form action="/user" method="get">
@@ -61,5 +66,17 @@
   {% elif user_id %}
     <p>Tagihan untuk pelanggan dengan ID {{ user_id }} tidak ditemukan.</p>
   {% endif %}
+
+  	<script>
+  	  window.addEventListener('scroll', function() {
+  	    const logo = document.querySelector('.logo');
+  	    if (window.scrollY > 50) { // when user scrolls down 50px
+  	      logo.classList.add('small');
+  	    } else {
+  	      logo.classList.remove('small');
+  	    }
+  	  });
+  	</script>
+  
 </body>
 </html>
