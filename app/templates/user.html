@@ -9,9 +9,10 @@
 </head>
 <body>
 
-    <div class="logo-container">
-  	  <img src="app/static/images/hb-logo-sm.png" alt="Logo" class="logo">
-  	</div>
+  <div class="logo-container">
+  	<img src="app/static/images/hb-logo-sm.png" alt="Logo" class="logo">
+  </div>
+  <div class="content">
   
   <div class="form-container">
     <h1>Lihat Tagihan Saya</h1>
@@ -67,6 +68,8 @@
     <p>Tagihan untuk pelanggan dengan ID {{ user_id }} tidak ditemukan.</p>
   {% endif %}
 
+</div>
+    
   	<script>
   	  window.addEventListener('scroll', function() {
   	    const logo = document.querySelector('.logo');
