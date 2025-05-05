@@ -126,3 +126,37 @@ h2, h3 {
     color: #555;
   }
 }
+
+/*-----logo-----------*/
+
+  .logo-container {
+    position: fixed;
+    top: 20px; 
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    z-index: 1000;
+    pointer-events: none; /* optional */
+  }
+
+  .logo {
+    max-width: 240px;
+    width: auto;
+    height: auto;
+    transition: all 0.3s ease;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .logo.small {
+    max-width: 120px;
+    opacity: 0.5; /* fade to 50% */
+  }
+
+  .content {
+    margin-top: 300px; /* <-- Enough space to move below the logo */
+    text-align: center;
+  }
