@@ -6,6 +6,7 @@ import datetime
 import csv
 from datetime import datetime
 from typing import Optional, List, Dict
+import uuid
 
 DB_PATH = "app/db/bills.db"
 BACKUP_DIR = "backups"
@@ -21,18 +22,30 @@ def ensure_payment_timestamp_column():
     cursor.execute("PRAGMA table_info(bills)")
     columns = [col["name"] for col in cursor.fetchall()]
     if "payment_timestamp" not in columns:
-        cursor.execute("ALTER TABLE bills ADD COLUMN payment_timestamp TEXT")
+        cursor.execute("ALTER TABLE bills ADD COLUMN payment_timestamp TEXT, receipt_no TEXT")
         conn.commit()
         print("🛠️ Added 'payment_timestamp' column to bills table.")
 
     conn.close()
 
+def generate_receipt_no(bill_id):
+    now = datetime.datetime.now()
+    return f"RCP-{now.strftime('%Y%m%d')}-{bill_id}-{uuid.uuid4().hex[:4]}"
+
 def mark_bills_as_paid(bill_ids: list[int]):
     conn = get_db_connection()
     cursor = conn.cursor()
-   
+
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    cursor.executemany("UPDATE bills SET paid = 1, payment_timestamp = ? WHERE id = ?", [(now, bill_id) for bill_id in bill_ids])
+
+    for bill_id in bill_ids:
+        receipt_no = generate_receipt_no(bill_id)
+        cursor.execute("""
+            UPDATE bills 
+            SET paid = 1, payment_timestamp = ?, receipt_no = ?
+            WHERE id = ?
+        """, (now, receipt_no, bill_id))
+
     conn.commit()
     conn.close()
 
@@ -40,7 +53,7 @@ def mark_bills_as_paid(bill_ids: list[int]):
 def cancel_bills_payment(bill_ids_cancel: list[int]):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.executemany("UPDATE bills SET paid = 0, payment_timestamp = NULL WHERE id = ?", [(bill_id,) for bill_id in bill_ids_cancel])
+    cursor.executemany("UPDATE bills SET paid = 0, payment_timestamp = NULL, receipt_no = NULL WHERE id = ?", [(bill_id,) for bill_id in bill_ids_cancel])
     conn.commit()
     conn.close()
 
