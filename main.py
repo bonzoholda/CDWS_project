@@ -124,19 +124,12 @@ async def admin_page(request: Request):
 
 # Admin restore db from google drive (if necessary)
 @app.post("/admin/restore")
-async def restore_db_route(request: Request):
-    # Optional: check for admin cookie
-    if request.cookies.get("admin_logged_in") != "true":
-        return JSONResponse(content={"success": False, "message": "Unauthorized"}, status_code=401)
-
-    folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")  # should already be in Railway
-    file_name = "bills.db"
-
-    success = restore_from_drive(file_name, folder_id)
-    if success:
-        return JSONResponse(content={"success": True, "message": "Database successfully restored."})
-    else:
-        return JSONResponse(content={"success": False, "message": "Failed to restore database."})
+async def restore_db_route():
+    success = restore_from_drive()
+    return {
+        "success": success,
+        "message": "✅ Database restored" if success else "❌ Restore failed"
+    }
 
 
 # Admin update bills route
