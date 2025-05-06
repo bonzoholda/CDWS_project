@@ -81,7 +81,7 @@
             {% if bill.paid %}
                 <label>
                     <input type="checkbox" name="bill_ids_cancel" value="{{ bill.id }}">
-                    {{ bill.user_name }} – {{ bill.pay_period }} – ₱{{ bill.bill_amount }}
+                    {{ bill.user_name }} – {{ bill.pay_period }} – {{ bill.bill_amount }}
                 </label><br>
             {% endif %}
         {% endfor %}
