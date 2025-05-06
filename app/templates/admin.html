@@ -82,7 +82,10 @@
     <form action="/admin/cancel_payment" method="post">
         {% for bill in bills %}
             {% if bill.paid %}
-                <input type="hidden" name="bill_ids" value="{{ bill.id }}">
+                <label>
+                    <input type="checkbox" name="bill_ids" value="{{ bill.id }}">
+                    Cancel {{ bill.pay_period }} for {{ bill.user_name }} (₱{{ bill.bill_amount }})
+                </label><br>
             {% endif %}
         {% endfor %}
         <button type="submit"
@@ -90,6 +93,7 @@
             Cancel Selected Payments
         </button>
     </form>
+
 
 
 
