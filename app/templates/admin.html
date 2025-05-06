@@ -64,9 +64,10 @@
                 <td>{{ bill.pay_period }}</td>
                 <td>{{ bill.bill_amount }}</td>
                 <td>
-                    {{ "PAID" if bill.paid else "UNPAID" }}
+                    {{ "✅ PAID" if bill.paid else "UNPAID" }}
                     {% if bill.payment_timestamp %}
                         <br><small>{{ bill.payment_timestamp }}</small>
+                        <br><a href="/invoice/{{ bill.id }}" target="_blank" class="btn btn-sm btn-outline-primary">🧾 Print Receipt</a>
                     {% endif %}
                 </td>
             </tr>
