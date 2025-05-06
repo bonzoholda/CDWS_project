@@ -1,0 +1,29 @@
+@media print {
+  body {
+    width: 210mm;
+    font-size: 14px;
+    margin: 0 auto;
+    padding: 20mm;
+    font-family: 'Roboto', sans-serif;
+  }
+
+  .no-print {
+    display: none;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+  }
+
+  th, td {
+    padding: 8px;
+    border: 1px solid #ccc;
+    text-align: left;
+  }
+
+  h1, h2 {
+    margin-top: 0;
+  }
+}
