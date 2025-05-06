@@ -248,7 +248,7 @@ async def invoice(request: Request, user_id: str, _=Depends(admin_required)):
     return templates.TemplateResponse("invoice.html", {"request": request, "bills": rows})
 
 # receipt of paid bill
-@app.get("/invoice/{bill_id}", response_class=HTMLResponse)
+@app.get("/receipt/{bill_id}", response_class=HTMLResponse)
 def show_invoice(request: Request, bill_id: int):
     conn = get_db_connection()
     cursor = conn.cursor()
