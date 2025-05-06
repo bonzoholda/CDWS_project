@@ -37,10 +37,10 @@ def mark_bills_as_paid(bill_ids: list[int]):
     conn.close()
 
 
-def cancel_bills_payment(bill_ids: list[int]):
+def cancel_bills_payment(bill_ids_cancel: list[int]):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.executemany("UPDATE bills SET paid = 0, payment_timestamp = NULL WHERE id = ?", [(bill_id,) for bill_id in bill_ids])
+    cursor.executemany("UPDATE bills SET paid = 0, payment_timestamp = NULL WHERE id = ?", [(bill_id,) for bill_id in bill_ids_cancel])
     conn.commit()
     conn.close()
 
