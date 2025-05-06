@@ -142,9 +142,13 @@ async def update_payment_route(request: Request, bill_ids: List[int] = Form(...)
     return RedirectResponse("/admin", status_code=303)
 
 @app.post("/admin/cancel_payment")
-async def cancel_payment_route(request: Request, bill_ids_cancel: List[int] = Form(...)):
+async def cancel_payment_route(
+    request: Request,
+    bill_ids_cancel: Optional[List[int]] = Form(None)
+):
     check_admin_logged_in(request)
-    cancel_bills_payment(bill_ids_cancel)
+    if bill_ids_cancel:
+        cancel_bills_payment(bill_ids_cancel)
     return RedirectResponse("/admin", status_code=303)
 
 
