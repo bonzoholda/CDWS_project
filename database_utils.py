@@ -26,27 +26,19 @@ def ensure_payment_timestamp_column():
 
     conn.close()
 
-def mark_as_paid(user_id, pay_period):
+def mark_bills_as_paid(bill_ids: list[int]):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("""
-        UPDATE bills
-        SET paid = 1,
-            payment_timestamp = ?
-        WHERE user_id = ? AND pay_period = ?
-    """, (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_id, pay_period))
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    cursor.executemany("UPDATE bills SET paid = 1, payment_timestamp = ? WHERE id = ?", [(now, bill_id) for bill_id in bill_ids])
     conn.commit()
     conn.close()
 
-def cancel_payment(user_id, pay_period):
+
+def cancel_bills_payment(bill_ids: list[int]):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("""
-        UPDATE bills
-        SET paid = 0,
-            payment_timestamp = NULL
-        WHERE user_id = ? AND pay_period = ?
-    """, (user_id, pay_period))
+    cursor.executemany("UPDATE bills SET paid = 0, payment_timestamp = NULL WHERE id = ?", [(bill_id,) for bill_id in bill_ids])
     conn.commit()
     conn.close()
 
