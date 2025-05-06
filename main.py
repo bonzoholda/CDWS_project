@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, UploadFile, File, Depends, HTTPException, Response
+from fastapi import FastAPI, Request, Form, UploadFile, File, Depends, HTTPException, Response, Query
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -13,6 +13,7 @@ from datetime import datetime, timedelta, timezone
 from drive_uploader import upload_to_drive
 from drive_uploader import restore_from_drive
 from database_utils import mark_bills_as_paid, cancel_bills_payment, ensure_payment_timestamp_column
+from database_utils import get_daily_payment_summary, get_bills_by_date
 
 app = FastAPI()
 
@@ -235,6 +236,31 @@ async def invoice(request: Request, user_id: str, _=Depends(admin_required)):
     rows = conn.execute("SELECT * FROM bills WHERE user_id = ? AND paid = 0", (user_id,)).fetchall()
     conn.close()
     return templates.TemplateResponse("invoice.html", {"request": request, "bills": rows})
+
+# payment summary route
+@app.get("/admin/payment_summary", response_class=HTMLResponse)
+async def payment_summary(request: Request, start: Optional[str] = Query(None), end: Optional[str] = Query(None), date: Optional[str] = Query(None)):
+    check_admin_logged_in(request)
+
+    if date:
+        bills = get_bills_by_date(date)
+        total = sum(b["bill_amount"] for b in bills)
+        return templates.TemplateResponse("payment_summary.html", {
+            "request": request,
+            "mode": "daily_details",
+            "selected_date": date,
+            "bills": bills,
+            "subtotal": total
+        })
+    else:
+        summary = get_daily_payment_summary(start, end)
+        return templates.TemplateResponse("payment_summary.html", {
+            "request": request,
+            "mode": "summary",
+            "summary": summary,
+            "start": start,
+            "end": end
+        })
 
 if __name__ == "__main__":
     import uvicorn
