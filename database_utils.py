@@ -147,7 +147,7 @@ def insert_from_csv(file_path: str):
 
 #===payment summary====
 def get_daily_payment_summary(start_date: Optional[str] = None, end_date: Optional[str] = None) -> List[Dict]:
-    conn = sqlite3.connect("bills.db")
+    conn = get_db_connection()
     cursor = conn.cursor()
 
     query = """
@@ -172,7 +172,7 @@ def get_daily_payment_summary(start_date: Optional[str] = None, end_date: Option
 
 
 def get_bills_by_date(payment_date: str) -> List[Dict]:
-    conn = sqlite3.connect("bills.db")
+    conn = get_db_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
