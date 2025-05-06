@@ -5,6 +5,14 @@
     <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
+
+    <!-- ✅ NAVBAR goes here -->
+    <nav>
+        <ul>
+            <li><a href="/admin">🏠 Dashboard</a></li>
+        </ul>
+    </nav>
+    
     <h1>Invoice for {{ bills[0].user_name if bills else 'Unknown User' }}</h1>
     <p>Address: {{ bills[0].user_address if bills else '' }}</p>
     <hr>
