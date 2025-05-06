@@ -38,10 +38,12 @@
     </ul>
 
     <h2>All Bills</h2>
-    
+
+    <input type="text" id="billSearch" placeholder="Search by user name or ID..." style="margin: 1em 0; padding: 5px; width: 250px;">
+        
     <!-- ✅ Form for marking selected bills as PAID -->
     <form action="/admin/update_payment" method="post">
-        <table border="1">
+        <table id="billTable" border="1">
             <tr>
                 <th>Mark Paid</th>
                 <th>User</th>
@@ -130,6 +132,23 @@
             });
         }
     }
+    </script>
+
+    <script>
+    document.getElementById('billSearch').addEventListener('keyup', function () {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#billTable tbody tr');
+    
+        rows.forEach(row => {
+            const userName = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || "";
+            const userId = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase().match(/\d+/)?.[0] || "";
+            if (userName.includes(searchTerm) || userId.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
     </script>
 
     
