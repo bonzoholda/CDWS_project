@@ -37,10 +37,12 @@ def upload_to_drive(file_path, file_name):
 
 
 
-def restore_from_drive(file_name, folder_id):
+def restore_from_drive():
     service = build('drive', 'v3', credentials=creds)
 
-    # Search for the file in the folder
+    file_name = "bills.db"
+    folder_id = FOLDER_ID
+
     query = f"name='{file_name}' and '{folder_id}' in parents and trashed = false"
     response = service.files().list(q=query, spaces='drive', fields='files(id, name)', pageSize=1).execute()
     files = response.get('files', [])
@@ -61,3 +63,4 @@ def restore_from_drive(file_name, folder_id):
 
     print(f"✅ Restored database from Google Drive to {DB_PATH}")
     return True
+
