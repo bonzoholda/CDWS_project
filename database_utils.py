@@ -5,6 +5,7 @@ import glob
 import datetime
 import csv
 from datetime import datetime
+from typing import Optional, List, Dict
 
 DB_PATH = "app/db/bills.db"
 BACKUP_DIR = "backups"
@@ -142,3 +143,45 @@ def insert_from_csv(file_path: str):
     ensure_payment_timestamp_column()
     backup_db()
     print(f"✅ Inserted {rows_inserted} rows and created backup.")
+
+
+#===payment summary====
+def get_daily_payment_summary(start_date: Optional[str] = None, end_date: Optional[str] = None) -> List[Dict]:
+    conn = sqlite3.connect("bills.db")
+    cursor = conn.cursor()
+
+    query = """
+        SELECT DATE(payment_timestamp) as payment_date, SUM(bill_amount) as total_payment
+        FROM bills
+        WHERE paid = 1
+    """
+    params = []
+
+    if start_date:
+        query += " AND DATE(payment_timestamp) >= ?"
+        params.append(start_date)
+    if end_date:
+        query += " AND DATE(payment_timestamp) <= ?"
+        params.append(end_date)
+
+    query += " GROUP BY DATE(payment_timestamp) ORDER BY DATE(payment_timestamp) DESC"
+    cursor.execute(query, params)
+    result = [{"payment_date": row[0], "total_payment": row[1]} for row in cursor.fetchall()]
+    conn.close()
+    return result
+
+
+def get_bills_by_date(payment_date: str) -> List[Dict]:
+    conn = sqlite3.connect("bills.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT user_name, pay_period, bill_amount
+        FROM bills
+        WHERE paid = 1 AND DATE(payment_timestamp) = ?
+        ORDER BY user_name
+    """, (payment_date,))
+    
+    result = [{"user_name": row[0], "pay_period": row[1], "bill_amount": row[2]} for row in cursor.fetchall()]
+    conn.close()
+    return result
