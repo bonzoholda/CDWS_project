@@ -2,7 +2,6 @@ import os
 import sqlite3
 import shutil
 import glob
-import datetime
 import csv
 from datetime import datetime
 from typing import Optional, List, Dict
@@ -45,9 +44,9 @@ def ensure_receipt_no_column_exists():
 
 
 def generate_receipt_no(bill_id):
-    now = datetime.datetime.now()
+    now = datetime.now()
     return f"RCP-{now.strftime('%Y%m%d')}-{bill_id}-{uuid.uuid4().hex[:4]}"
-
+    
 def mark_bills_as_paid(bill_ids: list[int]):
     conn = get_db_connection()
     cursor = conn.cursor()
