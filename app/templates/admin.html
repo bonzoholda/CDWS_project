@@ -27,7 +27,7 @@
     </ul>
 
     <h2>All Bills</h2>
-    <form action="/admin/update" method="post">
+    <form action="/admin/update_payment" method="post">
         <table border="1">
             <tr>
                 <th>Mark Paid</th>
@@ -35,19 +35,39 @@
                 <th>Period</th>
                 <th>Amount</th>
                 <th>Status</th>
+                <th>Actions</th>
             </tr>
             {% for bill in bills %}
             <tr>
-                <td>{% if not bill.paid %}<input type="checkbox" name="bill_ids" value="{{ bill.id }}">{% endif %}</td>
+                <td>
+                    {% if not bill.paid %}
+                        <input type="checkbox" name="bill_ids" value="{{ bill.id }}">
+                    {% endif %}
+                </td>
                 <td>{{ bill.user_name }}</td>
                 <td>{{ bill.pay_period }}</td>
                 <td>{{ bill.bill_amount }}</td>
-                <td>{{ "PAID" if bill.paid else "UNPAID" }}</td>
+                <td>
+                    {{ "PAID" if bill.paid else "UNPAID" }}
+                    {% if bill.payment_timestamp %}
+                        <br><small>{{ bill.payment_timestamp }}</small>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if bill.paid %}
+                    <form method="post" action="/admin/cancel_payment" style="display:inline;">
+                        <input type="hidden" name="user_id" value="{{ bill.user_id }}">
+                        <input type="hidden" name="pay_period" value="{{ bill.pay_period }}">
+                        <button type="submit" onclick="return confirm('Cancel payment for {{ bill.user_name }}?')">Cancel</button>
+                    </form>
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </table>
         <button type="submit">Update Selected as Paid</button>
     </form>
+
 
     <form action="/admin/logout" method="get">
         <button type="submit">Logout</button>
