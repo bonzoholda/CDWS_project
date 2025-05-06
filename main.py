@@ -247,6 +247,21 @@ async def invoice(request: Request, user_id: str, _=Depends(admin_required)):
     conn.close()
     return templates.TemplateResponse("invoice.html", {"request": request, "bills": rows})
 
+# receipt of paid bill
+@app.get("/invoice/{bill_id}", response_class=HTMLResponse)
+def show_invoice(request: Request, bill_id: int):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM bills WHERE id = ?", (bill_id,))
+    bill = cursor.fetchone()
+    conn.close()
+
+    if not bill:
+        return HTMLResponse("<h2>Invoice not found.</h2>", status_code=404)
+
+    return templates.TemplateResponse("invoice.html", {"request": request, "bill": bill})
+
+
 # payment summary route
 @app.get("/admin/payment_summary", response_class=HTMLResponse)
 async def payment_summary(request: Request, start: Optional[str] = Query(None), end: Optional[str] = Query(None), date: Optional[str] = Query(None)):
