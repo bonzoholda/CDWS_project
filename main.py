@@ -136,9 +136,13 @@ async def restore_db_route():
 
 # Admin update bills route
 @app.post("/admin/update_payment")
-async def update_payment_route(request: Request, bill_ids: List[int] = Form(...)):
+async def update_payment_route(
+    request: Request,
+    bill_ids: Optional[List[int]] = Form(None)
+):
     check_admin_logged_in(request)
-    mark_bills_as_paid(bill_ids)
+    if bill_ids:
+        mark_bills_as_paid(bill_ids)
     return RedirectResponse("/admin", status_code=303)
 
 @app.post("/admin/cancel_payment")
