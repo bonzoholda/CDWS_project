@@ -11,6 +11,21 @@ BACKUP_DIR = "backups"
 def ensure_backup_folder():
     os.makedirs(BACKUP_DIR, exist_ok=True)
 
+def ensure_payment_timestamp_column():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Check if payment_timestamp column exists
+    cursor.execute("PRAGMA table_info(bills)")
+    columns = [col["name"] for col in cursor.fetchall()]
+    if "payment_timestamp" not in columns:
+        cursor.execute("ALTER TABLE bills ADD COLUMN payment_timestamp TEXT")
+        conn.commit()
+        print("🛠️ Added 'payment_timestamp' column to bills table.")
+
+    conn.close()
+
+
 def backup_db():
     ensure_backup_folder()
 
@@ -67,6 +82,9 @@ def restore_db():
             paid INTEGER DEFAULT 0
         )
     """)
+
+    ensure_payment_timestamp_column()
+    
     conn.commit()
     conn.close()
 
