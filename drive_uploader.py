@@ -40,18 +40,30 @@ def upload_to_drive(file_path, file_name):
 def restore_from_drive():
     service = build('drive', 'v3', credentials=creds)
 
-    file_name = "bills.db"
     folder_id = FOLDER_ID
 
-    query = f"name='{file_name}' and '{folder_id}' in parents and trashed = false"
-    response = service.files().list(q=query, spaces='drive', fields='files(id, name)', pageSize=1).execute()
+    # Search for files starting with 'bills_backup' in the given folder
+    query = f"name contains 'bills_backup' and '{folder_id}' in parents and trashed = false"
+    response = service.files().list(
+        q=query,
+        spaces='drive',
+        fields='files(id, name, createdTime)',
+        orderBy='createdTime desc',
+        pageSize=1
+    ).execute()
+
     files = response.get('files', [])
 
     if not files:
-        print("❌ Backup file not found in Google Drive.")
+        print("❌ No backup files found in Google Drive.")
         return False
 
-    file_id = files[0]['id']
+    latest_file = files[0]
+    file_id = latest_file['id']
+    file_name = latest_file['name']
+
+    print(f"📦 Restoring latest backup: {file_name}")
+
     request = service.files().get_media(fileId=file_id)
 
     with open(DB_PATH, 'wb') as f:
@@ -61,6 +73,6 @@ def restore_from_drive():
             status, done = downloader.next_chunk()
             print(f"⬇️ Download progress: {int(status.progress() * 100)}%")
 
-    print(f"✅ Restored database from Google Drive to {DB_PATH}")
+    print(f"✅ Restored database from Google Drive backup ({file_name}) to {DB_PATH}")
     return True
 
