@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Receipt - {{ bill.receipt_no }}</title>
+    <link rel="stylesheet" href="static/style.css"> <!-- optional -->
+    <style>
+        body { font-family: Roboto, sans-serif; padding: 20px; }
+        .receipt { max-width: 400px; margin: auto; border: 1px solid #ccc; padding: 20px; }
+        .receipt h2 { text-align: center; }
+        .receipt p { margin: 5px 0; }
+        @media print {
+            body { margin: 0; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt">
+        <h2>Payment Receipt</h2>
+        <p><strong>Receipt No:</strong> {{ bill.receipt_no }}</p>
+        <p><strong>Date:</strong> {{ bill.payment_timestamp }}</p>
+        <hr>
+        <p><strong>User:</strong> {{ bill.user_name }}</p>
+        <p><strong>Address:</strong> {{ bill.user_address }}</p>
+        <p><strong>Period:</strong> {{ bill.pay_period }}</p>
+        <p><strong>Amount:</strong> {{ bill.bill_amount }} THB</p>
+        <hr>
+        <p>✅ Paid Successfully</p>
+        <div class="no-print" style="text-align:center; margin-top: 20px;">
+            <button onclick="window.print()">🖨️ Print Receipt</button>
+        </div>
+    </div>
+</body>
+</html>
