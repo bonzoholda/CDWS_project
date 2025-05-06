@@ -44,6 +44,7 @@
     <!-- ✅ Form for marking selected bills as PAID -->
     <form action="/admin/update_payment" method="post">
         <table id="billTable" border="1">
+            <thead>
             <tr>
                 <th>Mark Paid</th>
                 <th>User</th>
@@ -51,6 +52,8 @@
                 <th>Amount</th>
                 <th>Status</th>
             </tr>
+            </thead>
+            <tbody>
             {% for bill in bills %}
             <tr>
                 <td>
@@ -69,6 +72,7 @@
                 </td>
             </tr>
             {% endfor %}
+            </tbody>
         </table>
     
         <button type="submit">✅ Mark Selected as Paid</button>
