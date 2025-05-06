@@ -14,11 +14,12 @@
     </nav>
 <div class="invoice">
 
+{% for bill in bills %}
     <pre>
 HIPPAM BARU
-        
-Resi Pembayaran Tagihan
-Nomor resi: {{ bill.receipt_no }}
+
+Resi Pembayaran
+No. Resi: {{ bill.receipt_no }}
         
 ID Pelanggan: {{ bill.user_id }}
 Nama: {{ bill.user_name }}
@@ -42,6 +43,8 @@ Jumlah Tagihan: {{ bill.bill_amount }}
 Waktu Bayar:
 {{ bill.payment_timestamp }}
     </pre>
+    <hr>
+{% endfor %}
 
     
 </div>
