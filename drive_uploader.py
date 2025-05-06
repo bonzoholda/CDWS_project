@@ -6,7 +6,7 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from googleapiclient.http import MediaIoBaseDownload
-from database_utils import DB_PATH
+from database_utils import DB_PATH, ensure_payment_timestamp_column
 
 # Load credentials from Railway environment variable
 service_account_info = json.loads(os.environ['GOOGLE_SERVICE_ACCOUNT'])
@@ -73,6 +73,7 @@ def restore_from_drive():
             status, done = downloader.next_chunk()
             print(f"⬇️ Download progress: {int(status.progress() * 100)}%")
 
+    ensure_payment_timestamp_column()
     print(f"✅ Restored database from Google Drive backup ({file_name}) to {DB_PATH}")
     return True
 
