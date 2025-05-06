@@ -4,6 +4,7 @@ import shutil
 import glob
 import datetime
 import csv
+from datetime import datetime
 
 DB_PATH = "app/db/bills.db"
 BACKUP_DIR = "backups"
@@ -24,6 +25,31 @@ def ensure_payment_timestamp_column():
         print("🛠️ Added 'payment_timestamp' column to bills table.")
 
     conn.close()
+
+def mark_as_paid(user_id, pay_period):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE bills
+        SET paid = 1,
+            payment_timestamp = ?
+        WHERE user_id = ? AND pay_period = ?
+    """, (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_id, pay_period))
+    conn.commit()
+    conn.close()
+
+def cancel_payment(user_id, pay_period):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE bills
+        SET paid = 0,
+            payment_timestamp = NULL
+        WHERE user_id = ? AND pay_period = ?
+    """, (user_id, pay_period))
+    conn.commit()
+    conn.close()
+
 
 
 def backup_db():
