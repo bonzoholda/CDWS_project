@@ -1,0 +1,52 @@
+<h2>Payment Summary</h2>
+
+<form method="get" action="/admin/payment_summary">
+    <label>Start Date: <input type="date" name="start" value="{{ start or '' }}"></label>
+    <label>End Date: <input type="date" name="end" value="{{ end or '' }}"></label>
+    <button type="submit">Filter Range</button>
+</form>
+
+<form method="get" action="/admin/payment_summary">
+    <label>Single Date: <input type="date" name="date" value="{{ selected_date or '' }}"></label>
+    <button type="submit">View Daily Details</button>
+</form>
+
+{% if mode == "summary" %}
+    <h3>Daily Totals</h3>
+    <table border="1">
+        <tr>
+            <th>Date</th>
+            <th>Total Payment</th>
+            <th>Actions</th>
+        </tr>
+        {% for row in summary %}
+        <tr>
+            <td>{{ row.payment_date }}</td>
+            <td>{{ row.total_payment }}</td>
+            <td>
+                <a href="/admin/payment_summary?date={{ row.payment_date }}">View Bills</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% elif mode == "daily_details" %}
+    <h3>Bills Paid on {{ selected_date }}</h3>
+    <table border="1">
+        <tr>
+            <th>User</th>
+            <th>Period</th>
+            <th>Amount</th>
+        </tr>
+        {% for b in bills %}
+        <tr>
+            <td>{{ b.user_name }}</td>
+            <td>{{ b.pay_period }}</td>
+            <td>{{ b.bill_amount }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2"><strong>Subtotal</strong></td>
+            <td><strong>{{ subtotal }}</strong></td>
+        </tr>
+    </table>
+{% endif %}
