@@ -8,7 +8,7 @@ import os
 import io
 from typing import List
 from starlette.middleware.sessions import SessionMiddleware
-from database_utils import restore_db, backup_db, get_db_connection, DB_PATH
+from database_utils import restore_db, backup_db, get_db_connection, DB_PATH, mark_as_paid, cancel_payment
 from datetime import datetime, timedelta, timezone
 from drive_uploader import upload_to_drive
 from drive_uploader import restore_from_drive
@@ -133,21 +133,17 @@ async def restore_db_route():
 
 
 # Admin update bills route
-@app.post("/admin/update")
-async def update_bills(request: Request, bill_ids: list[int] = Form(...)):
+@app.post("/admin/update_payment")
+async def update_payment(user_id: str = Form(...), pay_period: str = Form(...)):
     check_admin_logged_in(request)  # Ensure admin is logged in
-    
-    conn = get_db_connection()
-    cursor = conn.cursor()
+    mark_as_paid(user_id, pay_period)
+    return RedirectResponse("/admin", status_code=303)
 
-    # Update logic
-    for bill_id in bill_ids:
-        cursor.execute("UPDATE bills SET paid = 1 WHERE id = ?", (bill_id,))
-    
-    conn.commit()
-    conn.close()
-
-    return RedirectResponse(url="/admin", status_code=303)
+@app.post("/admin/cancel_payment")
+async def cancel_payment_route(user_id: str = Form(...), pay_period: str = Form(...)):
+    check_admin_logged_in(request)  # Ensure admin is logged in    
+    cancel_payment(user_id, pay_period)
+    return RedirectResponse("/admin", status_code=303)
 
 
 # Public user view page
@@ -229,21 +225,6 @@ async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
     return RedirectResponse(url="/admin", status_code=303)
 
 
-
-# Admin update bills (mark bills as paid)
-@app.post("/admin/update")
-async def update_bills(request: Request, bill_ids: List[int] = Form(...), _=Depends(admin_required)):
-    check_admin_logged_in(request)  # Ensure admin is logged in
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    for bill_id in bill_ids:
-        cursor.execute("UPDATE bills SET paid = 1 WHERE id = ?", (bill_id,))
-    conn.commit()
-    conn.close()
-
-    backup_db()
-
-    return RedirectResponse(url="/admin", status_code=303)
 
 # Admin invoice route (view and print invoices)
 @app.get("/admin/invoice/{user_id}", response_class=HTMLResponse)
