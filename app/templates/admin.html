@@ -39,12 +39,11 @@
 
     <h2>All Bills</h2>
     
-    <!-- Form for marking selected bills as paid -->
+    <!-- ✅ Form for marking selected bills as PAID -->
     <form action="/admin/update_payment" method="post">
         <table border="1">
             <tr>
                 <th>Mark Paid</th>
-                <th>Cancel Paid</th>
                 <th>User</th>
                 <th>Period</th>
                 <th>Amount</th>
@@ -55,11 +54,6 @@
                 <td>
                     {% if not bill.paid %}
                         <input type="checkbox" name="bill_ids" value="{{ bill.id }}">
-                    {% endif %}
-                </td>
-                <td>
-                    {% if bill.paid %}
-                        <input type="checkbox" name="bill_ids_cancel" value="{{ bill.id }}">
                     {% endif %}
                 </td>
                 <td>{{ bill.user_name }}</td>
@@ -75,25 +69,28 @@
             {% endfor %}
         </table>
     
-        <button type="submit">Mark Selected as Paid</button>
+        <button type="submit">✅ Mark Selected as Paid</button>
     </form>
     
-    <!-- Form for canceling selected payments -->
+    <br><br>
+    
+    <!-- ✅ Form for canceling selected PAID bills only -->
     <form action="/admin/cancel_payment" method="post">
+        <h3>Cancel Paid Bills</h3>
         {% for bill in bills %}
             {% if bill.paid %}
                 <label>
-                    <input type="checkbox" name="bill_ids" value="{{ bill.id }}">
-                    Cancel {{ bill.pay_period }} for {{ bill.user_name }} (₱{{ bill.bill_amount }})
+                    <input type="checkbox" name="bill_ids_cancel" value="{{ bill.id }}">
+                    {{ bill.user_name }} – {{ bill.pay_period }} – ₱{{ bill.bill_amount }}
                 </label><br>
             {% endif %}
         {% endfor %}
+        <br>
         <button type="submit"
             onclick="return confirm('Are you sure you want to cancel selected payments?')">
-            Cancel Selected Payments
+            ❌ Cancel Selected Payments
         </button>
     </form>
-
 
 
 
