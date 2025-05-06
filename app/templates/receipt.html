@@ -1,34 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Receipt - {{ bill.receipt_no }}</title>
-    <link rel="stylesheet" href="static/style.css"> <!-- optional -->
-    <style>
-        body { font-family: Roboto, sans-serif; padding: 20px; }
-        .receipt { max-width: 400px; margin: auto; border: 1px solid #ccc; padding: 20px; }
-        .receipt h2 { text-align: center; }
-        .receipt p { margin: 5px 0; }
-        @media print {
-            body { margin: 0; }
-            .no-print { display: none; }
-        }
-    </style>
+    <title>Payment Receipt</title>
+    <link rel="stylesheet" href="static/print-invoice.css" media="print"">
 </head>
 <body>
-    <div class="receipt">
-        <h2>Payment Receipt</h2>
-        <p><strong>Receipt No:</strong> {{ bill.receipt_no }}</p>
-        <p><strong>Date:</strong> {{ bill.payment_timestamp }}</p>
-        <hr>
-        <p><strong>User:</strong> {{ bill.user_name }}</p>
-        <p><strong>Address:</strong> {{ bill.user_address }}</p>
-        <p><strong>Period:</strong> {{ bill.pay_period }}</p>
-        <p><strong>Amount:</strong> {{ bill.bill_amount }} THB</p>
-        <hr>
-        <p>✅ Paid Successfully</p>
-        <div class="no-print" style="text-align:center; margin-top: 20px;">
-            <button onclick="window.print()">🖨️ Print Receipt</button>
-        </div>
-    </div>
+
+    <!-- ✅ NAVBAR goes here -->
+    <nav>
+        <ul>
+            <li><a href="/admin">🏠 Dashboard</a></li>
+        </ul>
+    </nav>
+<div class="invoice">
+
+    <pre>
+HIPPAM BARU
+        
+Resi Pembayaran Tagihan
+Nomor resi: {{ bill.receipt_no }}
+        
+ID Pelanggan: {{ bill.user_id }}
+Nama: {{ bill.user_name }}
+Alamat: {{ bill.user_address }}
+
+Periode: {{ bill.pay_period }}
+Nomor SR: {{ bill.device_id }}
+
+Meter Lalu: {{ bill.meter_past }}
+Meter Kini: {{ bill.meter_now }}
+Pakai m³: {{ bill.usage }}
+
+0–10 m³: {{ bill.lv1_cost }}
+11–20 m³: {{ bill.lv2_cost }}
+21–30 m³: {{ bill.lv3_cost }}
+31+ m³: {{ bill.lv4_cost }}
+Beban Dasar: {{ bill.basic_cost }}
+
+Jumlah Tagihan: {{ bill.bill_amount }}
+
+Waktu Bayar:
+{{ bill.payment_timestamp }}
+    </pre>
+
+    
+</div>
+<div class="no-print">
+    <button onclick="window.print()">Cetak Resi</button>
+</div>
+    
 </body>
 </html>
