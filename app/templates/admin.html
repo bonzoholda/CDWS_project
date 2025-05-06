@@ -67,7 +67,7 @@
                     {{ "✅ PAID" if bill.paid else "UNPAID" }}
                     {% if bill.payment_timestamp %}
                         <br><small>{{ bill.payment_timestamp }}</small>
-                        <br><a href="/receipt/{{ bill.id }}" target="_blank" class="btn btn-sm btn-outline-primary">🧾 Print Receipt</a>
+                        <br><a href="/admin/receipt/{{ bill.id }}" target="_blank" class="btn btn-sm btn-outline-primary">🧾 Print Receipt</a>
                     {% endif %}
                 </td>
             </tr>
