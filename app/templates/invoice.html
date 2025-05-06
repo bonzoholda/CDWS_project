@@ -13,6 +13,7 @@
         </ul>
     </nav>
 <div class="invoice">
+{% for bill in bills %}
     <pre>
 HIPPAM BARU
 ======================
@@ -27,17 +28,20 @@ Meter Lalu: {{ bill.meter_past }}
 Meter Kini: {{ bill.meter_now }}
 Pakai m³: {{ bill.usage }}
 
-0–10 m³: ₱{{ bill.lv1_cost }}
-11–20 m³: ₱{{ bill.lv2_cost }}
-21–30 m³: ₱{{ bill.lv3_cost }}
-31+ m³: ₱{{ bill.lv4_cost }}
-Beban Dasar: ₱{{ bill.basic_cost }}
+0–10 m³: {{ bill.lv1_cost }}
+11–20 m³: {{ bill.lv2_cost }}
+21–30 m³: {{ bill.lv3_cost }}
+31+ m³: {{ bill.lv4_cost }}
+Beban Dasar: {{ bill.basic_cost }}
 
-Jumlah Tagihan: ₱{{ bill.bill_amount }}
+Jumlah Tagihan: {{ bill.bill_amount }}
 
 Waktu Bayar:
 {{ bill.payment_timestamp or 'Belum Dibayar' }}
     </pre>
+    <hr>
+{% endfor %}
+    
 </div>
 <div class="no-print">
     <button onclick="window.print()">Cetak Invoice</button>
