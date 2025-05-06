@@ -8,11 +8,11 @@ import os
 import io
 from typing import List
 from starlette.middleware.sessions import SessionMiddleware
-from database_utils import restore_db, backup_db, get_db_connection, DB_PATH, mark_as_paid, cancel_payment
+from database_utils import restore_db, backup_db, get_db_connection, DB_PATH
 from datetime import datetime, timedelta, timezone
 from drive_uploader import upload_to_drive
 from drive_uploader import restore_from_drive
-
+from database_utils import mark_bills_as_paid, cancel_bills_payment
 
 app = FastAPI()
 
@@ -134,15 +134,15 @@ async def restore_db_route():
 
 # Admin update bills route
 @app.post("/admin/update_payment")
-async def update_payment(user_id: str = Form(...), pay_period: str = Form(...)):
-    check_admin_logged_in(request)  # Ensure admin is logged in
-    mark_as_paid(user_id, pay_period)
+async def update_payment_route(request: Request, bill_ids: List[int] = Form(...)):
+    check_admin_logged_in(request)
+    mark_bills_as_paid(bill_ids)
     return RedirectResponse("/admin", status_code=303)
 
 @app.post("/admin/cancel_payment")
-async def cancel_payment_route(user_id: str = Form(...), pay_period: str = Form(...)):
-    check_admin_logged_in(request)  # Ensure admin is logged in    
-    cancel_payment(user_id, pay_period)
+async def cancel_payment_route(request: Request, bill_ids: List[int] = Form(...)):
+    check_admin_logged_in(request)
+    cancel_bills_payment(bill_ids)
     return RedirectResponse("/admin", status_code=303)
 
 
