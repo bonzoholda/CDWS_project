@@ -75,22 +75,34 @@
     <br><br>
     
     <!-- ✅ Form for canceling selected PAID bills only -->
-    <form action="/admin/cancel_payment" method="post">
-        <h3>Cancel Paid Bills</h3>
-        {% for bill in bills %}
-            {% if bill.paid %}
-                <label>
-                    <input type="checkbox" name="bill_ids_cancel" value="{{ bill.id }}">
-                    {{ bill.user_name }} – {{ bill.pay_period }} – {{ bill.bill_amount }}
-                </label><br>
-            {% endif %}
-        {% endfor %}
-        <br>
-        <button type="submit"
-            onclick="return confirm('Are you sure you want to cancel selected payments?')">
-            ❌ Cancel Selected Payments
-        </button>
-    </form>
+    <details>
+        <summary style="cursor: pointer; font-weight: bold; margin-top: 1em;">Cancel Paid Bills</summary>
+        <form action="/admin/cancel_payment" method="post" style="margin-top: 1em;">
+            <table border="1">
+                <tr>
+                    <th>Select</th>
+                    <th>User</th>
+                    <th>Period</th>
+                    <th>Amount</th>
+                </tr>
+                {% for bill in bills %}
+                    {% if bill.paid %}
+                    <tr>
+                        <td><input type="checkbox" name="bill_ids_cancel" value="{{ bill.id }}"></td>
+                        <td>{{ bill.user_name }}</td>
+                        <td>{{ bill.pay_period }}</td>
+                        <td>₱{{ bill.bill_amount }}</td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+            <button type="submit"
+                onclick="return confirm('Are you sure you want to cancel selected payments?')">
+                Cancel Selected Payments
+            </button>
+        </form>
+    </details>
+
 
 
 
