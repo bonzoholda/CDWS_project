@@ -12,7 +12,7 @@ from database_utils import restore_db, backup_db, get_db_connection, DB_PATH
 from datetime import datetime, timedelta, timezone
 from drive_uploader import upload_to_drive
 from drive_uploader import restore_from_drive
-from database_utils import mark_bills_as_paid, cancel_bills_payment
+from database_utils import mark_bills_as_paid, cancel_bills_payment, ensure_payment_timestamp_column
 
 app = FastAPI()
 
@@ -219,6 +219,7 @@ async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
     conn.commit()
     conn.close()
 
+    ensure_payment_timestamp_column()
     print(f"✅ Inserted {inserted_count} new rows from {csv_file.filename}")
     backup_db()
     
