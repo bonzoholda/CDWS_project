@@ -14,7 +14,7 @@ from datetime import datetime, timedelta, timezone
 from drive_uploader import upload_to_drive
 from drive_uploader import restore_from_drive
 from database_utils import mark_bills_as_paid, cancel_bills_payment, ensure_payment_timestamp_column
-from database_utils import get_daily_payment_summary, get_bills_by_date
+from database_utils import get_daily_payment_summary, get_bills_by_date, ensure_receipt_no_column_exists
 
 app = FastAPI()
 
@@ -230,6 +230,7 @@ async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
     conn.close()
 
     ensure_payment_timestamp_column()
+    ensure_receipt_no_column_exists()
     print(f"✅ Inserted {inserted_count} new rows from {csv_file.filename}")
     backup_db()
     
