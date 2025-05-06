@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request, Form, UploadFile, File, Depends, HTTPException, Response
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import sqlite3
@@ -11,6 +11,8 @@ from starlette.middleware.sessions import SessionMiddleware
 from database_utils import restore_db, backup_db, get_db_connection, DB_PATH
 from datetime import datetime, timedelta, timezone
 from drive_uploader import upload_to_drive
+from drive_uploader import restore_from_drive
+
 
 app = FastAPI()
 
@@ -119,6 +121,22 @@ async def admin_page(request: Request):
         "summary": summary,
         "bills": bills
     })
+
+# Admin restore db from google drive (if necessary)
+@app.post("/admin/restore")
+async def restore_db_route(request: Request):
+    # Optional: check for admin cookie
+    if request.cookies.get("admin_logged_in") != "true":
+        return JSONResponse(content={"success": False, "message": "Unauthorized"}, status_code=401)
+
+    folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")  # should already be in Railway
+    file_name = "bills.db"
+
+    success = restore_from_drive(file_name, folder_id)
+    if success:
+        return JSONResponse(content={"success": True, "message": "Database successfully restored."})
+    else:
+        return JSONResponse(content={"success": False, "message": "Failed to restore database."})
 
 
 # Admin update bills route
