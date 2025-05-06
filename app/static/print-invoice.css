@@ -1,24 +1,18 @@
 @media print {
   body {
     width: 80mm;
-    font-size: 12px;
     margin: 0;
-    padding: 10px;
-    font-family: 'Roboto', sans-serif;
+    padding: 5mm;
+    font-size: 12px;
+    font-family: monospace;
   }
 
   .no-print {
     display: none;
   }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  th, td {
-    padding: 4px;
-    border-bottom: 1px dashed #999;
-    text-align: left;
+  .invoice pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
   }
 }
