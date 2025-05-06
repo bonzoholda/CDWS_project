@@ -137,5 +137,7 @@ def insert_from_csv(file_path: str):
 
     conn.commit()
     conn.close()
+    
+    ensure_payment_timestamp_column()
     backup_db()
     print(f"✅ Inserted {rows_inserted} rows and created backup.")
