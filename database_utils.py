@@ -22,11 +22,27 @@ def ensure_payment_timestamp_column():
     cursor.execute("PRAGMA table_info(bills)")
     columns = [col["name"] for col in cursor.fetchall()]
     if "payment_timestamp" not in columns:
-        cursor.execute("ALTER TABLE bills ADD COLUMN payment_timestamp TEXT, receipt_no TEXT")
+        cursor.execute("ALTER TABLE bills ADD COLUMN payment_timestamp TEXT")
         conn.commit()
         print("🛠️ Added 'payment_timestamp' column to bills table.")
 
     conn.close()
+
+def ensure_receipt_no_column_exists():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Check if 'receipt_no' column already exists
+    cursor.execute("PRAGMA table_info(bills);")
+    columns = [row[1] for row in cursor.fetchall()]
+    
+    if 'receipt_no' not in columns:
+        cursor.execute("ALTER TABLE bills ADD COLUMN receipt_no TEXT;")
+        conn.commit()
+
+    conn.close()
+
+
 
 def generate_receipt_no(bill_id):
     now = datetime.datetime.now()
@@ -35,16 +51,18 @@ def generate_receipt_no(bill_id):
 def mark_bills_as_paid(bill_ids: list[int]):
     conn = get_db_connection()
     cursor = conn.cursor()
-
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     for bill_id in bill_ids:
-        receipt_no = generate_receipt_no(bill_id)
-        cursor.execute("""
-            UPDATE bills 
-            SET paid = 1, payment_timestamp = ?, receipt_no = ?
-            WHERE id = ?
-        """, (now, receipt_no, bill_id))
+        cursor.execute("SELECT paid, receipt_no FROM bills WHERE id = ?", (bill_id,))
+        row = cursor.fetchone()
+        if row and not row['paid']:  # Only update unpaid bills
+            receipt_no = generate_receipt_no(bill_id)
+            cursor.execute("""
+                UPDATE bills 
+                SET paid = 1, payment_timestamp = ?, receipt_no = ?
+                WHERE id = ?
+            """, (now, receipt_no, bill_id))
 
     conn.commit()
     conn.close()
@@ -117,6 +135,7 @@ def restore_db():
     """)
 
     ensure_payment_timestamp_column()
+    ensure_receipt_no_column_exists()
     
     conn.commit()
     conn.close()
@@ -154,6 +173,7 @@ def insert_from_csv(file_path: str):
     conn.close()
     
     ensure_payment_timestamp_column()
+    ensure_receipt_no_column_exists()
     backup_db()
     print(f"✅ Inserted {rows_inserted} rows and created backup.")
 
