@@ -15,6 +15,10 @@
         <button type="submit">Upload CSV</button>
     </form>
 
+    <button onclick="confirmRestore()">🔁 Restore Database</button>
+    <p id="restore-status" style="color: green;"></p>
+            
+        
     <h2>User Unpaid Summary</h2>
     <ul>
         {% for row in summary %}
@@ -49,5 +53,28 @@
         <button type="submit">Logout</button>
     </form>
     </div>
+
+    
+    <script>
+    function confirmRestore() {
+        if (confirm("⚠️ Are you sure you want to restore the database from Google Drive? This will overwrite current data.")) {
+            fetch('/admin/restore', {
+                method: 'POST',
+                credentials: 'same-origin'  // include cookies
+            })
+            .then(response => response.json())
+            .then(data => {
+                const status = document.getElementById('restore-status');
+                status.textContent = data.message;
+                status.style.color = data.success ? "green" : "red";
+            })
+            .catch(error => {
+                document.getElementById('restore-status').textContent = "Something went wrong.";
+            });
+        }
+    }
+    </script>
+
+    
 </body>
 </html>
