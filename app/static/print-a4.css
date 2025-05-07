@@ -6,7 +6,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
+    width: 300px;
     z-index: 1000;
     pointer-events: none; /* optional */
   }
