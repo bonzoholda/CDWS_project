@@ -249,14 +249,14 @@ async def invoice(request: Request, user_id: str, _=Depends(admin_required)):
         c.execute("SELECT * FROM bills WHERE user_id = ? AND paid = 0", (user_id,))
         user_data = c.fetchall()
 
-        return templates.TemplateResponse("user.html", {
+        return templates.TemplateResponse("invoice.html", {
             "request": request,
             "user_id": user_id,
             "user_data": user_data
         })
 
     except sqlite3.Error as e:
-        return templates.TemplateResponse("user.html", {
+        return templates.TemplateResponse("invoice.html", {
             "request": request,
             "user_id": user_id,
             "user_data": [],
