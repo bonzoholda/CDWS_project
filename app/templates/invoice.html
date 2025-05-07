@@ -1,8 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Tagihan Pelanggan</title>
+    <meta charset="UTF-8">
+    <title>Invoice - {{ user_data.user_name }}</title>
     <link rel="stylesheet" href="static/print-a4.css" media="print"">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 40px;
+            color: #333;
+        }
+
+        h2, p {
+            margin: 0 0 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid #999;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        @media print {
+            body {
+                margin: 10mm;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -41,7 +75,7 @@
               <td data-label="Biaya 01-10">{{ "{:,.0f}".format(bill.lv1_cost|float) }}</td>
               <td data-label="Biaya 11-20">{{ "{:,.0f}".format(bill.lv2_cost|float) }}</td>
               <td data-label="Biaya 21-30">{{ "{:,.0f}".format(bill.lv3_cost|float) }}</td>
-              <td data-label="Biaya di atas 30">{{ "{:,.0f}".format(bill.lv4_cost|float) }}</td>
+              <td data-label="Biaya 31+">{{ "{:,.0f}".format(bill.lv4_cost|float) }}</td>
               <td data-label="Beban Dasar">{{ "{:,.0f}".format(bill.basic_cost|float) }}</td>
               <td data-label="Jumlah Tagihan">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
             </tr>
