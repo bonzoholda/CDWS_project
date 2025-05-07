@@ -1,3 +1,16 @@
+  .logo-container {
+    position: fixed;
+    top: 20px; 
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    z-index: 1000;
+    pointer-events: none; /* optional */
+  }
+
 @media print {
   body {
     width: 210mm;
