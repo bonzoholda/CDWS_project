@@ -1,16 +1,27 @@
-/* Normal view */
-.logo-container {
-  text-align: center;
-  margin-top: 20px;
+/* Hide by default */
+.print-only {
+  display: none;
 }
 
-.logo {
-  width: 300px;
-  max-width: 100%;
-  height: auto;
-  display: inline-block;
-  margin-bottom: 20px;
+/* Show only when printing */
+@media print {
+  .print-only {
+    display: block;
+  }
+
+  .logo {
+    width: 80mm;
+    height: auto;
+    display: block;
+    margin: 0 auto 10mm;
+  }
+
+  .logo-container {
+    text-align: center;
+    margin-bottom: 10mm;
+  }
 }
+
 
 /* Print view */
 @media print {
@@ -40,17 +51,5 @@
 
   h1, h2 {
     margin-top: 0;
-  }
-
-  .logo-container {
-    text-align: center;
-    margin-top: 10mm;
-  }
-
-  .logo {
-    width: 80mm;
-    height: auto;
-    display: block;
-    margin: 0 auto 10mm;
   }
 }
