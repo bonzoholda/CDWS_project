@@ -243,23 +243,28 @@ async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
 async def invoice(request: Request, user_id: str, _=Depends(admin_required)):
     check_admin_logged_in(request)  # Ensure admin is logged in
     conn = get_db_connection()
+    c = conn.cursor()
 
-    rows = conn.execute(
-        "SELECT * FROM bills WHERE user_id = ? AND paid = 0", (user_id,)
-    ).fetchall()
+    try:
+        c.execute("SELECT * FROM bills WHERE user_id = ? AND paid = 0", (user_id,))
+        user_data = c.fetchall()
 
-    # Get user data (assuming user_name and user_address are present in one of the bills)
-    user_data = conn.execute(
-        "SELECT user_name, user_address FROM bills WHERE user_id = ? LIMIT 1", (user_id,)
-    ).fetchall()
+        return templates.TemplateResponse("user.html", {
+            "request": request,
+            "user_id": user_id,
+            "user_data": user_data
+        })
 
-    conn.close()
+    except sqlite3.Error as e:
+        return templates.TemplateResponse("user.html", {
+            "request": request,
+            "user_id": user_id,
+            "user_data": [],
+            "error": f"Database error: {str(e)}"
+        })
 
-    return templates.TemplateResponse("invoice.html", {
-        "request": request,
-        "bills": rows,
-        "user_data": user_data  # <-- add this
-    })
+    finally:
+        conn.close()
 
 
 # receipt of paid bill
