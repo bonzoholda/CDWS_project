@@ -11,8 +11,8 @@
 
   {% if user_data %}
     <h2>Tagihan: {{ user_data[0].user_name }}</h2>
-    <div class="table-wrapper">
-      <table class="bill-table">
+    <div class="tablebox">
+      <table class="tb-bill">
         <thead>
           <tr>
             <th>Periode</th>
@@ -49,7 +49,7 @@
         </tbody>
       </table>
     </div>
-    <h3 class="totaldue">Total belum terbayar: {{ "{:,.0f}".format(user_data | map(attribute='bill_amount') | sum) }}</h3>
+    <h3 class="totaltagih">Total belum terbayar: {{ "{:,.0f}".format(user_data | map(attribute='bill_amount') | sum) }}</h3>
   {% elif user_id %}
     <p>Tagihan untuk pelanggan dengan ID {{ user_id }} tidak ditemukan.</p>
   {% endif %}
