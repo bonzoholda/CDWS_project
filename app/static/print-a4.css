@@ -1,24 +1,20 @@
 /* Hide by default */
-.print-only {
+.invoice-logo {
   display: none;
 }
 
-/* Show only when printing */
+/* Show and format only in print */
 @media print {
-  .print-only {
+  .invoice-logo {
     display: block;
-  }
-
-  .logo {
-    width: 80mm;
-    height: auto;
-    display: block;
-    margin: 0 auto 10mm;
-  }
-
-  .logo-container {
     text-align: center;
-    margin-bottom: 10mm;
+    margin-bottom: 20mm;
+  }
+
+  .invoice-logo img {
+    width: 80mm;        /* ~300px */
+    height: auto;
+    display: inline-block;
   }
 }
 
