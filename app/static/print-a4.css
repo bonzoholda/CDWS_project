@@ -1,3 +1,4 @@
+/* Normal view */
 .logo-container {
   text-align: center;
   margin-top: 20px;
@@ -5,13 +6,13 @@
 
 .logo {
   width: 300px;
+  max-width: 100%;
   height: auto;
   display: inline-block;
   margin-bottom: 20px;
-  max-width: 100%; /* biar responsive */
 }
 
-
+/* Print view */
 @media print {
   body {
     width: 210mm;
@@ -40,20 +41,16 @@
   h1, h2 {
     margin-top: 0;
   }
-}
 
-@media print {
   .logo-container {
     text-align: center;
     margin-top: 10mm;
   }
 
   .logo {
-    width: 80mm;      /* Approx 300px */
+    width: 80mm;
     height: auto;
     display: block;
     margin: 0 auto 10mm;
   }
 }
-
-
