@@ -1,16 +1,3 @@
-.logo-container {
-  text-align: center;
-  margin-top: 20px;
-}
-
-.logo {
-  width: 300px;
-  height: auto;
-  display: inline-block;
-  margin-bottom: 20px;
-}
-
-
 @media print {
   body {
     width: 210mm;
@@ -40,3 +27,16 @@
     margin-top: 0;
   }
 }
+
+.logo-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.logo {
+  width: 300px;
+  height: auto;
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
