@@ -248,8 +248,9 @@ async def invoice(request: Request, user_id: str, _=Depends(admin_required)):
         "SELECT * FROM bills WHERE user_id = ? AND paid = 0", (user_id,)
     ).fetchall()
 
+    # Get user data (assuming user_name and user_address are present in one of the bills)
     user_data = conn.execute(
-        "SELECT DISTINCT user_name, user_address FROM bills WHERE user_id = ? LIMIT 1", (user_id,)
+        "SELECT user_name, user_address FROM bills WHERE user_id = ? LIMIT 1", (user_id,)
     ).fetchall()
 
     conn.close()
