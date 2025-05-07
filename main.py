@@ -243,9 +243,23 @@ async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
 async def invoice(request: Request, user_id: str, _=Depends(admin_required)):
     check_admin_logged_in(request)  # Ensure admin is logged in
     conn = get_db_connection()
-    rows = conn.execute("SELECT * FROM bills WHERE user_id = ? AND paid = 0", (user_id,)).fetchall()
+
+    rows = conn.execute(
+        "SELECT * FROM bills WHERE user_id = ? AND paid = 0", (user_id,)
+    ).fetchall()
+
+    user_data = conn.execute(
+        "SELECT DISTINCT user_name, user_address FROM bills WHERE user_id = ? LIMIT 1", (user_id,)
+    ).fetchall()
+
     conn.close()
-    return templates.TemplateResponse("invoice.html", {"request": request, "bills": rows})
+
+    return templates.TemplateResponse("invoice.html", {
+        "request": request,
+        "bills": rows,
+        "user_data": user_data  # <-- add this
+    })
+
 
 # receipt of paid bill
 @app.get("/admin/receipt/{bill_id}", response_class=HTMLResponse)
