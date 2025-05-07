@@ -6,42 +6,54 @@
 </head>
 <body>
 
-    <!-- ✅ NAVBAR goes here -->
-    <nav>
-        <ul>
-            <li><a href="/admin">🏠 Dashboard</a></li>
-        </ul>
-    </nav>
-<div class="invoice">
-{% for bill in bills %}
-    <pre>
-HIPPAM BARU
-======================
-ID Pelanggan: {{ bill.user_id }}
-Nama: {{ bill.user_name }}
-Alamat: {{ bill.user_address }}
 
-Periode: {{ bill.pay_period }}
-Nomor SR: {{ bill.device_id }}
+  </div>
 
-Meter Lalu: {{ bill.meter_past }}
-Meter Kini: {{ bill.meter_now }}
-Pakai m³: {{ bill.usage }}
+  {% if user_data %}
+    <h2>Tagihan: {{ user_data[0].user_name }}</h2>
+    <div class="table-wrapper">
+      <table class="bill-table">
+        <thead>
+          <tr>
+            <th>Periode</th>
+            <th>Nomor SR</th>
+            <th>Alamat</th>
+            <th>Meter Lalu</th>
+            <th>Meter Sekarang</th>
+            <th>Pemakaian</th>
+            <th>Biaya 01-10</th>
+            <th>Biaya 11-20</th>
+            <th>Biaya 21-30</th>
+            <th>Biaya di atas 30</th>
+            <th>Beban Dasar</th>
+            <th>Jumlah Tagihan</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for bill in user_data %}
+            <tr>
+              <td data-label="Periode">{{ bill.pay_period }}</td>
+              <td data-label="Nomor SR">{{ bill.device_id }}</td>
+              <td data-label="Alamat">{{ bill.user_address }}</td>
+              <td data-label="Meter Lalu">{{ "{:,.0f}".format(bill.meter_past|float) }}</td>
+              <td data-label="Meter Sekarang">{{ "{:,.0f}".format(bill.meter_now|float) }}</td>
+              <td data-label="Pemakaian">{{ "{:,.0f}".format(bill.usage|float) }}</td>
+              <td data-label="Biaya 01-10">{{ "{:,.0f}".format(bill.lv1_cost|float) }}</td>
+              <td data-label="Biaya 11-20">{{ "{:,.0f}".format(bill.lv2_cost|float) }}</td>
+              <td data-label="Biaya 21-30">{{ "{:,.0f}".format(bill.lv3_cost|float) }}</td>
+              <td data-label="Biaya di atas 30">{{ "{:,.0f}".format(bill.lv4_cost|float) }}</td>
+              <td data-label="Beban Dasar">{{ "{:,.0f}".format(bill.basic_cost|float) }}</td>
+              <td data-label="Jumlah Tagihan">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <h3 class="totaldue">Total belum terbayar: {{ "{:,.0f}".format(user_data | map(attribute='bill_amount') | sum) }}</h3>
+  {% elif user_id %}
+    <p>Tagihan untuk pelanggan dengan ID {{ user_id }} tidak ditemukan.</p>
+  {% endif %}
 
-0–10 m³: {{ bill.lv1_cost }}
-11–20 m³: {{ bill.lv2_cost }}
-21–30 m³: {{ bill.lv3_cost }}
-31+ m³: {{ bill.lv4_cost }}
-Beban Dasar: {{ bill.basic_cost }}
-
-Jumlah Tagihan: {{ bill.bill_amount }}
-
-Waktu Bayar:
-{{ bill.payment_timestamp or 'Belum Dibayar' }}
-    </pre>
-    <hr>
-{% endfor %}
-    
 </div>
 <div class="no-print">
     <button onclick="window.print()">Cetak Invoice</button>
