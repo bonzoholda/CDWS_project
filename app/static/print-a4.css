@@ -28,15 +28,18 @@
   }
 }
 
-.logo-container {
-  text-align: center;
-  margin-top: 20px;
+@media print {
+  .logo-container {
+    text-align: center;
+    margin-top: 10mm;
+  }
+
+  .logo {
+    width: 80mm;      /* Approx 300px */
+    height: auto;
+    display: block;
+    margin: 0 auto 10mm;
+  }
 }
 
-.logo {
-  width: 300px;
-  height: auto;
-  display: inline-block;
-  margin-bottom: 20px;
-}
 
