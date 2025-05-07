@@ -11,6 +11,16 @@
     pointer-events: none; /* optional */
   }
 
+.logo {
+    height: 60px;
+    margin-bottom: 20px;
+}
+
+.logo-container {
+    text-align: center;
+}
+
+
 @media print {
   body {
     width: 210mm;
