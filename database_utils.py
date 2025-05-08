@@ -83,7 +83,7 @@ def backup_db():
         print("⚠️ No database found to back up.")
         return
 
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
     backup_filename = f"bills_backup_{timestamp}.db"
     backup_path = os.path.join(BACKUP_DIR, backup_filename)
