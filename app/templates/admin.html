@@ -31,16 +31,41 @@
         
     <h2>User Unpaid Summary</h2>
 
-        <details>
-        <summary style="cursor: pointer; font-weight: bold; margin-top: 1em;">Tagihan Belum Terbayar</summary>    
-    <input type="text" id="invoiceSearch" placeholder="Search by user name or ID..." style="margin: 1em 0; padding: 5px; width: 250px;">
-        
-    <ul class="invoice-list" id="invList">
+<details>
+<summary style="cursor: pointer; font-weight: bold; margin-top: 1em;">Tagihan Belum Terbayar</summary>
+
+<input type="text" id="invoiceSearch" placeholder="Search by user name or ID..." style="margin: 1em 0; padding: 5px; width: 250px;">
+
+<table id="invoiceTable" border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse; width: 100%;">
+    <thead>
+        <tr>
+            <th>User Name</th>
+            <th>User ID</th>
+            <th>Unpaid Amount</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set total = 0 %}
         {% for row in summary %}
-            <li><strong>{{ row.user_name }}</strong> ({{ row.user_id }}) — {{ row['SUM(bill_amount)'] }} unpaid - <a href="/admin/invoice/{{ row.user_id }}" target="_blank">Print Invoice</a></li>
+            <tr>
+                <td>{{ row.user_name }}</td>
+                <td>{{ row.user_id }}</td>
+                <td>{{ row['SUM(bill_amount)'] }}</td>
+                <td><a href="/admin/invoice/{{ row.user_id }}" target="_blank">Print Invoice</a></td>
+            </tr>
+            {% set total = total + row['SUM(bill_amount)'] %}
         {% endfor %}
-    </ul>
-        </details>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="2" style="text-align: right;"><strong>Total</strong></td>
+            <td colspan="2"><strong>{{ total }}</strong></td>
+        </tr>
+    </tfoot>
+</table>
+</details>
+
             
     <h2>All Bills</h2>
 
@@ -148,21 +173,18 @@
     }
     </script>
 
-    <script>
-    document.getElementById('invoiceSearch').addEventListener('input', function() {
-        const filter = this.value.toLowerCase();
-        const listItems = document.querySelectorAll('#invList li');
-    
-        listItems.forEach(function(item) {
-            const text = item.textContent.toLowerCase();
-            if (text.includes(filter)) {
-                item.style.display = '';
-            } else {
-                item.style.display = 'none';
-            }
-        });
+<script>
+document.getElementById('invoiceSearch').addEventListener('input', function () {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#invoiceTable tbody tr');
+
+    rows.forEach(function (row) {
+        const rowText = row.textContent.toLowerCase();
+        row.style.display = rowText.includes(filter) ? '' : 'none';
     });
-    </script>
+});
+</script>
+
 
     
     <script>
