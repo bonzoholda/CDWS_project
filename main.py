@@ -104,12 +104,12 @@ async def admin_logout(request: Request):
 
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_page(request: Request):
-    check_admin_logged_in(request)  # Check if admin is logged in
+    check_admin_logged_in(request)
     conn = get_db_connection()
     conn.row_factory = sqlite3.Row
 
     summary = conn.execute("""
-        SELECT user_name, user_id, SUM(bill_amount) 
+        SELECT user_name, user_id, SUM(bill_amount) AS total_unpaid
         FROM bills 
         WHERE paid = 0 
         GROUP BY user_id
@@ -118,14 +118,15 @@ async def admin_page(request: Request):
     bills = conn.execute("SELECT * FROM bills ORDER BY user_id, pay_period DESC").fetchall()
     conn.close()
 
-    total_unpaid = sum(row['SUM(bill_amount)'] for row in summary)
-        
+    total_unpaid = sum(row['total_unpaid'] for row in summary)
+
     return templates.TemplateResponse("admin.html", {
         "request": request,
         "summary": summary,
         "bills": bills,
         "total": total_unpaid
     })
+
 
 # Admin restore db from google drive (if necessary)
 @app.post("/admin/restore")
