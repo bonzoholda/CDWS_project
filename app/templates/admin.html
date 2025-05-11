@@ -195,15 +195,16 @@ document.getElementById('invoiceSearch').addEventListener('input', function () {
     
 <script>
 document.getElementById('billSearch').addEventListener('keyup', function () {
-        const searchTerm = this.value.toLowerCase();
-        const rows = document.querySelectorAll('#billTable tbody tr');
-    
+    const searchTerm = this.value.toLowerCase(); // Correct variable
+    const rows = document.querySelectorAll('#billTable tbody tr');
+
     rows.forEach(function (row) {
         const rowText = row.textContent.toLowerCase();
-        row.style.display = rowText.includes(filter) ? '' : 'none';
+        row.style.display = rowText.includes(searchTerm) ? '' : 'none'; // Use searchTerm here
     });
 });
 </script>
+
 
 
     
