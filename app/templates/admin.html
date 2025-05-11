@@ -30,7 +30,9 @@
             
         
     <h2>User Unpaid Summary</h2>
-    <ul>
+    <input type="text" id="invoiceSearch" placeholder="Search by user name or ID..." style="margin: 1em 0; padding: 5px; width: 250px;">
+        
+    <ul class="invoice-list" id="invList">
         {% for row in summary %}
             <li><strong>{{ row.user_name }}</strong> ({{ row.user_id }}) — {{ row['SUM(bill_amount)'] }} unpaid - <a href="/admin/invoice/{{ row.user_id }}" target="_blank">Print Invoice</a></li>
         {% endfor %}
@@ -138,6 +140,24 @@
     }
     </script>
 
+    <script>
+    document.getElementById('invoiceSearch').addEventListener('keyup', function () {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#invList li');
+    
+        rows.forEach(row => {
+            const userCell = row.querySelector('li:nth-child(1)');
+            const userText = userCell ? userCell.textContent.toLowerCase() : "";
+    
+            if (userText.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+    </script>
+    
     <script>
     document.getElementById('billSearch').addEventListener('keyup', function () {
         const searchTerm = this.value.toLowerCase();
