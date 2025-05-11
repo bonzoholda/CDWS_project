@@ -39,22 +39,22 @@
 <table id="invoiceTable" border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse; width: 100%;">
     <thead>
         <tr>
-            <th>User Name</th>
+
             <th>User ID</th>
+            <th>User Name</th>            
             <th>Unpaid Amount</th>
             <th>Action</th>
         </tr>
     </thead>
     <tbody>
-        {% set total = 0 %}
         {% for row in summary %}
             <tr>
-                <td>{{ row.user_name }}</td>
+
                 <td>{{ row.user_id }}</td>
-                <td>{{ row['SUM(bill_amount)'] }}</td>
+                <td>{{ row.user_name }}</td>                
+                <td>{{ row.total_unpaid }}</td>
                 <td><a href="/admin/invoice/{{ row.user_id }}" target="_blank">Print Invoice</a></td>
             </tr>
-            
         {% endfor %}
     </tbody>
     <tfoot>
@@ -63,9 +63,9 @@
             <td colspan="2"><strong>{{ total }}</strong></td>
         </tr>
     </tfoot>
-
 </table>
 </details>
+
 
             
     <h2>All Bills</h2>
