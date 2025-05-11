@@ -30,6 +30,9 @@
             
         
     <h2>User Unpaid Summary</h2>
+
+        <details>
+        <summary style="cursor: pointer; font-weight: bold; margin-top: 1em;">Tagihan Belum Terbayar</summary>    
     <input type="text" id="invoiceSearch" placeholder="Search by user name or ID..." style="margin: 1em 0; padding: 5px; width: 250px;">
         
     <ul class="invoice-list" id="invList">
@@ -37,9 +40,12 @@
             <li><strong>{{ row.user_name }}</strong> ({{ row.user_id }}) — {{ row['SUM(bill_amount)'] }} unpaid - <a href="/admin/invoice/{{ row.user_id }}" target="_blank">Print Invoice</a></li>
         {% endfor %}
     </ul>
-
+        </details>
+            
     <h2>All Bills</h2>
 
+        <details>
+        <summary style="cursor: pointer; font-weight: bold; margin-top: 1em;">Data Seluruh Tagihan</summary>
     <input type="text" id="billSearch" placeholder="Search by user name or ID..." style="margin: 1em 0; padding: 5px; width: 250px;">
         
     <!-- ✅ Form for marking selected bills as PAID -->
@@ -79,7 +85,9 @@
     
         <button type="submit">✅ Mark Selected as Paid</button>
     </form>
-    
+        </details>
+
+        
     <br><br>
     
     <!-- ✅ Form for canceling selected PAID bills only -->
