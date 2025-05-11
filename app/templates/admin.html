@@ -61,7 +61,7 @@
     <tfoot>
         <tr>
             <td colspan="2" style="text-align: right;"><strong>Total</strong></td>
-            <td colspan="2"><strong>{{ "{:,.0f}".format('SUM(bill_amount)') | sum) }}</strong></td>
+            <td colspan="2"><strong>{{ "{:,.0f}".format(row['SUM(bill_amount)']) | sum) }}</strong></td>
         </tr>
     </tfoot>
 </table>
