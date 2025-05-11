@@ -118,10 +118,13 @@ async def admin_page(request: Request):
     bills = conn.execute("SELECT * FROM bills ORDER BY user_id, pay_period DESC").fetchall()
     conn.close()
 
+    total_unpaid = sum(row['SUM(bill_amount)'] for row in summary)
+        
     return templates.TemplateResponse("admin.html", {
         "request": request,
         "summary": summary,
-        "bills": bills
+        "bills": bills,
+        "total": total_unpaid
     })
 
 # Admin restore db from google drive (if necessary)
