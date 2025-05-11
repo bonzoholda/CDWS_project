@@ -57,6 +57,12 @@ h2, h3 {
   margin-top: 20px;
 }
 
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
 .bill-table {
   width: 100%;
   border-collapse: collapse;
