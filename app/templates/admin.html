@@ -81,7 +81,8 @@
             <thead>
             <tr>
                 <th>Mark Paid</th>
-                <th>User</th>
+                <th>User ID</th>
+                <th>User Name</th>
                 <th>Period</th>
                 <th>Amount</th>
                 <th>Status</th>
@@ -95,7 +96,8 @@
                         <input type="checkbox" name="bill_ids" value="{{ bill.id }}">
                     {% endif %}
                 </td>
-                <td>{{ bill.user_name }} ({{ bill.user_id }}) </td>
+                <td> {{ bill.user_id }} </td>
+                <td>{{ bill.user_name }} </td>
                 <td>{{ bill.pay_period }}</td>
                 <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
                
@@ -191,23 +193,17 @@ document.getElementById('invoiceSearch').addEventListener('input', function () {
 
 
     
-    <script>
-    document.getElementById('billSearch').addEventListener('keyup', function () {
+<script>
+document.getElementById('billSearch').addEventListener('keyup', function () {
         const searchTerm = this.value.toLowerCase();
         const rows = document.querySelectorAll('#billTable tbody tr');
     
-        rows.forEach(row => {
-            const userCell = row.querySelector('td:nth-child(2)');
-            const userText = userCell ? userCell.textContent.toLowerCase() : "";
-    
-            if (userText.includes(searchTerm)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
+    rows.forEach(function (row) {
+        const rowText = row.textContent.toLowerCase();
+        row.style.display = rowText.includes(filter) ? '' : 'none';
     });
-    </script>
+});
+</script>
 
 
     
