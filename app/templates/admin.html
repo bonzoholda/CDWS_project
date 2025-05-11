@@ -54,14 +54,14 @@
                 <td>{{ row['SUM(bill_amount)'] }}</td>
                 <td><a href="/admin/invoice/{{ row.user_id }}" target="_blank">Print Invoice</a></td>
             </tr>
-            {% set total = total + row['SUM(bill_amount)'] %}
+            {% set total = row['SUM(bill_amount)'] %}
             
         {% endfor %}
     </tbody>
     <tfoot>
         <tr>
             <td colspan="2" style="text-align: right;"><strong>Total</strong></td>
-            <td colspan="2"><strong>{{ "{:,.0f}".format(row['SUM(bill_amount)']) | sum) }}</strong></td>
+            <td colspan="2"><strong>{{ total }}</strong></td>
         </tr>
     </tfoot>
 </table>
