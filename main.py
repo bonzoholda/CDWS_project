@@ -240,7 +240,7 @@ async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
 
 # Admin invoice route (view and print invoices)
 @app.get("/admin/invoice/{user_id}", response_class=HTMLResponse)
-async def invoice(request: Request, user_id: str, _=Depends(admin_required)):
+async def invoice(request: Request, user_id: str):
     check_admin_logged_in(request)  # Ensure admin is logged in
     conn = get_db_connection()
     c = conn.cursor()
