@@ -21,19 +21,19 @@
   }
 
   .receipt-logo {
-    text-align: center;
+    text-align: left;
     margin-bottom: 3mm;
   }
 
   .receipt-logo .logo {
     width: 30mm;
-    max-width: 100%;
+    max-width: 50%;
   }
 
   .receipt-title {
     font-weight: bold;
-    font-size: 1.2em;
-    text-align: center;
+    font-size: 1.2rem;
+    text-align: left;
     margin-bottom: 3mm;
   }
 
