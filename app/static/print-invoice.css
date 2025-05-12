@@ -1,13 +1,16 @@
+/* Set exact paper width for print */
+@page {
+  size: 50mm auto;
+  margin: 0;
+}
+
 @media print {
   body {
     margin: 0;
     padding: 0;
-  }
-
-  .pageview {
     width: 50mm;
   }
-  
+
   .receipt {
     width: 50mm;
     padding: 2mm;
@@ -19,12 +22,19 @@
 
   .receipt-logo {
     text-align: center;
-    margin-bottom: 5mm;
+    margin-bottom: 3mm;
   }
 
   .receipt-logo .logo {
     width: 30mm;
     max-width: 100%;
+  }
+
+  .receipt-title {
+    font-weight: bold;
+    font-size: 1.2em;
+    text-align: center;
+    margin-bottom: 3mm;
   }
 
   pre {
@@ -36,11 +46,6 @@
   hr {
     border: none;
     border-top: 1px dashed #000;
-    margin: 5mm 0;
-  }
-
-  @page {
-    size: 50mm auto;
-    margin: 0;
+    margin: 4mm 0;
   }
 }
