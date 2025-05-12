@@ -98,6 +98,32 @@ h2, h3 {
   text-align: right;
 }
 
+.search-container {
+  position: relative;
+  display: inline-block;
+}
+
+#invoiceSearch {
+  padding: 5px 30px 5px 5px;
+  width: 250px;
+}
+
+.clear-icon {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 16px;
+  color: #999;
+  display: none;
+}
+
+.clear-icon:hover {
+  color: #333;
+}
+
+
 /* ------------ MOBILE STYLE (card format) ------------ */
 @media (max-width: 768px) {
   .bill-table,
