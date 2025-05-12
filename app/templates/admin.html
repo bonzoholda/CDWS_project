@@ -80,7 +80,7 @@
         <summary style="cursor: pointer; font-weight: bold; margin-top: 1em;">Data Seluruh Tagihan</summary>
 <div class="search-container">
   <input type="text" id="billSearch" placeholder="Search by user name or ID...">
-  <span class="clear-icon" id="clearIcon">&times;</span>
+  <span class="clear-icon" id="clearIconBill">&times;</span>
 </div>
 <button id="togglePaidButton">
     {{ "Tampilkan Semua Periode" if unpaid_only else "Tampilkan Periode Belum Terbayar" }}
@@ -190,7 +190,7 @@
     }
     </script>
 
-//--------------searchbox invoice-----------------//    
+<!-- ✅ searchbox for invoice -->     
 <script>
 const input = document.getElementById('invoiceSearch');
 const clearIcon = document.getElementById('clearIcon');
@@ -221,10 +221,10 @@ clearIcon.addEventListener('click', function () {
 
 
     
-//--------------searchbox bill-----------------//    
+<!-- ✅ searchbox for bill -->   
 <script>
 const input = document.getElementById('billSearch');
-const clearIcon = document.getElementById('clearIcon');
+const clearIcon = document.getElementById('clearIconBill');
 
 function filterTable() {
     const filter = input.value.toLowerCase();
@@ -242,7 +242,7 @@ function filterTable() {
 input.addEventListener('input', filterTable);
 
 // Clear filter when clicking the icon
-clearIcon.addEventListener('click', function () {
+clearIconBill.addEventListener('click', function () {
     input.value = '';
     filterTable(); // reset filter
     input.focus();
