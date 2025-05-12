@@ -11,6 +11,20 @@
     display: none;
   }
 
+@media print {
+  .receipt-logo {
+    display: block;
+    text-align: center;
+    margin-bottom: 10mm;
+  }
+
+  .receipt-logo img {
+    width: 40mm;        /* ~300px */
+    height: auto;
+    display: inline-block;
+  }
+}
+  
   .invoice pre {
     white-space: pre-wrap;
     word-wrap: break-word;
