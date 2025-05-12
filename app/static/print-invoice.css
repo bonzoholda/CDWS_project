@@ -27,7 +27,7 @@
 
   .receipt-logo .logo {
     width: 30mm;
-    max-width: 50%;
+    max-width: 70%;
   }
 
   .receipt-title {
@@ -37,6 +37,13 @@
     margin-bottom: 3mm;
   }
 
+  .total-bill {
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-align: left;
+    margin-bottom: 3mm;
+  }
+  
   pre {
     white-space: pre-wrap;
     margin: 0;
