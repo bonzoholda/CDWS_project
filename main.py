@@ -103,7 +103,7 @@ async def admin_logout(request: Request):
 
 
 @app.get("/admin", response_class=HTMLResponse)
-async def admin_page(request: Request):
+async def admin_page(request: Request, unpaid_only: bool = Query(False)):
     check_admin_logged_in(request)
     conn = get_db_connection()
     conn.row_factory = sqlite3.Row
@@ -115,7 +115,11 @@ async def admin_page(request: Request):
         GROUP BY user_id
     """).fetchall()
 
-    bills = conn.execute("SELECT * FROM bills ORDER BY user_id, pay_period DESC").fetchall()
+    if unpaid_only:
+        bills = conn.execute("SELECT * FROM bills WHERE paid = 0 ORDER BY user_id, pay_period DESC").fetchall()
+    else:
+        bills = conn.execute("SELECT * FROM bills ORDER BY user_id, pay_period DESC").fetchall()
+
     conn.close()
 
     total_unpaid = sum(row['total_unpaid'] for row in summary)
@@ -124,7 +128,8 @@ async def admin_page(request: Request):
         "request": request,
         "summary": summary,
         "bills": bills,
-        "total": total_unpaid
+        "total": total_unpaid,
+        "unpaid_only": unpaid_only
     })
 
 
