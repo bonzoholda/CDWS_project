@@ -75,10 +75,9 @@
         <details>
         <summary style="cursor: pointer; font-weight: bold; margin-top: 1em;">Data Seluruh Tagihan</summary>
     <input type="text" id="billSearch" placeholder="Search by user name or ID..." style="margin: 1em 0; padding: 5px; width: 250px;">
-    <button id="togglePaidButton">
-        {{ "Tampilkan Semua Periode" if unpaid_only else "Tampilkan Periode Belum Terbayar" }}
-    </button>
-
+<button id="togglePaidButton">
+    {{ "Tampilkan Semua Periode" if unpaid_only else "Tampilkan Periode Belum Terbayar" }}
+</button>
     
     <!-- ✅ Form for marking selected bills as PAID -->
     <form action="/admin/update_payment" method="post">
@@ -235,15 +234,16 @@ document.getElementById("filterButton").addEventListener("click", function () {
 </script>
 
 <script>
-let filterPaid = false;
-
 document.getElementById("togglePaidButton").addEventListener("click", function () {
     const params = new URLSearchParams(window.location.search);
-    if (!filterPaid) {
-        params.set("unpaid_only", "true");
-    } else {
+    const currentlyUnpaidOnly = params.get("unpaid_only") === "true";
+
+    if (currentlyUnpaidOnly) {
         params.delete("unpaid_only");
+    } else {
+        params.set("unpaid_only", "true");
     }
+
     window.location.search = params.toString();
 });
 </script>
