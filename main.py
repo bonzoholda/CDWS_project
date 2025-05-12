@@ -200,6 +200,7 @@ async def user_view(request: Request, user_id: str):
     finally:
         conn.close()
 
+
 @app.post("/admin/upload")
 async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
     check_admin_logged_in(request)
@@ -208,13 +209,39 @@ async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
     contents = await csv_file.read()
 
     decoded = contents.decode("utf-8")
-    reader = csv.DictReader(io.StringIO(decoded))
+    raw_reader = csv.DictReader(io.StringIO(decoded))
+
+    # Header mapping: CSV header → expected DB key
+    csv_to_db_keys = {
+        'lvl1_cost': 'lv1_cost',
+        'lvl2_cost': 'lv2_cost',
+        'lvl3_cost': 'lv3_cost',
+        'lvl4_cost': 'lv4_cost',
+        'user_id': 'user_id',
+        'device_id': 'device_id',
+        'user_name': 'user_name',
+        'user_address': 'user_address',
+        'pay_period': 'pay_period',
+        'meter_past': 'meter_past',
+        'meter_now': 'meter_now',
+        'usage': 'usage',
+        'basic_cost': 'basic_cost',
+        'bill_amount': 'bill_amount'
+    }
 
     inserted_count = 0
-    for row in reader:
+    for raw_row in raw_reader:
         try:
-            user_id = row['user_id'].strip()
-            pay_period = row['pay_period'].strip()
+            # Remap keys using header mapping
+            row = {}
+            for csv_key, db_key in csv_to_db_keys.items():
+                if csv_key in raw_row:
+                    row[db_key] = raw_row[csv_key].strip()
+                else:
+                    row[db_key] = ""
+
+            user_id = row['user_id']
+            pay_period = row['pay_period']
 
             # Check for duplicate entry
             cursor.execute("SELECT 1 FROM bills WHERE user_id = ? AND pay_period = ?", (user_id, pay_period))
@@ -222,18 +249,47 @@ async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
                 print(f"⚠️ Skipping duplicate: user_id={user_id}, pay_period={pay_period}")
                 continue
 
+            # Cleaning functions
+            def clean_int(val):
+                return int(float(val.replace(',', '') or 0))
+
+            def clean_float(val):
+                return round(float(val.replace(',', '') or 0.0), 2)
+
+            def clean_date_to_mmdd(val):
+                try:
+                    dt = datetime.strptime(val, "%m/%d/%Y")  # adjust if needed
+                    return dt.strftime("%m/%d")
+                except:
+                    return val.strip()
+
+            # Clean values
+            meter_past = clean_int(row['meter_past'])
+            meter_now = clean_int(row['meter_now'])
+            usage = clean_int(row['usage'])
+            lv1_cost = clean_float(row['lv1_cost'])
+            lv2_cost = clean_float(row['lv2_cost'])
+            lv3_cost = clean_float(row['lv3_cost'])
+            lv4_cost = clean_float(row['lv4_cost'])
+            basic_cost = clean_float(row['basic_cost'])
+            bill_amount = clean_float(row['bill_amount'])
+            user_address = clean_date_to_mmdd(row['user_address'])
+
+            # Insert row
             cursor.execute("""
                 INSERT INTO bills (
                     user_id, device_id, user_name, user_address, pay_period, meter_past, meter_now,
                     usage, lv1_cost, lv2_cost, lv3_cost, lv4_cost, basic_cost, bill_amount, paid
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
             """, (
-                user_id, row['device_id'], row['user_name'], row['user_address'], pay_period,
-                float(row['meter_past']), float(row['meter_now']), float(row['usage']),
-                float(row['lv1_cost']), float(row['lv2_cost']), float(row['lv3_cost']), float(row['lv4_cost']),
-                float(row['basic_cost']), float(row['bill_amount'])
+                user_id, row['device_id'], row['user_name'], user_address, pay_period,
+                meter_past, meter_now, usage,
+                lv1_cost, lv2_cost, lv3_cost, lv4_cost,
+                basic_cost, bill_amount
             ))
+
             inserted_count += 1
+
         except Exception as e:
             print(f"❌ Skipped row due to error: {e}")
             continue
@@ -245,9 +301,8 @@ async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
     ensure_receipt_no_column_exists()
     print(f"✅ Inserted {inserted_count} new rows from {csv_file.filename}")
     backup_db()
-    
-    return RedirectResponse(url="/admin", status_code=303)
 
+    return RedirectResponse(url="/admin", status_code=303)
 
 
 # Admin invoice route (view and print invoices)
