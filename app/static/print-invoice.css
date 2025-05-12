@@ -56,3 +56,10 @@
     margin: 4mm 0;
   }
 }
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
