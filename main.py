@@ -124,8 +124,7 @@ async def admin_page(request: Request):
         "request": request,
         "summary": summary,
         "bills": bills,
-        "total": total_unpaid,
-        "count" : unpaid_count
+        "total": total_unpaid
     })
 
 
