@@ -103,10 +103,12 @@ async def admin_logout(request: Request):
 
 
 @app.get("/admin", response_class=HTMLResponse)
-async def admin_page(request: Request, unpaid_only: bool = Query(False)):
+async def admin_page(request: Request, unpaid_only: Optional[str] = Query(None)):
     check_admin_logged_in(request)
     conn = get_db_connection()
     conn.row_factory = sqlite3.Row
+
+    unpaid_only_flag = unpaid_only == "true"
 
     summary = conn.execute("""
         SELECT user_name, user_id, SUM(bill_amount) AS total_unpaid, COUNT(user_id) AS unpaid_count
@@ -115,7 +117,7 @@ async def admin_page(request: Request, unpaid_only: bool = Query(False)):
         GROUP BY user_id
     """).fetchall()
 
-    if unpaid_only:
+    if unpaid_only_flag:
         bills = conn.execute("SELECT * FROM bills WHERE paid = 0 ORDER BY user_id, pay_period DESC").fetchall()
     else:
         bills = conn.execute("SELECT * FROM bills ORDER BY user_id, pay_period DESC").fetchall()
@@ -129,8 +131,9 @@ async def admin_page(request: Request, unpaid_only: bool = Query(False)):
         "summary": summary,
         "bills": bills,
         "total": total_unpaid,
-        "unpaid_only": unpaid_only
+        "unpaid_only": unpaid_only_flag
     })
+
 
 
 # Admin restore db from google drive (if necessary)
