@@ -109,7 +109,7 @@ async def admin_page(request: Request):
     conn.row_factory = sqlite3.Row
 
     summary = conn.execute("""
-        SELECT user_name, user_id, SUM(bill_amount) AS total_unpaid
+        SELECT user_name, user_id, SUM(bill_amount) AS total_unpaid, COUNT(*) AS unpaid_count
         FROM bills 
         WHERE paid = 0 
         GROUP BY user_id
@@ -124,7 +124,8 @@ async def admin_page(request: Request):
         "request": request,
         "summary": summary,
         "bills": bills,
-        "total": total_unpaid
+        "total": total_unpaid,
+        "count" : unpaid_count
     })
 
 
