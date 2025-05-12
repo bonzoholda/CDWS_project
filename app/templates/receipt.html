@@ -37,7 +37,9 @@ Pakai m³: {{ bill['usage'] }}
 31+ m³[4,000]: {{ "{:,.0f}".format(bill['lv4_cost']) }}
 Beban Dasar: {{ "{:,.0f}".format(bill['basic_cost']) }}
 
+<div class = "total-bill">
 Total Bayar: {{ "{:,.0f}".format(bill['bill_amount']) }}
+</div>
 
 Waktu Bayar:
 {{ bill['payment_timestamp'] }}
