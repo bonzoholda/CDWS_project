@@ -75,7 +75,10 @@
         <details>
         <summary style="cursor: pointer; font-weight: bold; margin-top: 1em;">Data Seluruh Tagihan</summary>
     <input type="text" id="billSearch" placeholder="Search by user name or ID..." style="margin: 1em 0; padding: 5px; width: 250px;">
-    <button id="togglePaidButton" style="margin-bottom: 10px;">Tampilkan Periode Belum Terbayar</button>
+    <button id="togglePaidButton">
+        {{ "Tampilkan Semua Periode" if unpaid_only else "Tampilkan Periode Belum Terbayar" }}
+    </button>
+
     
     <!-- ✅ Form for marking selected bills as PAID -->
     <form action="/admin/update_payment" method="post">
@@ -235,30 +238,15 @@ document.getElementById("filterButton").addEventListener("click", function () {
 let filterPaid = false;
 
 document.getElementById("togglePaidButton").addEventListener("click", function () {
-    const table = document.getElementById("billTable").getElementsByTagName("tbody")[0];
-    const rows = table.getElementsByTagName("tr");
-
+    const params = new URLSearchParams(window.location.search);
     if (!filterPaid) {
-        for (let i = 0; i < rows.length; i++) {
-            const statusCell = rows[i].children[5]; // Column 6 = Status (PAID/UNPAID)
-            if (statusCell.innerText.includes("UNPAID")) {
-                rows[i].style.display = "";
-            } else {
-                rows[i].style.display = "none";
-            }
-        }
-        this.textContent = "Tampilkan Semua Periode";
+        params.set("unpaid_only", "true");
     } else {
-        for (let i = 0; i < rows.length; i++) {
-            rows[i].style.display = "";
-        }
-        this.textContent = "Tampilkan Periode Belum Terbayar";
+        params.delete("unpaid_only");
     }
-
-    filterPaid = !filterPaid;
+    window.location.search = params.toString();
 });
 </script>
-
 
     
 </body>
