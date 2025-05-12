@@ -34,7 +34,11 @@
 <details>
 <summary style="cursor: pointer; font-weight: bold; margin-top: 1em;">Tagihan Belum Terbayar</summary>
 
-<input type="text" id="invoiceSearch" placeholder="Search by user name or ID..." style="margin: 1em 0; padding: 5px; width: 250px;">
+<div class="search-container">
+  <input type="text" id="invoiceSearch" placeholder="Search by user name or ID...">
+  <span class="clear-icon" id="clearIcon">&times;</span>
+</div>
+
 <button id="filterButton" style="margin-bottom: 10px;">Tampilkan Tagihan > 2 periode</button>
 <table class="invoice-table" id="invoiceTable" border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse; width: 100%;">
     <thead>
@@ -183,17 +187,34 @@
     }
     </script>
 
+//--------------searchbox -----------------//    
 <script>
-document.getElementById('invoiceSearch').addEventListener('input', function () {
-    const filter = this.value.toLowerCase();
+const input = document.getElementById('invoiceSearch');
+const clearIcon = document.getElementById('clearIcon');
+
+function filterTable() {
+    const filter = input.value.toLowerCase();
     const rows = document.querySelectorAll('#invoiceTable tbody tr');
 
     rows.forEach(function (row) {
         const rowText = row.textContent.toLowerCase();
         row.style.display = rowText.includes(filter) ? '' : 'none';
     });
+
+    clearIcon.style.display = filter ? 'block' : 'none';
+}
+
+// Run filter on input
+input.addEventListener('input', filterTable);
+
+// Clear filter when clicking the icon
+clearIcon.addEventListener('click', function () {
+    input.value = '';
+    filterTable(); // reset filter
+    input.focus();
 });
 </script>
+
 
 
     
