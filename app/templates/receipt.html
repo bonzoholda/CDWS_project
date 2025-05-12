@@ -1,30 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Payment Receipt</title>
-    <link rel="stylesheet" href="static/print-invoice.css" media="print">
+  <meta charset="utf-8">
+  <title>Receipt</title>
+  <link rel="stylesheet" href="static/print-invoice.css">
 </head>
-<body class="pageview">
+<body>
+  <div class="receipt">
+    <div class="receipt-logo">
+      <img src="/static/images/hb-logo-tiny.png" alt="Logo" class="logo">
+    </div>
 
-    <!-- ✅ NAVBAR goes here -->
-    <nav>
-        <ul>
-            <li><a href="/admin">🏠 Dashboard</a></li>
-        </ul>
-    </nav>
-
-<div class="receipt">
-
-  <div class="receipt-logo">
-    <img src="/static/images/hb-logo-tiny.png" alt="Logo" class="logo">
-  </div>
-
-  <div class="receipt-content">
-    <div style="font-weight: bold; font-size: 1.2em; text-align: center;">
+    <div class="receipt-title">
       HIPPAM BARU
     </div>
 
-    <pre>
+    <div class="receipt-content">
+<pre>
 Resi Pembayaran
 No: {{ bill['receipt_no'] }}
 
@@ -44,27 +36,19 @@ Pakai m³: {{ bill['usage'] }}
 21–30 m³[2,500]: {{ "{:,.0f}".format(bill['lv3_cost']) }}
 31+ m³[4,000]: {{ "{:,.0f}".format(bill['lv4_cost']) }}
 Beban Dasar: {{ "{:,.0f}".format(bill['basic_cost']) }}
-    </pre>
 
-    <div style="font-weight: bold; font-size: 1.2em;">
-      Total Bayar: {{ "{:,.0f}".format(bill['bill_amount']) }}
-    </div>
+Total Bayar: {{ "{:,.0f}".format(bill['bill_amount']) }}
 
-    <pre>
 Waktu Bayar:
 {{ bill['payment_timestamp'] }}
-    </pre>
-  </div>
-
-  <hr>
-
-</div>
-
-
-
-    <div class="no-print">
-        <button onclick="window.print()">Cetak Resi</button>
+</pre>
     </div>
 
+    <hr>
+  </div>
+    <div class="no-print">
+        <button onclick="window.print()">Cetak Resi</button>
+    </div>    
 </body>
 </html>
+
