@@ -79,9 +79,10 @@
         <details>
         <summary style="cursor: pointer; font-weight: bold; margin-top: 1em;">Data Seluruh Tagihan</summary>
 <div class="search-container">
-  <input type="text" id="billSearch" placeholder="Search by user name or ID...">
+  <input type="text" id="billSearch" placeholder="Search by bill name or ID...">
   <span class="clear-icon" id="clearIconBill">&times;</span>
 </div>
+
 <button id="togglePaidButton">
     {{ "Tampilkan Semua Periode" if unpaid_only else "Tampilkan Periode Belum Terbayar" }}
 </button>
@@ -248,6 +249,7 @@ clearIcon.addEventListener('click', function () {
     input.focus();
 });
 </script>
+
 
 <script>
 let filtered = false;
