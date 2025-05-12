@@ -200,7 +200,7 @@ async def user_view(request: Request, user_id: str):
     finally:
         conn.close()
 
-
+# ====upload csv route
 @app.post("/admin/upload")
 async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
     check_admin_logged_in(request)
@@ -211,7 +211,7 @@ async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
     decoded = contents.decode("utf-8")
     raw_reader = csv.DictReader(io.StringIO(decoded))
 
-    # Header mapping: CSV header → expected DB key
+    # Header mapping: CSV header → expected DB column name
     csv_to_db_keys = {
         'lvl1_cost': 'lv1_cost',
         'lvl2_cost': 'lv2_cost',
@@ -232,7 +232,7 @@ async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
     inserted_count = 0
     for raw_row in raw_reader:
         try:
-            # Remap keys using header mapping
+            # Remap keys using defined mapping
             row = {}
             for csv_key, db_key in csv_to_db_keys.items():
                 if csv_key in raw_row:
@@ -243,27 +243,29 @@ async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
             user_id = row['user_id']
             pay_period = row['pay_period']
 
-            # Check for duplicate entry
+            # Check for duplicate
             cursor.execute("SELECT 1 FROM bills WHERE user_id = ? AND pay_period = ?", (user_id, pay_period))
             if cursor.fetchone():
                 print(f"⚠️ Skipping duplicate: user_id={user_id}, pay_period={pay_period}")
                 continue
 
-            # Cleaning functions
+            # === Cleaning Functions ===
             def clean_int(val):
-                return int(float(val.replace(',', '') or 0))
+                val = val.replace('$', '').replace(',', '').strip()
+                return int(float(val or 0))
 
             def clean_float(val):
-                return round(float(val.replace(',', '') or 0.0), 2)
+                val = val.replace('$', '').replace(',', '').strip()
+                return round(float(val or 0.0), 2)
 
             def clean_date_to_mmdd(val):
                 try:
-                    dt = datetime.strptime(val, "%m/%d/%Y")  # adjust if needed
+                    dt = datetime.strptime(val.strip(), "%m/%d/%Y")
                     return dt.strftime("%m/%d")
                 except:
                     return val.strip()
 
-            # Clean values
+            # === Clean fields ===
             meter_past = clean_int(row['meter_past'])
             meter_now = clean_int(row['meter_now'])
             usage = clean_int(row['usage'])
@@ -275,7 +277,7 @@ async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
             bill_amount = clean_float(row['bill_amount'])
             user_address = clean_date_to_mmdd(row['user_address'])
 
-            # Insert row
+            # === Insert into DB ===
             cursor.execute("""
                 INSERT INTO bills (
                     user_id, device_id, user_name, user_address, pay_period, meter_past, meter_now,
@@ -303,6 +305,7 @@ async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
     backup_db()
 
     return RedirectResponse(url="/admin", status_code=303)
+
 
 
 # Admin invoice route (view and print invoices)
