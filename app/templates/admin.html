@@ -78,7 +78,10 @@
 
         <details>
         <summary style="cursor: pointer; font-weight: bold; margin-top: 1em;">Data Seluruh Tagihan</summary>
-    <input type="text" id="billSearch" placeholder="Search by user name or ID..." style="margin: 1em 0; padding: 5px; width: 250px;">
+<div class="search-container">
+  <input type="text" id="billSearch" placeholder="Search by user name or ID...">
+  <span class="clear-icon" id="clearIcon">&times;</span>
+</div>
 <button id="togglePaidButton">
     {{ "Tampilkan Semua Periode" if unpaid_only else "Tampilkan Periode Belum Terbayar" }}
 </button>
@@ -187,7 +190,7 @@
     }
     </script>
 
-//--------------searchbox -----------------//    
+//--------------searchbox invoice-----------------//    
 <script>
 const input = document.getElementById('invoiceSearch');
 const clearIcon = document.getElementById('clearIcon');
@@ -218,15 +221,31 @@ clearIcon.addEventListener('click', function () {
 
 
     
+//--------------searchbox bill-----------------//    
 <script>
-document.getElementById('billSearch').addEventListener('input', function () {
-    const searchTerm = this.value.toLowerCase(); // Correct variable
+const input = document.getElementById('billSearch');
+const clearIcon = document.getElementById('clearIcon');
+
+function filterTable() {
+    const filter = input.value.toLowerCase();
     const rows = document.querySelectorAll('#billTable tbody tr');
 
     rows.forEach(function (row) {
         const rowText = row.textContent.toLowerCase();
-        row.style.display = rowText.includes(searchTerm) ? '' : 'none'; // Use searchTerm here
+        row.style.display = rowText.includes(filter) ? '' : 'none';
     });
+
+    clearIcon.style.display = filter ? 'block' : 'none';
+}
+
+// Run filter on input
+input.addEventListener('input', filterTable);
+
+// Clear filter when clicking the icon
+clearIcon.addEventListener('click', function () {
+    input.value = '';
+    filterTable(); // reset filter
+    input.focus();
 });
 </script>
 
