@@ -47,7 +47,7 @@
           {% for bill in user_data %}
             <tr>
               <td data-label="Periode">{{ bill.pay_period }}</td>
-              <td data-label="Nomor SR">{{ bill.device_id }}</td>
+              <td data-label="Nomor SR">{{ "{:,.0f}".format(bill.device_id|float) }}</td>
               <td data-label="Alamat">{{ bill.user_address }}</td>
               <td data-label="Meter Lalu">{{ "{:,.0f}".format(bill.meter_past|float) }}</td>
               <td data-label="Meter Sekarang">{{ "{:,.0f}".format(bill.meter_now|float) }}</td>
