@@ -35,7 +35,7 @@
 <summary style="cursor: pointer; font-weight: bold; margin-top: 1em;">Tagihan Belum Terbayar</summary>
 
 <input type="text" id="invoiceSearch" placeholder="Search by user name or ID..." style="margin: 1em 0; padding: 5px; width: 250px;">
-
+<button id="filterButton" style="margin-bottom: 10px;">Tampilkan Tagihan > 2 periode</button>
 <table class="invoice-table" id="invoiceTable" border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse; width: 100%;">
     <thead>
         <tr>
@@ -203,6 +203,30 @@ document.getElementById('billSearch').addEventListener('input', function () {
         const rowText = row.textContent.toLowerCase();
         row.style.display = rowText.includes(searchTerm) ? '' : 'none'; // Use searchTerm here
     });
+});
+</script>
+
+<script>
+let filtered = false;
+
+document.getElementById("filterButton").addEventListener("click", function () {
+    const table = document.getElementById("invoiceTable").getElementsByTagName("tbody")[0];
+    const rows = table.getElementsByTagName("tr");
+
+    if (!filtered) {
+        for (let i = 0; i < rows.length; i++) {
+            const unpaidCount = parseInt(rows[i].children[3].innerText);
+            rows[i].style.display = unpaidCount > 2 ? "" : "none";
+        }
+        this.textContent = "Tampilkan Semua Tagihan Belum Terbayar";
+    } else {
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].style.display = "";
+        }
+        this.textContent = "Tampilkan Tagihan > 2 periode";
+    }
+
+    filtered = !filtered;
 });
 </script>
 
