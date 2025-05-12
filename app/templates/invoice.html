@@ -74,7 +74,7 @@
           {% for bill in user_data %}
             <tr>
               <td>{{ bill.pay_period }}</td>
-              <td>{{ bill.device_id }}</td>
+              <td>{{ "{:,.0f}".format(bill.device_id|float) }}</td>
               <td>{{ bill.user_address }}</td>
               <td>{{ "{:,.0f}".format(bill.meter_past|float) }}</td>
               <td>{{ "{:,.0f}".format(bill.meter_now|float) }}</td>
