@@ -25,7 +25,7 @@ Nama: {{ bill['user_name'] }}
 Alamat: RT. {{ bill['user_address'] }}
 
 Periode: {{ bill['pay_period'] }}
-Nomor SR: {{ bill['device_id'] }}
+Nomor SR: {{ "{:,.0f}".format(bill.device_id|float) }}
 
 Meter Lalu: {{ bill['meter_past'] }}
 Meter Kini: {{ bill['meter_now'] }}
