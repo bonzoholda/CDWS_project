@@ -1,6 +1,6 @@
 @media print {
   body {
-    width: 80mm;
+    width: 50mm;
     margin: 0;
     padding: 5mm;
     font-size: 12px;
@@ -13,13 +13,14 @@
 
 @media print {
   .receipt-logo {
+    width: 30mm;
     display: block;
     text-align: center;
     margin-bottom: 10mm;
   }
 
   .receipt-logo img {
-    width: 40mm;        /* ~300px */
+    width: 30mm;        /* ~300px */
     height: auto;
     display: inline-block;
   }
