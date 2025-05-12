@@ -221,14 +221,13 @@ clearIcon.addEventListener('click', function () {
 
 
 
-    
-<!-- ✅ searchbox for bill -->   
+<!-- ✅ searchbox for bill -->     
 <script>
-const input = document.getElementById('billSearch');
-const clearIcon = document.getElementById('clearIconBill');
+const billInput = document.getElementById('billSearch');
+const clearIconBill = document.getElementById('clearIconBill');
 
-function filterTable() {
-    const filter = input.value.toLowerCase();
+function filterBillTable() {
+    const filter = billInput.value.toLowerCase();
     const rows = document.querySelectorAll('#billTable tbody tr');
 
     rows.forEach(function (row) {
@@ -236,19 +235,20 @@ function filterTable() {
         row.style.display = rowText.includes(filter) ? '' : 'none';
     });
 
-    clearIcon.style.display = filter ? 'block' : 'none';
+    clearIconBill.style.display = filter ? 'block' : 'none';
 }
 
 // Run filter on input
-input.addEventListener('input', filterTable);
+billInput.addEventListener('input', filterBillTable);
 
 // Clear filter when clicking the icon
-clearIcon.addEventListener('click', function () {
-    input.value = '';
-    filterTable(); // reset filter
-    input.focus();
+clearIconBill.addEventListener('click', function () {
+    billInput.value = '';
+    filterBillTable(); // reset filter
+    billInput.focus();
 });
 </script>
+
 
 
 <script>
