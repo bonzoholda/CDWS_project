@@ -4,6 +4,10 @@
     padding: 0;
   }
 
+  .pageview {
+    width: 50mm;
+  }
+  
   .receipt {
     width: 50mm;
     padding: 2mm;
