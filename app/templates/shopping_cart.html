@@ -64,6 +64,9 @@
     </table>
 
   <button type="submit" id="checkoutButton" style="margin-top: 1em;">✅ Checkout & Mark Selected as Paid</button>
+  <button type="button" id="emptyCartButton" style="margin-top: 1em; margin-left: 1em; background-color: #e74c3c; color: white;">
+    🗑️ Empty Cart
+  </button>
 
   </form>
 </section>
@@ -130,6 +133,10 @@
         <td>UNPAID</td>
       `;
       cartBody.appendChild(row);
+
+      // Show the checkout button again
+    document.getElementById('checkoutButton').style.display = 'inline-block';
+      
     });
   });
 
@@ -147,6 +154,12 @@
   });
 </script>
 
+document.getElementById('emptyCartButton').addEventListener('click', function () {
+  cartBody.innerHTML = '';
+  document.getElementById('checkoutButton').style.display = 'none';
+
+});
+  
 
 </div>
 </body>
