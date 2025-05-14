@@ -145,26 +145,42 @@
     });
   });
 
-  // Search filter functionality
-  document.getElementById('billSearch').addEventListener('input', function () {
-    const value = this.value.toLowerCase();
-    document.querySelectorAll('#availableBillsTable tbody tr').forEach(row => {
-      row.style.display = row.innerText.toLowerCase().includes(value) ? '' : 'none';
-    });
-  });
-
-  document.getElementById('clearSearch').addEventListener('click', function () {
-    document.getElementById('billSearch').value = '';
-    document.querySelectorAll('#availableBillsTable tbody tr').forEach(row => row.style.display = '');
-  });
-</script>
 
 document.getElementById('emptyCartButton').addEventListener('click', function () {
   document.getElementById('checkoutButton').style.display = 'none';
-
 });
   
+</script>
 
+<script>
+const billSearchInput = document.getElementById('billSearch');
+const clearSearchIcon = document.getElementById('clearSearch');
+
+function filterBillsTable() {
+    const filter = billSearchInput.value.toLowerCase();
+    const rows = document.querySelectorAll('#availableBillsTable tbody tr');
+
+    rows.forEach(function (row) {
+        const rowText = row.textContent.toLowerCase();
+        row.style.display = rowText.includes(filter) ? '' : 'none';
+    });
+
+    clearSearchIcon.style.display = filter ? 'block' : 'none';
+}
+
+// Run filter on input
+billSearchInput.addEventListener('input', filterBillsTable);
+
+// Clear filter when clicking the icon
+clearSearchIcon.addEventListener('click', function () {
+    billSearchInput.value = '';
+    filterBillsTable(); // reset filter
+    billSearchInput.focus();
+});
+</script>
+
+  
+  
 </div>
 </body>
 </html>
