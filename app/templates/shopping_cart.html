@@ -88,8 +88,7 @@
     </thead>
     <tbody>
       {% for bill in bills %}
-        <!-- Simplify the condition temporarily to check if bills show up -->
-        {% if not bill.paid %}
+        {% if not bill.paid and bill.id not in receipt_ids_list %}
           <tr data-bill-id="{{ bill.id }}">
             <td>
               <button type="button" class="add-to-cart"
@@ -113,6 +112,7 @@
 <script>
   const cartBody = document.getElementById('cartBody');
   const addButtons = document.querySelectorAll('.add-to-cart');
+  const checkoutButton = document.querySelector('button[type="submit"]');
 
   addButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -121,9 +121,10 @@
       const period = btn.dataset.period;
       const amount = parseFloat(btn.dataset.amount);
 
-      // Prevent duplicates
+      // Check if already added to cart
       if (document.querySelector(`#cartBody tr[data-bill-id='${billId}']`)) return;
 
+      // Create new row in cart
       const row = document.createElement('tr');
       row.setAttribute('data-bill-id', billId);
       row.innerHTML = `
@@ -134,10 +135,13 @@
         <td>UNPAID</td>
       `;
       cartBody.appendChild(row);
+
+      // Dynamically show checkout button
+      toggleCheckoutButton();
     });
   });
 
-  // 🔍 Search filter
+  // Search filter functionality
   document.getElementById('billSearch').addEventListener('input', function () {
     const value = this.value.toLowerCase();
     document.querySelectorAll('#availableBillsTable tbody tr').forEach(row => {
@@ -149,6 +153,18 @@
     document.getElementById('billSearch').value = '';
     document.querySelectorAll('#availableBillsTable tbody tr').forEach(row => row.style.display = '');
   });
+
+  // Toggle the visibility of the checkout button based on checkbox selection
+  function toggleCheckoutButton() {
+    const selectedCheckboxes = document.querySelectorAll('#cartBody input[type="checkbox"]:checked');
+    checkoutButton.style.display = selectedCheckboxes.length > 0 ? 'inline-block' : 'none';
+  }
+
+  // Listen for checkbox change to update checkout visibility
+  document.getElementById('cartForm').addEventListener('change', toggleCheckoutButton);
+
+  // Initial call to show or hide checkout button if there are pre-selected items
+  toggleCheckoutButton();
 </script>
 
 </div>
