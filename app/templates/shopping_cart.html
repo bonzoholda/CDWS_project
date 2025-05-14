@@ -63,9 +63,8 @@
       </tbody>
     </table>
 
-    {% if has_unpaid %}
-      <button type="submit" id="checkoutButton" style="margin-top: 1em;">✅ Checkout & Mark Selected as Paid</button>
-    {% endif %}
+  <button type="submit" id="checkoutButton" style="margin-top: 1em;">✅ Checkout & Mark Selected as Paid</button>
+
   </form>
 </section>
 
@@ -110,7 +109,6 @@
 <script>
   const cartBody = document.getElementById('cartBody');
   const addButtons = document.querySelectorAll('.add-to-cart');
-  const checkoutButton = document.getElementById('checkoutButton');
 
   addButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -125,27 +123,15 @@
       const row = document.createElement('tr');
       row.setAttribute('data-bill-id', billId);
       row.innerHTML = `
-        <td><input type="checkbox" name="bill_ids" value="${billId}"></td>
+        <td><input type="checkbox" name="bill_ids" value="${billId}" checked></td>
         <td>${userName}</td>
         <td>${period}</td>
         <td style="text-align: right;">${amount.toLocaleString('id-ID')}</td>
         <td>UNPAID</td>
       `;
       cartBody.appendChild(row);
-
-      // Dynamically show checkout button
-      toggleCheckoutButton();
     });
   });
-
-  // Toggle checkout button visibility based on cart selection
-  function toggleCheckoutButton() {
-    const selectedCheckboxes = document.querySelectorAll('#cartBody input[type="checkbox"]:checked');
-    checkoutButton.style.display = selectedCheckboxes.length > 0 ? 'inline-block' : 'none';
-  }
-
-  // Listen for checkbox change to update checkout visibility
-  document.getElementById('cartForm').addEventListener('change', toggleCheckoutButton);
 
   // Search filter functionality
   document.getElementById('billSearch').addEventListener('input', function () {
@@ -159,10 +145,8 @@
     document.getElementById('billSearch').value = '';
     document.querySelectorAll('#availableBillsTable tbody tr').forEach(row => row.style.display = '');
   });
-
-  // Initial call to show or hide checkout button if there are pre-selected items
-  toggleCheckoutButton();
 </script>
+
 
 </div>
 </body>
