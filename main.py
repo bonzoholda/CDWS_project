@@ -175,24 +175,21 @@ async def update_payment_through_cart(request: Request, bill_ids: List[int] = Fo
 
 
 @app.get("/admin/shopping_cart", response_class=HTMLResponse)
-async def shopping_cart(request: Request, unpaid_only: Optional[str] = Query(None)):
-    check_admin_logged_in(request)
+def shopping_cart(request: Request):
+    check_admin_logged_in(request)    
+    receipt_ids_str = request.query_params.get("receipt_ids")
+    receipt_ids = [int(i) for i in receipt_ids_str.split(",") if i.strip().isdigit()] if receipt_ids_str else []
+
     conn = get_db_connection()
     conn.row_factory = sqlite3.Row
-
-    unpaid_only_flag = unpaid_only == "true"
-
-    # Fetch all bills regardless of status
     bills = conn.execute("SELECT * FROM bills ORDER BY user_id, pay_period DESC").fetchall()
-
     conn.close()
 
     return templates.TemplateResponse("shopping_cart.html", {
         "request": request,
         "bills": bills,
-        "unpaid_only": unpaid_only_flag  # Default filter for unpaid only
+        "receipt_ids": receipt_ids
     })
-
 
 
 
