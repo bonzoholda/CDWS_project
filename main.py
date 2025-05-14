@@ -174,9 +174,10 @@ async def update_payment_through_cart(request: Request, bill_ids: List[int] = Fo
         return {"error": "There was an issue processing the payment."}
 
 
+
 @app.get("/admin/shopping_cart", response_class=HTMLResponse)
 def shopping_cart(request: Request):
-    check_admin_logged_in(request)    
+    check_admin_logged_in(request)     
     receipt_ids_str = request.query_params.get("receipt_ids")
     receipt_ids = [int(i) for i in receipt_ids_str.split(",") if i.strip().isdigit()] if receipt_ids_str else []
 
@@ -190,7 +191,6 @@ def shopping_cart(request: Request):
         "bills": bills,
         "receipt_ids": receipt_ids
     })
-
 
 
 @app.post("/admin/cancel_payment")
