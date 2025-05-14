@@ -25,13 +25,11 @@
 <!-- 🛒 CART SECTION (always visible, shows selected/paid bills with receipt link) -->
 <section>
   <h3>🛒 Tagihan Dalam Keranjang</h3>
-
-  <!-- Form submits bill_ids -->
-  <form id="cartForm" action="/admin/update_payment_through_cart" method="post">
-    <input type="hidden" name="receipt_ids" value="{{ receipt_ids | join(',') }}">
+  <form action="/admin/update_payment_through_cart" method="post" id="cartForm">
     <table id="cartTable" class="invoice-table">
       <thead>
         <tr>
+          <th>Pilih</th>
           <th>Nama</th>
           <th>Periode</th>
           <th>Tagihan</th>
@@ -39,38 +37,40 @@
         </tr>
       </thead>
       <tbody id="cartBody">
-        {% set has_unpaid = False %}
+        {% set has_unpaid = false %}
         {% for bill in bills %}
-          {% if bill.id in receipt_ids %}
-            {% if not bill.paid %}
-              {% set has_unpaid = True %}
-            {% endif %}
-            <tr data-bill-id="{{ bill.id }}">
-              <input type="hidden" name="bill_ids" value="{{ bill.id }}">
-              <td>{{ bill.user_name }}</td>
-              <td>{{ bill.pay_period }}</td>
-              <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
-              <td>
-                {% if bill.paid %}
-                  ✅ PAID<br>
-                  <a href="/admin/receipt/{{ bill.id }}" target="_blank">🧾 Print Receipt</a>
-                {% else %}
-                  UNPAID
-                {% endif %}
-              </td>
-            </tr>
-          {% endif %}
+          <tr data-bill-id="{{ bill.id }}">
+            <td>
+              {% if not bill.paid %}
+                {% set has_unpaid = true %}
+                <input type="checkbox" name="bill_ids" value="{{ bill.id }}">
+              {% else %}
+                <!-- No checkbox for paid bills -->
+                ✅
+              {% endif %}
+            </td>
+            <td>{{ bill.user_name }}</td>
+            <td>{{ bill.pay_period }}</td>
+            <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
+            <td>
+              {% if bill.paid %}
+                ✅ PAID<br>
+                <a href="/admin/receipt/{{ bill.id }}" target="_blank">🧾 Print Receipt</a>
+              {% else %}
+                UNPAID
+              {% endif %}
+            </td>
+          </tr>
         {% endfor %}
       </tbody>
     </table>
 
     {% if has_unpaid %}
       <button type="submit" style="margin-top: 1em;">✅ Checkout & Mark Selected as Paid</button>
-    {% else %}
-      <p>Semua tagihan dalam keranjang sudah dibayar. ✅</p>
     {% endif %}
   </form>
 </section>
+
 
 
 
