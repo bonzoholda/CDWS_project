@@ -39,28 +39,29 @@
       <tbody id="cartBody">
         {% set has_unpaid = false %}
         {% for bill in bills %}
-          <tr data-bill-id="{{ bill.id }}">
-            <td>
-              {% if not bill.paid %}
-                {% set has_unpaid = true %}
-                <input type="checkbox" name="bill_ids" value="{{ bill.id }}">
-              {% else %}
-                <!-- No checkbox for paid bills -->
-                ✅
-              {% endif %}
-            </td>
-            <td>{{ bill.user_name }}</td>
-            <td>{{ bill.pay_period }}</td>
-            <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
-            <td>
-              {% if bill.paid %}
-                ✅ PAID<br>
-                <a href="/admin/receipt/{{ bill.id }}" target="_blank">🧾 Print Receipt</a>
-              {% else %}
-                UNPAID
-              {% endif %}
-            </td>
-          </tr>
+          {% if bill.id in receipt_ids %}
+            <tr data-bill-id="{{ bill.id }}">
+              <td>
+                {% if not bill.paid %}
+                  {% set has_unpaid = true %}
+                  <input type="checkbox" name="bill_ids" value="{{ bill.id }}">
+                {% else %}
+                  ✅
+                {% endif %}
+              </td>
+              <td>{{ bill.user_name }}</td>
+              <td>{{ bill.pay_period }}</td>
+              <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
+              <td>
+                {% if bill.paid %}
+                  ✅ PAID<br>
+                  <a href="/admin/receipt/{{ bill.id }}" target="_blank">🧾 Print Receipt</a>
+                {% else %}
+                  UNPAID
+                {% endif %}
+              </td>
+            </tr>
+          {% endif %}
         {% endfor %}
       </tbody>
     </table>
