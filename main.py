@@ -157,6 +157,51 @@ async def update_payment_route(
         mark_bills_as_paid(bill_ids)
     return RedirectResponse("/admin", status_code=303)
 
+
+
+@app.post("/admin/update_payment_through_cart")
+async def update_payment_through_cart(
+    request: Request,
+    bill_ids: Optional[List[int]] = Form(None)
+):
+    check_admin_logged_in(request)
+    if bill_ids:
+        mark_bills_as_paid(bill_ids)
+        # Prepare receipt_ids for redirect
+        receipt_str = ",".join(map(str, bill_ids))
+        return RedirectResponse(
+            f"/admin/shopping-cart?receipt_ids={receipt_str}",
+            status_code=303
+        )
+    # If no bill_ids submitted, just go back without error
+    return RedirectResponse("/admin/shopping-cart", status_code=303)
+
+@app.get("/admin/shopping-cart", response_class=HTMLResponse)
+def shopping_cart(request: Request):
+    receipt_ids_str = request.query_params.get("receipt_ids")
+    bills = []
+
+    if receipt_ids_str:
+        try:
+            receipt_ids = [int(rid) for rid in receipt_ids_str.split(",") if rid.strip().isdigit()]
+            if receipt_ids:
+                conn = get_db_connection()
+                cursor = conn.cursor()
+                query = f"SELECT * FROM bills WHERE id IN ({','.join(['?']*len(receipt_ids))})"
+                cursor.execute(query, receipt_ids)
+                bills = cursor.fetchall()
+                conn.close()
+        except Exception as e:
+            print(f"⚠️ Error loading receipts: {e}")
+
+    return templates.TemplateResponse("shopping_cart.html", {
+        "request": request,
+        "bills": bills,
+        "unpaid_only": True  # optional, you may adjust based on use case
+    })
+
+
+
 @app.post("/admin/cancel_payment")
 async def cancel_payment_route(
     request: Request,
