@@ -170,11 +170,11 @@ async def update_payment_through_cart(
         # Prepare receipt_ids for redirect
         receipt_str = ",".join(map(str, bill_ids))
         return RedirectResponse(
-            f"/admin/shopping-cart?receipt_ids={receipt_str}",
+            f"/admin/shopping_cart?receipt_ids={receipt_str}",
             status_code=303
         )
     # If no bill_ids submitted, just go back without error
-    return RedirectResponse("/admin/shopping-cart", status_code=303)
+    return RedirectResponse("/admin/shopping_cart", status_code=303)
 
 @app.get("/admin/shopping_cart", response_class=HTMLResponse)
 def shopping_cart(request: Request, unpaid_only: Optional[str] = Query("true")):
