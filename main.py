@@ -188,23 +188,36 @@ async def shopping_cart(request: Request, receipt_ids: Optional[str] = Query(Non
     conn.row_factory = sqlite3.Row
 
     receipt_id_list = []
-    bills = []
+    selected_bills = []
+    all_unpaid_bills = []
 
     if receipt_ids:
         receipt_id_list = [int(i) for i in receipt_ids.split(",") if i.isdigit()]
         placeholders = ",".join(["?"] * len(receipt_id_list))
-        bills = conn.execute(
+        selected_bills = conn.execute(
             f"SELECT * FROM bills WHERE id IN ({placeholders})",
             receipt_id_list
         ).fetchall()
+
+    # Load all unpaid bills for selection (excluding already selected ones)
+    if receipt_id_list:
+        placeholders = ",".join(["?"] * len(receipt_id_list))
+        all_unpaid_bills = conn.execute(
+            f"SELECT * FROM bills WHERE paid = 0 AND id NOT IN ({placeholders})",
+            receipt_id_list
+        ).fetchall()
+    else:
+        all_unpaid_bills = conn.execute("SELECT * FROM bills WHERE paid = 0").fetchall()
 
     conn.close()
 
     return templates.TemplateResponse("shopping_cart.html", {
         "request": request,
-        "bills": bills,
+        "selected_bills": selected_bills,
         "receipt_ids": receipt_id_list,
+        "all_unpaid_bills": all_unpaid_bills,
     })
+
 
 
 
