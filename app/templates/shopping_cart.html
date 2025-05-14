@@ -25,7 +25,10 @@
 <!-- 🛒 CART SECTION (always visible, shows selected/paid bills with receipt link) -->
 <section>
   <h3>🛒 Tagihan Dalam Keranjang</h3>
-  <form action="/admin/update_payment_through_cart" method="post" id="cartForm">
+
+  <!-- Form submits bill_ids -->
+  <form id="cartForm" action="/admin/update_payment_through_cart" method="post">
+    <input type="hidden" name="receipt_ids" value="{{ receipt_ids | join(',') }}">
     <table id="cartTable" class="invoice-table">
       <thead>
         <tr>
@@ -54,13 +57,17 @@
             </tr>
           {% endif %}
         {% endfor %}
-
       </tbody>
     </table>
 
-    <button type="submit" style="margin-top: 1em;">✅ Checkout & Mark Selected as Paid</button>
+    {% if receipt_ids %}
+      <button type="submit" style="margin-top: 1em;">✅ Checkout & Mark Selected as Paid</button>
+    {% else %}
+      <p>Belum ada tagihan dalam keranjang.</p>
+    {% endif %}
   </form>
 </section>
+
 
 <!-- 🔍 AVAILABLE BILLS SECTION -->
 <section style="margin-top: 3em;">
