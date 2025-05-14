@@ -182,30 +182,21 @@ async def update_payment_through_cart(request: Request, bill_ids: List[int] = Fo
 
 
 @app.get("/admin/shopping_cart", response_class=HTMLResponse)
-async def shopping_cart(request: Request, receipt_ids: Optional[str] = Query(None), unpaid_only: Optional[str] = Query("true")):
+async def shopping_cart(request: Request, receipt_ids: Optional[str] = Query(None)):
     check_admin_logged_in(request)
     conn = get_db_connection()
     conn.row_factory = sqlite3.Row
 
     receipt_id_list = []
+    bills = []
+
     if receipt_ids:
         receipt_id_list = [int(i) for i in receipt_ids.split(",") if i.isdigit()]
-
-    # Load bills depending on 'unpaid_only' filter
-    if unpaid_only == "true":
-        bills = conn.execute("SELECT * FROM bills WHERE paid = 0").fetchall()
-    else:
-        bills = conn.execute("SELECT * FROM bills").fetchall()
-
-    # Also load any paid bills in receipt_ids to keep them in the cart
-    if receipt_id_list:
-        extra_bills = conn.execute(
-            f"SELECT * FROM bills WHERE id IN ({','.join(['?'] * len(receipt_id_list))})",
+        placeholders = ",".join(["?"] * len(receipt_id_list))
+        bills = conn.execute(
+            f"SELECT * FROM bills WHERE id IN ({placeholders})",
             receipt_id_list
         ).fetchall()
-        bill_ids = {bill["id"] for bill in bills}
-        # Add paid bills not already in the list
-        bills += [b for b in extra_bills if b["id"] not in bill_ids]
 
     conn.close()
 
@@ -213,8 +204,8 @@ async def shopping_cart(request: Request, receipt_ids: Optional[str] = Query(Non
         "request": request,
         "bills": bills,
         "receipt_ids": receipt_id_list,
-        "unpaid_only": unpaid_only == "true"
     })
+
 
 
 
