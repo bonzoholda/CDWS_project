@@ -27,60 +27,59 @@
   </button>
 
   <!-- Form to submit selected bills -->
-  <form action="/admin/update_payment_through_cart" method="post">
-    <table class="invoice-table" id="billTable" border="1">
-      <thead>
-        <tr>
-          <th>🛒 Pilih</th>
-          <th>User ID</th>
-          <th>Nama</th>
-          <th>Periode</th>
-          <th>Tagihan</th>
-          <th>Status</th>
+<form action="/admin/update_payment_through_cart" method="post">
+  <table class="invoice-table" id="billTable" border="1">
+    <thead>
+      <tr>
+        <th>🛒 Pilih</th>
+        <th>User ID</th>
+        <th>Nama</th>
+        <th>Periode</th>
+        <th>Tagihan</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% set receipt_ids = request.query_params.get('receipt_ids', '').split(',') | map('int') | list %}
+      {% set total_cart = 0 %}
+      {% for bill in bills %}
+        <tr class="bill-row">
+          <td>
+            {% if not bill.paid %}
+              <input type="checkbox" name="bill_ids" value="{{ bill.id }}" class="cart-checkbox"
+                     data-amount="{{ bill.bill_amount }}">
+            {% endif %}
+          </td>
+          <td>{{ bill.user_id }}</td>
+          <td>{{ bill.user_name }}</td>
+          <td>{{ bill.pay_period }}</td>
+          <td style="text-align: right;">
+            {{ "{:,.0f}".format(bill.bill_amount | float) }}
+          </td>
+          <td>
+            {% if bill.paid %}
+              ✅ PAID
+              <br>
+              <a href="/admin/receipt/{{ bill.id }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                🧾 Print Receipt
+              </a>
+            {% else %}
+              UNPAID
+            {% endif %}
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        {% set receipt_ids = request.query_params.get('receipt_ids', '').split(',') | map('int') | list %}
-        {% set total_cart = 0 %}
-        {% for bill in bills %}
-          <tr class="bill-row">
-            <td>
-              {% if not bill.paid %}
-                <input type="checkbox" name="bill_ids" value="{{ bill.id }}" class="cart-checkbox"
-                       data-amount="{{ bill.bill_amount }}">
-              {% endif %}
-            </td>
-            <td>{{ bill.user_id }}</td>
-            <td>{{ bill.user_name }}</td>
-            <td>{{ bill.pay_period }}</td>
-            <td style="text-align: right;">
-              {{ "{:,.0f}".format(bill.bill_amount|float) }}
-            </td>
-            <td>
-              {% if bill.paid %}
-                ✅ PAID
-                {% if bill.id in receipt_ids %}
-                  <br>
-                  <a href="/admin/receipt/{{ bill.id }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                    🧾 Print Receipt
-                  </a>
-                {% endif %}
-              {% else %}
-                UNPAID
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+      {% endfor %}
+    </tbody>
+  </table>
 
-    <!-- Cart summary and submit -->
-    <div style="margin-top: 1em; text-align: right;">
-      <strong>Total dalam Cart:</strong> <span id="cartTotal">Rp 0</span>
-    </div>
+  <!-- Cart summary and submit -->
+  <div style="margin-top: 1em; text-align: right;">
+    <strong>Total dalam Cart:</strong> <span id="cartTotal">Rp 0</span>
+  </div>
 
-    <button type="submit" style="margin-top: 1em;">✅ Checkout & Mark Selected as Paid</button>
-  </form>
+  <button type="submit" style="margin-top: 1em;">✅ Checkout & Mark Selected as Paid</button>
+</form>
+
 </details>
 
 <script>
