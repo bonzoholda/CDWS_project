@@ -176,7 +176,7 @@ async def update_payment_through_cart(
     # If no bill_ids submitted, just go back without error
     return RedirectResponse("/admin/shopping-cart", status_code=303)
 
-@app.get("/admin/shopping-cart", response_class=HTMLResponse)
+@app.get("/admin/shopping_cart", response_class=HTMLResponse)
 def shopping_cart(request: Request):
     receipt_ids_str = request.query_params.get("receipt_ids")
     bills = []
