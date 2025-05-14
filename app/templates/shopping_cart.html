@@ -113,6 +113,7 @@
 <script>
   const cartBody = document.getElementById('cartBody');
   const addButtons = document.querySelectorAll('.add-to-cart');
+  document.getElementById('checkoutButton').style.display = 'none';
 
   addButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -156,7 +157,7 @@
 </script>
 
 document.getElementById('emptyCartButton').addEventListener('click', function () {
-  cartBody.innerHTML = '';
+  location.reload();
   document.getElementById('checkoutButton').style.display = 'none';
 
 });
