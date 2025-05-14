@@ -1,28 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-    <!-- ✅ NAVBAR goes here -->
-    <header>
-      <nav>
-          <ul>
-              <li><a href="/admin">🏠 Dashboard</a></li>
-              <li><a href="/admin/logout">🚪 Logout</a></li>
-          </ul>
-      </nav>
-    </header>
-    
+<!-- ✅ NAVBAR -->
+<header>
+  <nav>
+    <ul>
+      <li><a href="/admin">🏠 Dashboard</a></li>
+      <li><a href="/admin/logout">🚪 Logout</a></li>
+    </ul>
+  </nav>
+</header>
+
 <div class="form-container">
 
-
-<!-- 🛒 CART SECTION (always visible, shows selected/paid bills with receipt link) -->
+<!-- 🛒 CART SECTION -->
 <section>
   <h3>🛒 Tagihan Dalam Keranjang</h3>
   <form action="/admin/update_payment_through_cart" method="post" id="cartForm">
@@ -38,30 +37,28 @@
       </thead>
       <tbody id="cartBody">
         {% set has_unpaid = false %}
-        {% for bill in bills %}
-          {% if bill.id in receipt_ids %}
-            <tr data-bill-id="{{ bill.id }}">
-              <td>
-                {% if not bill.paid %}
-                  {% set has_unpaid = true %}
-                  <input type="checkbox" name="bill_ids" value="{{ bill.id }}">
-                {% else %}
-                  ✅
-                {% endif %}
-              </td>
-              <td>{{ bill.user_name }}</td>
-              <td>{{ bill.pay_period }}</td>
-              <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
-              <td>
-                {% if bill.paid %}
-                  ✅ PAID<br>
-                  <a href="/admin/receipt/{{ bill.id }}" target="_blank">🧾 Print Receipt</a>
-                {% else %}
-                  UNPAID
-                {% endif %}
-              </td>
-            </tr>
-          {% endif %}
+        {% for bill in selected_bills %}
+          <tr data-bill-id="{{ bill.id }}">
+            <td>
+              {% if not bill.paid %}
+                {% set has_unpaid = true %}
+                <input type="checkbox" name="bill_ids" value="{{ bill.id }}">
+              {% else %}
+                ✅
+              {% endif %}
+            </td>
+            <td>{{ bill.user_name }}</td>
+            <td>{{ bill.pay_period }}</td>
+            <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
+            <td>
+              {% if bill.paid %}
+                ✅ PAID<br>
+                <a href="/admin/receipt/{{ bill.id }}" target="_blank">🧾 Print Receipt</a>
+              {% else %}
+                UNPAID
+              {% endif %}
+            </td>
+          </tr>
         {% endfor %}
       </tbody>
     </table>
@@ -71,8 +68,6 @@
     {% endif %}
   </form>
 </section>
-
-
 
 <!-- 🔍 AVAILABLE BILLS SECTION -->
 <section style="margin-top: 3em;">
@@ -92,29 +87,25 @@
       </tr>
     </thead>
     <tbody>
-        {% for bill in bills %}
-          {% if not bill.paid and bill.id not in receipt_ids %}
-            <tr data-bill-id="{{ bill.id }}">
-              <td>
-                <button type="button" class="add-to-cart"
-                        data-id="{{ bill.id }}"
-                        data-name="{{ bill.user_name }}"
-                        data-period="{{ bill.pay_period }}"
-                        data-amount="{{ bill.bill_amount }}">
-                  ➕
-                </button>
-              </td>
-              <td>{{ bill.user_name }}</td>
-              <td>{{ bill.pay_period }}</td>
-              <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
-            </tr>
-          {% endif %}
-        {% endfor %}
-
+      {% for bill in all_unpaid_bills %}
+        <tr data-bill-id="{{ bill.id }}">
+          <td>
+            <button type="button" class="add-to-cart"
+                    data-id="{{ bill.id }}"
+                    data-name="{{ bill.user_name }}"
+                    data-period="{{ bill.pay_period }}"
+                    data-amount="{{ bill.bill_amount }}">
+              ➕
+            </button>
+          </td>
+          <td>{{ bill.user_name }}</td>
+          <td>{{ bill.pay_period }}</td>
+          <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
+        </tr>
+      {% endfor %}
     </tbody>
   </table>
 </section>
-
 
 <script>
   const cartBody = document.getElementById('cartBody');
@@ -127,14 +118,13 @@
       const period = btn.dataset.period;
       const amount = parseFloat(btn.dataset.amount);
 
-      // Check if already added
+      // Avoid duplicates
       if (document.querySelector(`#cartBody tr[data-bill-id='${billId}']`)) return;
 
-      // Create new row in cart
       const row = document.createElement('tr');
       row.setAttribute('data-bill-id', billId);
       row.innerHTML = `
-        <input type="hidden" name="bill_ids" value="${billId}">
+        <td><input type="checkbox" name="bill_ids" value="${billId}"></td>
         <td>${userName}</td>
         <td>${period}</td>
         <td style="text-align: right;">${amount.toLocaleString('id-ID')}</td>
@@ -144,7 +134,6 @@
     });
   });
 
-  // Search filter
   document.getElementById('billSearch').addEventListener('input', function () {
     const value = this.value.toLowerCase();
     document.querySelectorAll('#availableBillsTable tbody tr').forEach(row => {
@@ -157,7 +146,6 @@
     document.querySelectorAll('#availableBillsTable tbody tr').forEach(row => row.style.display = '');
   });
 </script>
-
 
 </div>
 </body>
