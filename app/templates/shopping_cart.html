@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="form-container">
+<h2>🛒 Shopping Cart Dashboard</h2>
+
+<details open>
+  <summary style="cursor: pointer; font-weight: bold; margin-top: 1em;">Pilih Tagihan Untuk Checkout</summary>
+
+  <!-- Search box -->
+  <div class="search-container">
+    <input type="text" id="billSearch" placeholder="Search by bill name or ID...">
+    <span class="clear-icon" id="clearIconBill">&times;</span>
+  </div>
+
+  <!-- Toggle view (optional) -->
+  <button id="togglePaidButton">
+    {{ "Tampilkan Semua Periode" if unpaid_only else "Tampilkan Periode Belum Terbayar" }}
+  </button>
+
+  <!-- Form to submit selected bills -->
+  <form action="/admin/update_payment_through_cart" method="post">
+    <table class="invoice-table" id="billTable" border="1">
+      <thead>
+        <tr>
+          <th>🛒 Pilih</th>
+          <th>User ID</th>
+          <th>Nama</th>
+          <th>Periode</th>
+          <th>Tagihan</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% set receipt_ids = request.query_params.get('receipt_ids', '').split(',') | map('int') | list %}
+        {% set total_cart = 0 %}
+        {% for bill in bills %}
+          <tr class="bill-row">
+            <td>
+              {% if not bill.paid %}
+                <input type="checkbox" name="bill_ids" value="{{ bill.id }}" class="cart-checkbox"
+                       data-amount="{{ bill.bill_amount }}">
+              {% endif %}
+            </td>
+            <td>{{ bill.user_id }}</td>
+            <td>{{ bill.user_name }}</td>
+            <td>{{ bill.pay_period }}</td>
+            <td style="text-align: right;">
+              {{ "{:,.0f}".format(bill.bill_amount|float) }}
+            </td>
+            <td>
+              {% if bill.paid %}
+                ✅ PAID
+                {% if bill.id in receipt_ids %}
+                  <br>
+                  <a href="/admin/receipt/{{ bill.id }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                    🧾 Print Receipt
+                  </a>
+                {% endif %}
+              {% else %}
+                UNPAID
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Cart summary and submit -->
+    <div style="margin-top: 1em; text-align: right;">
+      <strong>Total dalam Cart:</strong> <span id="cartTotal">Rp 0</span>
+    </div>
+
+    <button type="submit" style="margin-top: 1em;">✅ Checkout & Mark Selected as Paid</button>
+  </form>
+</details>
+
+<script>
+  // Search filter
+  const searchInput = document.getElementById('billSearch');
+  const clearIcon = document.getElementById('clearIconBill');
+  const billRows = document.querySelectorAll('.bill-row');
+
+  searchInput.addEventListener('input', function () {
+    const value = this.value.toLowerCase();
+    billRows.forEach(row => {
+      const text = row.innerText.toLowerCase();
+      row.style.display = text.includes(value) ? '' : 'none';
+    });
+    clearIcon.style.display = value ? 'inline' : 'none';
+  });
+
+  clearIcon.addEventListener('click', function () {
+    searchInput.value = '';
+    billRows.forEach(row => row.style.display = '');
+    clearIcon.style.display = 'none';
+  });
+
+  // Cart total calculation
+  const checkboxes = document.querySelectorAll('.cart-checkbox');
+  const cartTotalEl = document.getElementById('cartTotal');
+
+  function formatCurrency(amount) {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(amount);
+  }
+
+  function updateCartTotal() {
+    let total = 0;
+    checkboxes.forEach(cb => {
+      if (cb.checked) {
+        total += parseFloat(cb.getAttribute('data-amount') || 0);
+      }
+    });
+    cartTotalEl.innerText = formatCurrency(total);
+  }
+
+  checkboxes.forEach(cb => cb.addEventListener('change', updateCartTotal));
+</script>
+
+</div>
+</body>
+</html>
