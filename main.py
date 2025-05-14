@@ -160,41 +160,37 @@ async def update_payment_route(
 
 
 @app.post("/admin/update_payment_through_cart")
-async def update_payment_through_cart(
-    request: Request,
-    bill_ids: Optional[List[int]] = Form(None)
-):
-    check_admin_logged_in(request)
-    if bill_ids:
-        mark_bills_as_paid(bill_ids)
-        # Prepare receipt_ids for redirect
-        receipt_str = ",".join(map(str, bill_ids))
-        return RedirectResponse(
-            f"/admin/shopping_cart?receipt_ids={receipt_str}",
-            status_code=303
-        )
-    # If no bill_ids submitted, just go back without error
-    return RedirectResponse("/admin/shopping_cart", status_code=303)
+async def update_payment_through_cart(request: Request, bill_ids: List[int] = Form(...)):
+    try:
+        conn = get_db_connection()
+        for bill_id in bill_ids:
+            # Mark the bills as paid in the database
+            conn.execute("UPDATE bills SET paid = 1 WHERE id = ?", (bill_id,))
+        conn.commit()
+        conn.close()
+        return RedirectResponse(url='/admin/shopping_cart', status_code=303)  # redirect back to shopping cart
+    except Exception as e:
+        print(f"⚠️ Error processing payment: {e}")
+        return {"error": "There was an issue processing the payment."}
+
 
 @app.get("/admin/shopping_cart", response_class=HTMLResponse)
-def shopping_cart(request: Request, unpaid_only: Optional[str] = Query("true")):
+async def shopping_cart(request: Request, unpaid_only: Optional[str] = Query(None)):
     check_admin_logged_in(request)
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row  # ✅ enable dot-style access
+    conn.row_factory = sqlite3.Row
 
     unpaid_only_flag = unpaid_only == "true"
 
-    if unpaid_only_flag:
-        bills = conn.execute("SELECT * FROM bills WHERE paid = 0 ORDER BY user_id, pay_period DESC").fetchall()
-    else:
-        bills = conn.execute("SELECT * FROM bills ORDER BY user_id, pay_period DESC").fetchall()
+    # Fetch all bills regardless of status
+    bills = conn.execute("SELECT * FROM bills ORDER BY user_id, pay_period DESC").fetchall()
 
     conn.close()
 
     return templates.TemplateResponse("shopping_cart.html", {
         "request": request,
         "bills": bills,
-        "unpaid_only": unpaid_only_flag
+        "unpaid_only": unpaid_only_flag  # Default filter for unpaid only
     })
 
 
