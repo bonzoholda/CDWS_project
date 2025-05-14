@@ -20,7 +20,7 @@
     </header>
     
 <div class="form-container">
-<h2>🛒 Shopping Cart Dashboard</h2>
+
 
 <!-- 🛒 CART SECTION (always visible, shows selected/paid bills with receipt link) -->
 <section>
@@ -45,7 +45,7 @@
               <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
               <td>
                 {% if bill.paid %}
-                  ✅ PAID <br>
+                  ✅ PAID<br>
                   <a href="/admin/receipt/{{ bill.id }}" target="_blank">🧾 Print Receipt</a>
                 {% else %}
                   UNPAID
@@ -54,6 +54,7 @@
             </tr>
           {% endif %}
         {% endfor %}
+
       </tbody>
     </table>
 
@@ -79,18 +80,25 @@
       </tr>
     </thead>
     <tbody>
-      {% for bill in bills %}
-        {% if bill.id not in receipt_ids and not bill.paid %}
-          <tr data-bill-id="{{ bill.id }}">
-            <td><button type="button" class="add-to-cart" data-id="{{ bill.id }}"
-                        data-name="{{ bill.user_name }}" data-period="{{ bill.pay_period }}"
-                        data-amount="{{ bill.bill_amount }}">➕</button></td>
-            <td>{{ bill.user_name }}</td>
-            <td>{{ bill.pay_period }}</td>
-            <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
-          </tr>
-        {% endif %}
-      {% endfor %}
+        {% for bill in bills %}
+          {% if not bill.paid and bill.id not in receipt_ids %}
+            <tr data-bill-id="{{ bill.id }}">
+              <td>
+                <button type="button" class="add-to-cart"
+                        data-id="{{ bill.id }}"
+                        data-name="{{ bill.user_name }}"
+                        data-period="{{ bill.pay_period }}"
+                        data-amount="{{ bill.bill_amount }}">
+                  ➕
+                </button>
+              </td>
+              <td>{{ bill.user_name }}</td>
+              <td>{{ bill.pay_period }}</td>
+              <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+
     </tbody>
   </table>
 </section>
