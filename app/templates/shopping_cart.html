@@ -88,7 +88,8 @@
     </thead>
     <tbody>
       {% for bill in bills %}
-        {% if not bill.paid and bill.id not in receipt_ids_list %}
+        <!-- Simplify the condition temporarily to check if bills show up -->
+        {% if not bill.paid %}
           <tr data-bill-id="{{ bill.id }}">
             <td>
               <button type="button" class="add-to-cart"
