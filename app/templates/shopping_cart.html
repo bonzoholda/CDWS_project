@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shopping Cart Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-<!-- ✅ NAVBAR -->
 <header>
   <nav>
-      <ul>
-          <li><a href="/admin">🏠 Dashboard</a></li>
-          <li><a href="/admin/logout">🚪 Logout</a></li>
-      </ul>
+    <ul>
+      <li><a href="/admin">🏠 Dashboard</a></li>
+      <li><a href="/admin/logout">🚪 Logout</a></li>
+    </ul>
   </nav>
 </header>
 
@@ -25,7 +24,7 @@
 <section>
   <h3>🛒 Tagihan Dalam Keranjang</h3>
   <form action="/admin/update_payment_through_cart" method="post" id="cartForm">
-    <table id="cartTable" class="invoice-table">
+    <table class="invoice-table">
       <thead>
         <tr>
           <th>Pilih</th>
@@ -36,47 +35,48 @@
         </tr>
       </thead>
       <tbody id="cartBody">
-        {% set selected_bills = bills | selectattr("id", "in", receipt_ids) | list %}
-        {% for bill in selected_bills %}
-          <tr data-bill-id="{{ bill.id }}">
-            <td>
-              {% if not bill.paid %}
-                <input type="checkbox" name="bill_ids" value="{{ bill.id }}">
-              {% else %}
-                ✅
-              {% endif %}
-            </td>
-            <td>{{ bill.user_name }}</td>
-            <td>{{ bill.pay_period }}</td>
-            <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
-            <td>
-              {% if bill.paid %}
-                ✅ PAID<br>
-                <a href="/admin/receipt/{{ bill.id }}" target="_blank">🧾 Print Receipt</a>
-              {% else %}
-                UNPAID
-              {% endif %}
-            </td>
-          </tr>
+        {% set receipt_ids_list = receipt_ids | list %}
+        {% set show_checkout = false %}
+        {% for bill in bills %}
+          {% if bill.id in receipt_ids_list %}
+            <tr data-bill-id="{{ bill.id }}">
+              <td>
+                {% if not bill.paid %}
+                  {% set show_checkout = true %}
+                  <input type="checkbox" name="bill_ids" value="{{ bill.id }}">
+                {% else %}
+                  ✅
+                {% endif %}
+              </td>
+              <td>{{ bill.user_name }}</td>
+              <td>{{ bill.pay_period }}</td>
+              <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
+              <td>
+                {% if bill.paid %}
+                  ✅ PAID<br>
+                  <a href="/admin/receipt/{{ bill.id }}" target="_blank">🧾 Print Receipt</a>
+                {% else %}
+                  UNPAID
+                {% endif %}
+              </td>
+            </tr>
+          {% endif %}
         {% endfor %}
       </tbody>
     </table>
-
-    {% set unpaid_in_cart = selected_bills | selectattr("paid", "equalto", false) | list %}
-    {% if unpaid_in_cart %}
+    {% if show_checkout %}
       <button type="submit" style="margin-top: 1em;">✅ Checkout & Mark Selected as Paid</button>
     {% endif %}
   </form>
 </section>
 
-<!-- 📋 AVAILABLE BILLS SECTION -->
+<!-- 📋 AVAILABLE BILLS -->
 <section style="margin-top: 3em;">
   <h3>📋 Daftar Tagihan Tersedia</h3>
   <div class="search-container">
     <input type="text" id="billSearch" placeholder="Search...">
     <span id="clearSearch">&times;</span>
   </div>
-
   <table id="availableBillsTable" class="invoice-table">
     <thead>
       <tr>
@@ -88,7 +88,7 @@
     </thead>
     <tbody>
       {% for bill in bills %}
-        {% if not bill.paid and bill.id not in receipt_ids %}
+        {% if not bill.paid and bill.id not in receipt_ids_list %}
           <tr data-bill-id="{{ bill.id }}">
             <td>
               <button type="button" class="add-to-cart"
@@ -136,7 +136,7 @@
     });
   });
 
-  // 🔍 Filter search
+  // 🔍 Search filter
   document.getElementById('billSearch').addEventListener('input', function () {
     const value = this.value.toLowerCase();
     document.querySelectorAll('#availableBillsTable tbody tr').forEach(row => {
@@ -144,7 +144,6 @@
     });
   });
 
-  // Clear search
   document.getElementById('clearSearch').addEventListener('click', function () {
     document.getElementById('billSearch').value = '';
     document.querySelectorAll('#availableBillsTable tbody tr').forEach(row => row.style.display = '');
