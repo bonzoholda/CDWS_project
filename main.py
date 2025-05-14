@@ -168,7 +168,13 @@ async def update_payment_through_cart(request: Request, bill_ids: List[int] = Fo
             conn.execute("UPDATE bills SET paid = 1 WHERE id = ?", (bill_id,))
         conn.commit()
         conn.close()
-        return RedirectResponse(url='/admin/shopping_cart', status_code=303)  # redirect back to shopping cart
+        # /admin/update_payment_through_cart
+        # After marking bills as paid:
+        return RedirectResponse(
+            url=f"/admin/shopping_cart?receipt_ids={','.join(map(str, bill_ids))}",
+            status_code=303
+        )
+
     except Exception as e:
         print(f"⚠️ Error processing payment: {e}")
         return {"error": "There was an issue processing the payment."}
