@@ -178,26 +178,32 @@ async def update_payment_through_cart(
 
 @app.get("/admin/shopping_cart", response_class=HTMLResponse)
 def shopping_cart(request: Request):
-    receipt_ids_str = request.query_params.get("receipt_ids")
+    bill_ids_str = request.query_params.get("bill_ids")
     bills = []
 
-    if receipt_ids_str:
-        try:
-            receipt_ids = [int(rid) for rid in receipt_ids_str.split(",") if rid.strip().isdigit()]
-            if receipt_ids:
-                conn = get_db_connection()
-                cursor = conn.cursor()
-                query = f"SELECT * FROM bills WHERE id IN ({','.join(['?']*len(receipt_ids))})"
-                cursor.execute(query, receipt_ids)
-                bills = cursor.fetchall()
-                conn.close()
-        except Exception as e:
-            print(f"⚠️ Error loading receipts: {e}")
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        if bill_ids_str:
+            bill_ids = [int(bid) for bid in bill_ids_str.split(",") if bid.strip().isdigit()]
+            if bill_ids:
+                query = f"SELECT * FROM bills WHERE id IN ({','.join(['?']*len(bill_ids))})"
+                cursor.execute(query, bill_ids)
+        else:
+            # Fallback: load all unpaid bills
+            query = "SELECT * FROM bills WHERE is_paid = 0 ORDER BY user_id, pay_period"
+            cursor.execute(query)
+
+        bills = cursor.fetchall()
+        conn.close()
+    except Exception as e:
+        print(f"⚠️ Error loading bills: {e}")
 
     return templates.TemplateResponse("shopping_cart.html", {
         "request": request,
         "bills": bills,
-        "unpaid_only": True  # optional, you may adjust based on use case
+        "unpaid_only": True
     })
 
 
