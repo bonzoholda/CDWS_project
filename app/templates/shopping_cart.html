@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shopping Cart Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
+<!-- ✅ NAVBAR -->
 <header>
   <nav>
     <ul>
@@ -24,7 +25,7 @@
 <section>
   <h3>🛒 Tagihan Dalam Keranjang</h3>
   <form action="/admin/update_payment_through_cart" method="post" id="cartForm">
-    <table class="invoice-table">
+    <table id="cartTable" class="invoice-table">
       <thead>
         <tr>
           <th>Pilih</th>
@@ -35,48 +36,47 @@
         </tr>
       </thead>
       <tbody id="cartBody">
-        {% set receipt_ids_list = receipt_ids | list %}
-        {% set show_checkout = false %}
-        {% for bill in bills %}
-          {% if bill.id in receipt_ids_list %}
-            <tr data-bill-id="{{ bill.id }}">
-              <td>
-                {% if not bill.paid %}
-                  {% set show_checkout = true %}
-                  <input type="checkbox" name="bill_ids" value="{{ bill.id }}">
-                {% else %}
-                  ✅
-                {% endif %}
-              </td>
-              <td>{{ bill.user_name }}</td>
-              <td>{{ bill.pay_period }}</td>
-              <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
-              <td>
-                {% if bill.paid %}
-                  ✅ PAID<br>
-                  <a href="/admin/receipt/{{ bill.id }}" target="_blank">🧾 Print Receipt</a>
-                {% else %}
-                  UNPAID
-                {% endif %}
-              </td>
-            </tr>
-          {% endif %}
+        {% set has_unpaid = false %}
+        {% for bill in selected_bills %}
+          <tr data-bill-id="{{ bill.id }}">
+            <td>
+              {% if not bill.paid %}
+                {% set has_unpaid = true %}
+                <input type="checkbox" name="bill_ids" value="{{ bill.id }}">
+              {% else %}
+                ✅
+              {% endif %}
+            </td>
+            <td>{{ bill.user_name }}</td>
+            <td>{{ bill.pay_period }}</td>
+            <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
+            <td>
+              {% if bill.paid %}
+                ✅ PAID<br>
+                <a href="/admin/receipt/{{ bill.id }}" target="_blank">🧾 Print Receipt</a>
+              {% else %}
+                UNPAID
+              {% endif %}
+            </td>
+          </tr>
         {% endfor %}
       </tbody>
     </table>
-    {% if show_checkout %}
+
+    {% if has_unpaid %}
       <button type="submit" style="margin-top: 1em;">✅ Checkout & Mark Selected as Paid</button>
     {% endif %}
   </form>
 </section>
 
-<!-- 📋 AVAILABLE BILLS -->
+<!-- 🔍 AVAILABLE BILLS SECTION -->
 <section style="margin-top: 3em;">
   <h3>📋 Daftar Tagihan Tersedia</h3>
   <div class="search-container">
     <input type="text" id="billSearch" placeholder="Search...">
     <span id="clearSearch">&times;</span>
   </div>
+
   <table id="availableBillsTable" class="invoice-table">
     <thead>
       <tr>
@@ -87,23 +87,21 @@
       </tr>
     </thead>
     <tbody>
-      {% for bill in bills %}
-        {% if not bill.paid and bill.id not in receipt_ids_list %}
-          <tr data-bill-id="{{ bill.id }}">
-            <td>
-              <button type="button" class="add-to-cart"
-                      data-id="{{ bill.id }}"
-                      data-name="{{ bill.user_name }}"
-                      data-period="{{ bill.pay_period }}"
-                      data-amount="{{ bill.bill_amount }}">
-                ➕
-              </button>
-            </td>
-            <td>{{ bill.user_name }}</td>
-            <td>{{ bill.pay_period }}</td>
-            <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
-          </tr>
-        {% endif %}
+      {% for bill in all_unpaid_bills %}
+        <tr data-bill-id="{{ bill.id }}">
+          <td>
+            <button type="button" class="add-to-cart"
+                    data-id="{{ bill.id }}"
+                    data-name="{{ bill.user_name }}"
+                    data-period="{{ bill.pay_period }}"
+                    data-amount="{{ bill.bill_amount }}">
+              ➕
+            </button>
+          </td>
+          <td>{{ bill.user_name }}</td>
+          <td>{{ bill.pay_period }}</td>
+          <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
+        </tr>
       {% endfor %}
     </tbody>
   </table>
@@ -112,7 +110,6 @@
 <script>
   const cartBody = document.getElementById('cartBody');
   const addButtons = document.querySelectorAll('.add-to-cart');
-  const checkoutButton = document.querySelector('button[type="submit"]');
 
   addButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -121,10 +118,9 @@
       const period = btn.dataset.period;
       const amount = parseFloat(btn.dataset.amount);
 
-      // Check if already added to cart
+      // Avoid duplicates
       if (document.querySelector(`#cartBody tr[data-bill-id='${billId}']`)) return;
 
-      // Create new row in cart
       const row = document.createElement('tr');
       row.setAttribute('data-bill-id', billId);
       row.innerHTML = `
@@ -135,13 +131,9 @@
         <td>UNPAID</td>
       `;
       cartBody.appendChild(row);
-
-      // Dynamically show checkout button
-      toggleCheckoutButton();
     });
   });
 
-  // Search filter functionality
   document.getElementById('billSearch').addEventListener('input', function () {
     const value = this.value.toLowerCase();
     document.querySelectorAll('#availableBillsTable tbody tr').forEach(row => {
@@ -153,18 +145,6 @@
     document.getElementById('billSearch').value = '';
     document.querySelectorAll('#availableBillsTable tbody tr').forEach(row => row.style.display = '');
   });
-
-  // Toggle the visibility of the checkout button based on checkbox selection
-  function toggleCheckoutButton() {
-    const selectedCheckboxes = document.querySelectorAll('#cartBody input[type="checkbox"]:checked');
-    checkoutButton.style.display = selectedCheckboxes.length > 0 ? 'inline-block' : 'none';
-  }
-
-  // Listen for checkbox change to update checkout visibility
-  document.getElementById('cartForm').addEventListener('change', toggleCheckoutButton);
-
-  // Initial call to show or hide checkout button if there are pre-selected items
-  toggleCheckoutButton();
 </script>
 
 </div>
