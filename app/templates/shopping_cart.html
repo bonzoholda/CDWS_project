@@ -22,121 +22,122 @@
 <div class="form-container">
 <h2>🛒 Shopping Cart Dashboard</h2>
 
-<details open>
-  <summary style="cursor: pointer; font-weight: bold; margin-top: 1em;">Pilih Tagihan Untuk Checkout</summary>
+<!-- 🛒 CART SECTION (always visible, shows selected/paid bills with receipt link) -->
+<section>
+  <h3>🛒 Tagihan Dalam Keranjang</h3>
+  <form action="/admin/update_payment_through_cart" method="post" id="cartForm">
+    <table id="cartTable" class="invoice-table">
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Periode</th>
+          <th>Tagihan</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="cartBody">
+        {% for bill in bills %}
+          {% if bill.id in receipt_ids %}
+            <tr data-bill-id="{{ bill.id }}">
+              <input type="hidden" name="bill_ids" value="{{ bill.id }}">
+              <td>{{ bill.user_name }}</td>
+              <td>{{ bill.pay_period }}</td>
+              <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
+              <td>
+                {% if bill.paid %}
+                  ✅ PAID <br>
+                  <a href="/admin/receipt/{{ bill.id }}" target="_blank">🧾 Print Receipt</a>
+                {% else %}
+                  UNPAID
+                {% endif %}
+              </td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
 
-  <!-- Search box -->
+    <button type="submit" style="margin-top: 1em;">✅ Checkout & Mark Selected as Paid</button>
+  </form>
+</section>
+
+<!-- 🔍 AVAILABLE BILLS SECTION -->
+<section style="margin-top: 3em;">
+  <h3>📋 Daftar Tagihan Tersedia</h3>
   <div class="search-container">
-    <input type="text" id="billSearch" placeholder="Search by bill name or ID...">
-    <span class="clear-icon" id="clearIconBill">&times;</span>
+    <input type="text" id="billSearch" placeholder="Search...">
+    <span id="clearSearch">&times;</span>
   </div>
 
-  <!-- Toggle view (optional) -->
-  <button id="togglePaidButton">
-    {{ "Tampilkan Semua Periode" if unpaid_only else "Tampilkan Periode Belum Terbayar" }}
-  </button>
-
-  <!-- Form to submit selected bills -->
-<form action="/admin/update_payment_through_cart" method="post">
-  <table class="invoice-table" id="billTable" border="1">
+  <table id="availableBillsTable" class="invoice-table">
     <thead>
       <tr>
-        <th>🛒 Pilih</th>
-        <th>User ID</th>
+        <th>🛒 Tambah</th>
         <th>Nama</th>
         <th>Periode</th>
         <th>Tagihan</th>
-        <th>Status</th>
       </tr>
     </thead>
     <tbody>
-      {% set receipt_ids = request.query_params.get('receipt_ids', '').split(',') | map('int') | list %}
-      {% set total_cart = 0 %}
       {% for bill in bills %}
-        <tr class="bill-row">
-          <td>
-            {% if not bill.paid %}
-              <input type="checkbox" name="bill_ids" value="{{ bill.id }}" class="cart-checkbox"
-                     data-amount="{{ bill.bill_amount }}">
-            {% endif %}
-          </td>
-          <td>{{ bill.user_id }}</td>
-          <td>{{ bill.user_name }}</td>
-          <td>{{ bill.pay_period }}</td>
-          <td style="text-align: right;">
-            {{ "{:,.0f}".format(bill.bill_amount | float) }}
-          </td>
-          <td>
-            {% if bill.paid %}
-              ✅ PAID
-              <br>
-              <a href="/admin/receipt/{{ bill.id }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                🧾 Print Receipt
-              </a>
-            {% else %}
-              UNPAID
-            {% endif %}
-          </td>
-        </tr>
+        {% if bill.id not in receipt_ids and not bill.paid %}
+          <tr data-bill-id="{{ bill.id }}">
+            <td><button type="button" class="add-to-cart" data-id="{{ bill.id }}"
+                        data-name="{{ bill.user_name }}" data-period="{{ bill.pay_period }}"
+                        data-amount="{{ bill.bill_amount }}">➕</button></td>
+            <td>{{ bill.user_name }}</td>
+            <td>{{ bill.pay_period }}</td>
+            <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
+          </tr>
+        {% endif %}
       {% endfor %}
     </tbody>
   </table>
+</section>
 
-  <!-- Cart summary and submit -->
-  <div style="margin-top: 1em; text-align: right;">
-    <strong>Total dalam Cart:</strong> <span id="cartTotal">Rp 0</span>
-  </div>
-
-  <button type="submit" style="margin-top: 1em;">✅ Checkout & Mark Selected as Paid</button>
-</form>
-
-</details>
 
 <script>
+  const cartBody = document.getElementById('cartBody');
+  const addButtons = document.querySelectorAll('.add-to-cart');
+
+  addButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const billId = btn.dataset.id;
+      const userName = btn.dataset.name;
+      const period = btn.dataset.period;
+      const amount = parseFloat(btn.dataset.amount);
+
+      // Check if already added
+      if (document.querySelector(`#cartBody tr[data-bill-id='${billId}']`)) return;
+
+      // Create new row in cart
+      const row = document.createElement('tr');
+      row.setAttribute('data-bill-id', billId);
+      row.innerHTML = `
+        <input type="hidden" name="bill_ids" value="${billId}">
+        <td>${userName}</td>
+        <td>${period}</td>
+        <td style="text-align: right;">${amount.toLocaleString('id-ID')}</td>
+        <td>UNPAID</td>
+      `;
+      cartBody.appendChild(row);
+    });
+  });
+
   // Search filter
-  const searchInput = document.getElementById('billSearch');
-  const clearIcon = document.getElementById('clearIconBill');
-  const billRows = document.querySelectorAll('.bill-row');
-
-  searchInput.addEventListener('input', function () {
+  document.getElementById('billSearch').addEventListener('input', function () {
     const value = this.value.toLowerCase();
-    billRows.forEach(row => {
-      const text = row.innerText.toLowerCase();
-      row.style.display = text.includes(value) ? '' : 'none';
+    document.querySelectorAll('#availableBillsTable tbody tr').forEach(row => {
+      row.style.display = row.innerText.toLowerCase().includes(value) ? '' : 'none';
     });
-    clearIcon.style.display = value ? 'inline' : 'none';
   });
 
-  clearIcon.addEventListener('click', function () {
-    searchInput.value = '';
-    billRows.forEach(row => row.style.display = '');
-    clearIcon.style.display = 'none';
+  document.getElementById('clearSearch').addEventListener('click', function () {
+    document.getElementById('billSearch').value = '';
+    document.querySelectorAll('#availableBillsTable tbody tr').forEach(row => row.style.display = '');
   });
-
-  // Cart total calculation
-  const checkboxes = document.querySelectorAll('.cart-checkbox');
-  const cartTotalEl = document.getElementById('cartTotal');
-
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0
-    }).format(amount);
-  }
-
-  function updateCartTotal() {
-    let total = 0;
-    checkboxes.forEach(cb => {
-      if (cb.checked) {
-        total += parseFloat(cb.getAttribute('data-amount') || 0);
-      }
-    });
-    cartTotalEl.innerText = formatCurrency(total);
-  }
-
-  checkboxes.forEach(cb => cb.addEventListener('change', updateCartTotal));
 </script>
+
 
 </div>
 </body>
