@@ -417,6 +417,22 @@ def show_invoice(request: Request, bill_id: int):
 
     return templates.TemplateResponse("receipt.html", {"request": request, "bill": bill})
 
+@app.get("/admin/thermal-receipt/{bill_id}", response_class=HTMLResponse)
+def show_invoice(request: Request, bill_id: int):
+    check_admin_logged_in(request)  # Ensure admin is logged in
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM bills WHERE id = ?", (bill_id,))
+    bill = cursor.fetchone()
+    conn.close()
+
+    if not bill:
+        return HTMLResponse("<h2>Receipt not found.</h2>", status_code=404)
+
+    return templates.TemplateResponse("receipt.html", {"request": request, "bill": bill})
+
+
+
 
 # payment summary route
 @app.get("/admin/payment_summary", response_class=HTMLResponse)
