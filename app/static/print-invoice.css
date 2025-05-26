@@ -1,6 +1,6 @@
 /* Set exact paper width for print */
 @page {
-  size: 50mm auto;
+  size: 58mm auto;
   margin: 0;
 }
 
@@ -8,17 +8,17 @@
   body {
     margin: 0;
     padding: 0;
-    width: 50mm;
+    width: 58mm;
     font-family: monospace;
-    font-size: 10pt;
+    font-size: 6pt;
   }
 
   .receipt {
-    width: 50mm;
+    width: 58mm;
     padding: 0mm;
     font-family: monospace;
-    font-size: 10pt;
-    line-height: 1.2;
+    font-size: 6pt;
+    line-height: 1;
     color: #000;
   }
 
