@@ -5,52 +5,42 @@
   <title>Receipt</title>
 </head>
 <body>
+<pre>
+         HIPPAM BARU
+     ----------------------
 
-<div align="center">
-  <img src="/static/images/hb-logo-micro.png" width="120"><br>
-  <b>HIPPAM BARU</b><br>
-  <hr>
-</div>
+ Resi Pembayaran
+ No: {{ bill['receipt_no'] }}
 
-<div>
-  <b>Resi Pembayaran</b><br>
-  No: {{ bill['receipt_no'] }}<br><br>
+ ID         : {{ bill['user_id'] }}
+ Nama       : {{ bill['user_name'] }}
+ Alamat     : RT. {{ bill['user_address'] }}
 
-  ID Pelanggan: {{ bill['user_id'] }}<br>
-  Nama: {{ bill['user_name'] }}<br>
-  Alamat: RT. {{ bill['user_address'] }}<br><br>
+ Periode    : {{ bill['pay_period'] }}
+ Nomor SR   : {{ "{:,.0f}".format(bill.device_id|float) }}
 
-  Periode: {{ bill['pay_period'] }}<br>
-  Nomor SR: {{ "{:,.0f}".format(bill.device_id|float) }}<br><br>
+ Meter Lalu : {{ bill['meter_past'] }}
+ Meter Kini : {{ bill['meter_now'] }}
+ Pakai m³   : {{ bill['usage'] }}
 
-  Meter Lalu: {{ bill['meter_past'] }}<br>
-  Meter Kini: {{ bill['meter_now'] }}<br>
-  Pakai m³: {{ bill['usage'] }}<br><br>
+ 0–10 [1,000]  : {{ "{:,.0f}".format(bill['lv1_cost']) }}
+11–20 [1,000]  : {{ "{:,.0f}".format(bill['lv2_cost']) }}
+21–30 [2,500]  : {{ "{:,.0f}".format(bill['lv3_cost']) }}
+31+   [4,000]  : {{ "{:,.0f}".format(bill['lv4_cost']) }}
+Beban Dasar    : {{ "{:,.0f}".format(bill['basic_cost']) }}
 
-  0–10 m³[1,000]: {{ "{:,.0f}".format(bill['lv1_cost']) }}<br>
-  11–20 m³[1,000]: {{ "{:,.0f}".format(bill['lv2_cost']) }}<br>
-  21–30 m³[2,500]: {{ "{:,.0f}".format(bill['lv3_cost']) }}<br>
-  31+ m³[4,000]: {{ "{:,.0f}".format(bill['lv4_cost']) }}<br>
-  Beban Dasar: {{ "{:,.0f}".format(bill['basic_cost']) }}<br>
-</div>
+------------------------------
+TOTAL BAYAR    : {{ "{:,.0f}".format(bill['bill_amount']) }}
+------------------------------
 
-<hr>
+Waktu Bayar:
+{{ bill['payment_timestamp'] }}
 
-<div>
-  <b>Total Bayar:</b> {{ "{:,.0f}".format(bill['bill_amount']) }}<br><br>
-  Waktu Bayar:<br>
-  {{ bill['payment_timestamp'] }}<br>
-</div>
+        Terima Kasih
+</pre>
 
-<hr>
-
-<div align="center">
-  Terima Kasih<br>
-</div>
-
-<div class="no-print" style="margin-top: 20px;">
+<div class="no-print">
   <button onclick="window.print()">Cetak Resi</button>
 </div>
-
 </body>
 </html>
