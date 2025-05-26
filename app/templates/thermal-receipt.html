@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Receipt</title>
+</head>
+<body>
+
+<div align="center">
+  <img src="/static/images/hb-logo-micro.png" width="120"><br>
+  <b>HIPPAM BARU</b><br>
+  <hr>
+</div>
+
+<div>
+  <b>Resi Pembayaran</b><br>
+  No: {{ bill['receipt_no'] }}<br><br>
+
+  ID Pelanggan: {{ bill['user_id'] }}<br>
+  Nama: {{ bill['user_name'] }}<br>
+  Alamat: RT. {{ bill['user_address'] }}<br><br>
+
+  Periode: {{ bill['pay_period'] }}<br>
+  Nomor SR: {{ "{:,.0f}".format(bill.device_id|float) }}<br><br>
+
+  Meter Lalu: {{ bill['meter_past'] }}<br>
+  Meter Kini: {{ bill['meter_now'] }}<br>
+  Pakai m³: {{ bill['usage'] }}<br><br>
+
+  0–10 m³[1,000]: {{ "{:,.0f}".format(bill['lv1_cost']) }}<br>
+  11–20 m³[1,000]: {{ "{:,.0f}".format(bill['lv2_cost']) }}<br>
+  21–30 m³[2,500]: {{ "{:,.0f}".format(bill['lv3_cost']) }}<br>
+  31+ m³[4,000]: {{ "{:,.0f}".format(bill['lv4_cost']) }}<br>
+  Beban Dasar: {{ "{:,.0f}".format(bill['basic_cost']) }}<br>
+</div>
+
+<hr>
+
+<div>
+  <b>Total Bayar:</b> {{ "{:,.0f}".format(bill['bill_amount']) }}<br><br>
+  Waktu Bayar:<br>
+  {{ bill['payment_timestamp'] }}<br>
+</div>
+
+<hr>
+
+<div align="center">
+  Terima Kasih<br>
+</div>
+
+<div class="no-print" style="margin-top: 20px;">
+  <button onclick="window.print()">Cetak Resi</button>
+</div>
+
+</body>
+</html>
