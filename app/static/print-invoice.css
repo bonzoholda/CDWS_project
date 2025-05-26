@@ -6,56 +6,44 @@
 
 @media print {
   body {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 6px; /* Font kecil */
+    line-height: 1; /* Baris lebih rapat */
     margin: 0;
     padding: 0;
+  }
+
+  .receipt-content {
     width: 58mm;
-    font-family: monospace;
-    font-size: 6pt;
+    margin: 0 auto;
+    white-space: pre-wrap; /* tetap jaga format teks */
+    padding: 0;
   }
 
-  .receipt {
-    width: 58mm;
-    padding: 0mm;
-    font-family: monospace;
-    font-size: 6pt;
-    line-height: 1;
-    color: #000;
-  }
-
-  .receipt-logo {
-    text-align: left;
-    margin-bottom: 3mm;
-  }
-
-  .receipt-logo .logo {
-    width: 30mm;
-    max-width: 70%;
+  .receipt-logo img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
   }
 
   .receipt-title {
+    text-align: center;
     font-weight: bold;
-    font-size: 1.1rem;
-    text-align: left;
-    margin-bottom: 3mm;
+    font-size: 7px;
+    margin: 2px 0;
   }
 
   .total-bill {
     font-weight: bold;
-    font-size: 1.1rem;
-    text-align: left;
-    margin-bottom: 3mm;
-  }
-  
-  pre {
-    white-space: pre-wrap;
-    margin: 0;
-    padding: 0;
+    margin-top: 4px;
   }
 
-  hr {
-    border: none;
-    border-top: 1px dashed #000;
-    margin: 4mm 0;
+  pre {
+    font-size: 6px;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
   }
 }
 
