@@ -9,11 +9,13 @@
     margin: 0;
     padding: 0;
     width: 50mm;
+    font-family: monospace;
+    font-size: 10pt;
   }
 
   .receipt {
     width: 50mm;
-    padding: 2mm;
+    padding: 0mm;
     font-family: monospace;
     font-size: 10pt;
     line-height: 1.2;
