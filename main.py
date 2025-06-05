@@ -458,6 +458,71 @@ async def payment_summary(request: Request, start: Optional[str] = Query(None), 
             "end": end
         })
 
+# update bill entry route
+@app.get("/admin/update_bill_entry", response_class=HTMLResponse)
+async def render_update_form(request: Request, query: str = None, bill_id: int = None):
+    conn = get_db_connection()
+    bill = None
+    matches = []
+
+    if bill_id:
+        bill = conn.execute("SELECT * FROM bills WHERE id = ?", (bill_id,)).fetchone()
+    elif query:
+        query_like = f"%{query}%"
+        matches = conn.execute("""
+            SELECT id, user_id, user_name, pay_period FROM bills 
+            WHERE user_id LIKE ? OR user_name LIKE ?
+            ORDER BY id DESC LIMIT 20
+        """, (query_like, query_like)).fetchall()
+
+    conn.close()
+    return templates.TemplateResponse("update_bill_entry.html", {"request": request, "bill": bill, "matches": matches, "query": query})
+
+
+@app.post("/admin/update_bill_entry")
+async def update_bill_entry(
+    request: Request,
+    bill_id: int = Form(...),
+    user_id: str = Form(...),
+    device_id: str = Form(...),
+    user_name: str = Form(...),
+    user_address: str = Form(...),
+    pay_period: str = Form(...),
+    meter_past: int = Form(...),
+    meter_now: int = Form(...),
+    usage: int = Form(...),
+    lv1_cost: float = Form(...),
+    lv2_cost: float = Form(...),
+    lv3_cost: float = Form(...),
+    lv4_cost: float = Form(...),
+    basic_cost: float = Form(...),
+    bill_amount: float = Form(...),
+    paid: int = Form(...)
+):
+    try:
+        conn = get_db_connection()
+        conn.execute("""
+            UPDATE bills SET 
+                user_id = ?, device_id = ?, user_name = ?, user_address = ?, pay_period = ?,
+                meter_past = ?, meter_now = ?, usage = ?,
+                lv1_cost = ?, lv2_cost = ?, lv3_cost = ?, lv4_cost = ?,
+                basic_cost = ?, bill_amount = ?, paid = ?
+            WHERE id = ?
+        """, (
+            user_id, device_id, user_name, user_address, pay_period,
+            meter_past, meter_now, usage,
+            lv1_cost, lv2_cost, lv3_cost, lv4_cost,
+            basic_cost, bill_amount, paid,
+            bill_id
+        ))
+        conn.commit()
+        conn.close()
+        return RedirectResponse(url="/admin/update_bill_entry", status_code=303)
+    except Exception as e:
+        print(f"⚠️ Error updating bill: {e}")
+        return {"error": "Could not update the bill entry."}
+
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
