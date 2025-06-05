@@ -196,8 +196,9 @@ clearSearchIcon.addEventListener('click', function () {
     rows.forEach(row => {
       const amountCell = row.cells[3]; // 4th column is 'Tagihan'
       if (amountCell) {
-        const text = amountCell.innerText.replace(/[^\d]/g, '');
-        const value = parseFloat(text);
+        const rawText = amountCell.innerText;
+        const cleanedText = rawText.replace(/\./g, '').replace(/[^\d]/g, ''); // remove . and non-digits
+        const value = parseFloat(cleanedText);
         if (!isNaN(value)) {
           total += value;
         }
@@ -210,6 +211,7 @@ clearSearchIcon.addEventListener('click', function () {
 
   window.addEventListener('DOMContentLoaded', calculateTotalFromTable);
 </script>
+
 
   
   
