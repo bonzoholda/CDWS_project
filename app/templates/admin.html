@@ -139,8 +139,14 @@
     <!-- ✅ Form for canceling selected PAID bills only -->
     <details>
         <summary style="cursor: pointer; font-weight: bold; margin-top: 1em;">Cancel Paid Bills</summary>
+
+        <div class="search-container">
+          <input type="text" id="paidSearch" placeholder="Search by user name or ID...">
+          <span class="clear-icon" id="clearIconPaid">&times;</span>
+        </div>
+        
         <form action="/admin/cancel_payment" method="post" style="margin-top: 1em;">
-            <table class="invoice-table" border="1">
+            <table class="invoice-table" id="paidTable" border="1">
                 <tr>
                     <th>Select</th>
                     <th>User</th>
@@ -254,6 +260,33 @@ clearIconBill.addEventListener('click', function () {
 </script>
 
 
+<!-- ✅ searchbox for PAID bills -->     
+<script>
+const paidInput = document.getElementById('paidSearch');
+const clearIconPaid = document.getElementById('clearIconPaid');
+
+function filterPaidTable() {
+    const filter = paidInput.value.toLowerCase();
+    const rows = document.querySelectorAll('#paidTable tbody tr');
+
+    rows.forEach(function (row) {
+        const rowText = row.textContent.toLowerCase();
+        row.style.display = rowText.includes(filter) ? '' : 'none';
+    });
+
+    clearIconPaid.style.display = filter ? 'block' : 'none';
+}
+
+// Run filter on input
+paidInput.addEventListener('input', filterPaidTable);
+
+// Clear filter when clicking the icon
+clearIconPaid.addEventListener('click', function () {
+    paidInput.value = '';
+    filterPaidTable(); // reset filter
+    paidInput.focus();
+});
+</script>
 
 <script>
 let filtered = false;
