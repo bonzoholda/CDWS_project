@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Exo:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <title>Edit Bill</title>
+  <style>
+    form { max-width: 600px; margin: 20px auto; display: flex; flex-direction: column; gap: 10px; }
+    input, select, button { padding: 6px; }
+  </style>
+  
+  <style>
+  body {
+    font-family: 'Exo', sans-serif;
+    background: #f9f9f9;
+    padding: 20px;
+  }
+
+  main {
+    max-width: 700px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  label {
+    font-weight: 500;
+  }
+
+  input, select, button {
+    padding: 8px;
+    font-size: 1rem;
+  }
+
+  button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #0056b3;
+  }
+
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  li {
+    margin-bottom: 6px;
+  }
+
+  a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+  
+</head>
+<body>
+	<main>
+
+<!-- 🔍 Search Box -->
+<form method="get" action="/admin/update_bill_entry">
+  <label>Search by User ID or Name:</label>
+  <input type="text" name="query" value="{{ query or '' }}" required>
+  <button type="submit">🔍 Search</button>
+</form>
+
+{% if matches %}
+  <p><strong>Matching Results:</strong></p>
+  <ul>
+    {% for m in matches %}
+      <li>
+        <a href="/admin/update_bill_entry?bill_id={{ m.id }}">
+          [#{{ m.id }}] {{ m.user_name }} ({{ m.user_id }}) — {{ m.pay_period }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+
+  {% if bill %}
+  <hr>
+  <!-- 📝 Edit Form -->
+  <form method="post" action="/admin/update_bill_entry">
+    <input type="hidden" name="bill_id" value="{{ bill.id }}">
+
+    <label>User ID:</label>
+    <input type="text" name="user_id" value="{{ bill.user_id }}" required>
+
+    <label>Device ID:</label>
+    <input type="text" name="device_id" value="{{ bill.device_id }}" required>
+
+    <label>User Name:</label>
+    <input type="text" name="user_name" value="{{ bill.user_name }}" required>
+
+    <label>User Address:</label>
+    <input type="text" name="user_address" value="{{ bill.user_address }}" required>
+
+    <label>Pay Period:</label>
+    <input type="text" name="pay_period" value="{{ bill.pay_period }}" required>
+
+    <label>Meter Past:</label>
+    <input type="number" name="meter_past" value="{{ bill.meter_past }}" required>
+
+    <label>Meter Now:</label>
+    <input type="number" name="meter_now" value="{{ bill.meter_now }}" required>
+
+    <label>Usage:</label>
+    <input type="number" name="usage" value="{{ bill.usage }}" required>
+
+    <label>Level 1 Cost:</label>
+    <input type="number" step="0.01" name="lv1_cost" value="{{ bill.lv1_cost }}" required>
+
+    <label>Level 2 Cost:</label>
+    <input type="number" step="0.01" name="lv2_cost" value="{{ bill.lv2_cost }}" required>
+
+    <label>Level 3 Cost:</label>
+    <input type="number" step="0.01" name="lv3_cost" value="{{ bill.lv3_cost }}" required>
+
+    <label>Level 4 Cost:</label>
+    <input type="number" step="0.01" name="lv4_cost" value="{{ bill.lv4_cost }}" required>
+
+    <label>Basic Cost:</label>
+    <input type="number" step="0.01" name="basic_cost" value="{{ bill.basic_cost }}" required>
+
+    <label>Total Bill Amount:</label>
+    <input type="number" step="0.01" name="bill_amount" value="{{ bill.bill_amount }}" required>
+
+    <label>Paid Status:</label>
+    <select name="paid">
+      <option value="0" {% if bill.paid == 0 %}selected{% endif %}>UNPAID</option>
+      <option value="1" {% if bill.paid == 1 %}selected{% endif %}>PAID</option>
+    </select>
+
+    <button type="submit">💾 Update Bill</button>
+  </form>
+  {% endif %}
+  
+  </main>
+</body>
+</html>
