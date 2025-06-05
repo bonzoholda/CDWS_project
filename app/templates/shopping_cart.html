@@ -66,12 +66,10 @@
       </tbody>
       </table>
       
-      <div style="margin-top: 1em; text-align: right; font-weight: bold;">
-        Total dalam keranjang: Rp {{ "{:,.0f}".format(ns.total_amount) }}
+      <div id="cartTotal" style="margin-top: 1em; text-align: right; font-weight: bold;">
+        Total Tagihan: Rp 0
       </div>
-
-
-
+      
 
   <button type="submit" id="checkoutButton" style="margin-top: 1em;">✅ Checkout & Mark Selected as Paid</button>
 
@@ -187,6 +185,30 @@ clearSearchIcon.addEventListener('click', function () {
     filterBillsTable(); // reset filter
     billSearchInput.focus();
 });
+</script>
+
+
+<script>
+  function calculateTotalFromTable() {
+    const rows = document.querySelectorAll('#cartTable tbody tr');
+    let total = 0;
+
+    rows.forEach(row => {
+      const amountCell = row.cells[3]; // 4th column is 'Tagihan'
+      if (amountCell) {
+        const text = amountCell.innerText.replace(/[^\d]/g, '');
+        const value = parseFloat(text);
+        if (!isNaN(value)) {
+          total += value;
+        }
+      }
+    });
+
+    document.getElementById('cartTotal').textContent = 
+      'Total Tagihan: Rp ' + total.toLocaleString('id-ID', { minimumFractionDigits: 0 });
+  }
+
+  window.addEventListener('DOMContentLoaded', calculateTotalFromTable);
 </script>
 
   
