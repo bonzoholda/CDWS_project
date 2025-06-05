@@ -35,33 +35,40 @@
           <th>Status</th>
         </tr>
       </thead>
-      <tbody id="cartBody">
-        {% set has_unpaid = false %}
-        {% for bill in selected_bills %}
-          <tr data-bill-id="{{ bill.id }}">
-            <td>
-              {% if not bill.paid %}
-                {% set has_unpaid = true %}
-                <input type="checkbox" name="bill_ids" value="{{ bill.id }}">
-              {% else %}
-                ✅
-              {% endif %}
-            </td>
-            <td>{{ bill.user_name }}</td>
-            <td>{{ bill.pay_period }}</td>
-            <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
-            <td>
-              {% if bill.paid %}
-                ✅ PAID<br>
-                <a href="/admin/receipt/{{ bill.id }}" target="_blank">🧾 Print Receipt</a>
-              {% else %}
-                UNPAID
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        <tbody id="cartBody">
+          {% set has_unpaid = false %}
+          {% set total_amount = 0 %}
+          {% for bill in selected_bills %}
+            {% set total_amount = total_amount + (bill.bill_amount | float) %}
+            <tr data-bill-id="{{ bill.id }}">
+              <td>
+                {% if not bill.paid %}
+                  {% set has_unpaid = true %}
+                  <input type="checkbox" name="bill_ids" value="{{ bill.id }}">
+                {% else %}
+                  ✅
+                {% endif %}
+              </td>
+              <td>{{ bill.user_name }}</td>
+              <td>{{ bill.pay_period }}</td>
+              <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
+              <td>
+                {% if bill.paid %}
+                  ✅ PAID<br>
+                  <a href="/admin/receipt/{{ bill.id }}" target="_blank">🧾 Print Receipt</a>
+                {% else %}
+                  UNPAID
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        </table>
+        
+        <div style="margin-top: 1em; text-align: right; font-weight: bold;">
+          Total Tagihan: Rp {{ "{:,.0f}".format(total_amount) }}
+        </div>
+
 
   <button type="submit" id="checkoutButton" style="margin-top: 1em;">✅ Checkout & Mark Selected as Paid</button>
 
