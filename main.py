@@ -164,12 +164,11 @@ async def update_payment_through_cart(request: Request, bill_ids: List[int] = Fo
     try:
         conn = get_db_connection()
         for bill_id in bill_ids:
-            # Mark the bills as paid in the database
-            conn.execute("UPDATE bills SET paid = 1 WHERE id = ?", (bill_id,))
+            # Mark the bills as paid and record the timestamp
+            conn.execute("UPDATE bills SET paid = 1, payment_timestamp = CURRENT_TIMESTAMP WHERE id = ?", (bill_id,))
         conn.commit()
         conn.close()
-        # /admin/update_payment_through_cart
-        # After marking bills as paid:
+
         return RedirectResponse(
             url=f"/admin/shopping_cart?receipt_ids={','.join(map(str, bill_ids))}",
             status_code=303
