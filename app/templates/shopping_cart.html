@@ -39,7 +39,8 @@
         {% set has_unpaid = false %}
         {% set ns = namespace(total_amount=0) %}
         {% for bill in selected_bills %}
-          {% set ns.total_amount = ns.total_amount + (bill.bill_amount | float) %}
+          {% set amount = bill.bill_amount | float %}
+          {% set ns.total_amount = ns.total_amount + amount %}
           <tr data-bill-id="{{ bill.id }}">
             <td>
               {% if not bill.paid %}
@@ -51,7 +52,7 @@
             </td>
             <td>{{ bill.user_name }}</td>
             <td>{{ bill.pay_period }}</td>
-            <td style="text-align: right;">{{ "{:,.0f}".format(bill.bill_amount|float) }}</td>
+            <td style="text-align: right;">{{ "{:,.0f}".format(amount) }}</td>
             <td>
               {% if bill.paid %}
                 ✅ PAID<br>
@@ -66,8 +67,9 @@
       </table>
       
       <div style="margin-top: 1em; text-align: right; font-weight: bold;">
-        Total Tagihan: Rp {{ "{:,.0f}".format(ns.total_amount) }}
+        Total dalam keranjang: Rp {{ "{:,.0f}".format(ns.total_amount) }}
       </div>
+
 
 
 
