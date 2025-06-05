@@ -461,6 +461,7 @@ async def payment_summary(request: Request, start: Optional[str] = Query(None), 
 # update bill entry route
 @app.get("/admin/update_bill_entry", response_class=HTMLResponse)
 async def render_update_form(request: Request, query: str = None, bill_id: int = None):
+    check_admin_logged_in(request)  # Ensure admin is logged in
     conn = get_db_connection()
     bill = None
     matches = []
