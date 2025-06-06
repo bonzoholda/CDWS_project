@@ -428,7 +428,7 @@ def show_invoice(request: Request, bill_id: int):
     if not bill:
         return HTMLResponse("<h2>Receipt not found.</h2>", status_code=404)
 
-    return templates.TemplateResponse("receipt.html", {"request": request, "bill": bill})
+    return templates.TemplateResponse("thermal-receipt.html", {"request": request, "bill": bill})
 
 
 
