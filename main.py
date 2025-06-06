@@ -162,21 +162,17 @@ async def update_payment_route(
 @app.post("/admin/update_payment_through_cart")
 async def update_payment_through_cart(request: Request, bill_ids: List[int] = Form(...)):
     try:
-        conn = get_db_connection()
-        for bill_id in bill_ids:
-            # Mark the bills as paid and record the timestamp
-            conn.execute("UPDATE bills SET paid = 1, payment_timestamp = CURRENT_TIMESTAMP WHERE id = ?", (bill_id,))
-        conn.commit()
-        conn.close()
+        check_admin_logged_in(request)
+        mark_bills_as_paid(bill_ids)  # 🔄 Reused logic
 
         return RedirectResponse(
             url=f"/admin/shopping_cart?receipt_ids={','.join(map(str, bill_ids))}",
             status_code=303
         )
-
     except Exception as e:
         print(f"⚠️ Error processing payment: {e}")
         return {"error": "There was an issue processing the payment."}
+
 
 
 
