@@ -56,7 +56,7 @@
             <td>
               {% if bill.paid %}
                 ✅ PAID<br>
-                <a href="/admin/receipt/{{ bill.id }}" target="_blank">🧾 Print Receipt</a>
+                <a href="/admin/thermal-receipt/{{ bill.id }}" target="_blank">🧾 Print Receipt</a>
               {% else %}
                 UNPAID
               {% endif %}
