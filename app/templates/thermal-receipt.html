@@ -4,15 +4,40 @@
   <meta charset="utf-8">
   <title>Receipt</title>
   <style>
-  @media print {
-    .no-print {
-      display: none;
+    .logo-container {
+      text-align: center;
+      margin-top: 10px;
     }
-  }
-</style>
+  
+    .logo-container img {
+      width: 100px;
+      height: auto;
+    }
+  
+    @media print {
+      body {
+        margin: 0;
+        font-family: monospace;
+        font-size: 10pt;
+        width: 58mm;
+      }
+  
+      .no-print {
+        display: none;
+      }
+  
+      .logo-container img {
+        width: 100px;
+      }
+    }
+  </style>
 
 </head>
 <body>
+<div class="logo-container">
+  <img src="/static/images/hb-logo-rc.png" alt="Logo" />
+</div>
+  
 <pre>
          <b>HIPPAM BARU</b>
      ----------------------
