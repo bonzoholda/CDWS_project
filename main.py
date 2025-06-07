@@ -15,6 +15,7 @@ from drive_uploader import upload_to_drive
 from drive_uploader import restore_from_drive
 from database_utils import mark_bills_as_paid, cancel_bills_payment, ensure_payment_timestamp_column
 from database_utils import get_daily_payment_summary, get_bills_by_date, ensure_receipt_no_column_exists
+import pytz
 
 app = FastAPI()
 
@@ -41,6 +42,23 @@ def set_admin_cookie(response: Response):
 def check_admin_logged_in(request: Request):
     if request.cookies.get("admin_logged_in") != "true":
         raise HTTPException(status_code=307, detail="Redirecting to login", headers={"Location": "/admin/login"})
+
+# Define and register custom filter for Indonesian-style datetime
+def format_indonesian_datetime(value: str):
+    try:
+        utc_dt = datetime.strptime(value, "%Y-%m-%d %H:%M:%S").replace(tzinfo=pytz.UTC)
+        wib_tz = pytz.timezone("Asia/Jakarta")
+        wib_dt = utc_dt.astimezone(wib_tz)
+        months = [
+            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+        ]
+        return f"{wib_dt.day} {months[wib_dt.month - 1]} {wib_dt.year}, {wib_dt.strftime('%H:%M')} WIB"
+    except Exception:
+        return value
+
+# Register filter with Jinja2
+templates.env.filters["indo_datetime"] = format_indonesian_datetime
 
 
 # Database restore and backup functions at startup and shutdown events
