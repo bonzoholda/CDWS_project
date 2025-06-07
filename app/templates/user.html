@@ -29,7 +29,7 @@
     {% if all_paid %}
       <p class="info">✅ Semua tagihan telah dibayar. Berikut adalah pembayaran terakhir Anda.</p>
       {% if payment_timestamp %}
-        <p class="info">🕒 Dibayar pada: {{ payment_timestamp }}</p>
+        <p class="info">🕒 Dibayar pada: {{ payment_timestamp | indo_datetime }}</p>
       {% endif %}
     {% endif %}
     
