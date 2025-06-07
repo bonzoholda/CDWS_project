@@ -233,8 +233,8 @@ async def cancel_payment_route(
 async def public_view(request: Request):
     return templates.TemplateResponse("user.html", {"request": request})
 
-# User-specific bills page
-@app.get("/user", response_class=HTMLResponse)
+# User-specific bills page --- legacy
+@app.get("/user-legacy", response_class=HTMLResponse)
 async def user_view(request: Request, user_id: str):
     conn = get_db_connection()
     c = conn.cursor()
@@ -248,6 +248,54 @@ async def user_view(request: Request, user_id: str):
             "user_id": user_id,
             "user_data": user_data
         })
+
+    except sqlite3.Error as e:
+        return templates.TemplateResponse("user.html", {
+            "request": request,
+            "user_id": user_id,
+            "user_data": [],
+            "error": f"Database error: {str(e)}"
+        })
+
+    finally:
+        conn.close()
+
+# Updated user-specific page
+@app.get("/user", response_class=HTMLResponse)
+async def user_view(request: Request, user_id: str):
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        # Get unpaid bills
+        c.execute("SELECT * FROM bills WHERE user_id = ? AND paid = 0", (user_id,))
+        user_data = c.fetchall()
+
+        if user_data:
+            return templates.TemplateResponse("user.html", {
+                "request": request,
+                "user_id": user_id,
+                "user_data": user_data,
+                "all_paid": False
+            })
+        else:
+            # Get latest paid bill if no unpaid bills
+            c.execute("""
+                SELECT * FROM bills 
+                WHERE user_id = ? AND paid = 1 
+                ORDER BY pay_period DESC 
+                LIMIT 1
+            """, (user_id,))
+            latest_paid = c.fetchall()
+            payment_time = latest_paid[0]['payment_timestamp'] if latest_paid else None
+
+            return templates.TemplateResponse("user.html", {
+                "request": request,
+                "user_id": user_id,
+                "user_data": latest_paid,
+                "payment_timestamp": payment_time,
+                "all_paid": True
+            })
 
     except sqlite3.Error as e:
         return templates.TemplateResponse("user.html", {
