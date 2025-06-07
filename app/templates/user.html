@@ -25,6 +25,14 @@
 
   {% if user_data %}
     <h2>Tagihan: {{ user_data[0].user_name }}</h2>
+
+    {% if all_paid %}
+      <p class="info">✅ Semua tagihan telah dibayar. Berikut adalah pembayaran terakhir Anda.</p>
+      {% if payment_timestamp %}
+        <p class="info">🕒 Dibayar pada: {{ payment_timestamp }}</p>
+      {% endif %}
+    {% endif %}
+    
     <div class="table-wrapper">
       <table class="bill-table">
         <thead>
@@ -63,7 +71,11 @@
         </tbody>
       </table>
     </div>
-    <h3 class="totaldue">Total belum terbayar: {{ "{:,.0f}".format(user_data | map(attribute='bill_amount') | sum) }}</h3>
+    
+    {% if not all_paid %}
+      <h3 class="totaldue">Total belum terbayar: {{ "{:,.0f}".format(user_data | map(attribute='bill_amount') | sum) }}</h3>
+    {% endif %}
+    
   {% elif user_id %}
     <p>Tagihan untuk pelanggan dengan ID {{ user_id }} tidak ditemukan.</p>
   {% endif %}
