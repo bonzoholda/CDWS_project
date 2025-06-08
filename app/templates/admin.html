@@ -121,7 +121,7 @@
                 <td>
                     {{ "✅ PAID" if bill.paid else "UNPAID" }}
                     {% if bill.payment_timestamp %}
-                        <br><small>{{ bill.payment_timestamp }}</small>
+                        <br><small>{{ bill.payment_timestamp | indo_shortdate }}</small>
                         <br><a href="/admin/thermal-receipt/{{ bill.id }}" target="_blank" class="btn btn-sm btn-outline-primary">🧾 Print Receipt</a>
                     {% endif %}
                 </td>
