@@ -66,7 +66,7 @@ Beban Dasar    : {{ "{:,.0f}".format(bill['basic_cost']) }}
 ------------------------------
 
 Waktu Bayar:
-{{ bill['payment_timestamp'] }}
+{{ bill['payment_timestamp'] | indo_shortdate }}
 
         Terima Kasih
 </pre>
