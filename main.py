@@ -61,6 +61,24 @@ def format_indonesian_datetime(value: str):
 templates.env.filters["indo_datetime"] = format_indonesian_datetime
 
 
+# Define and register custom filter for Indonesian-style short-date dd-mmm-yyyy
+def format_indonesian_shortdate(value: str):
+    try:
+        utc_dt = datetime.strptime(value, "%Y-%m-%d %H:%M:%S").replace(tzinfo=pytz.UTC)
+        wib_tz = pytz.timezone("Asia/Jakarta")
+        wib_dt = utc_dt.astimezone(wib_tz)
+        months = [
+            "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
+            "Jul", "Ags", "Sep", "Okt", "Nov", "Des"
+        ]
+        return f"{wib_dt.day}-{months[wib_dt.month - 1]}-{wib_dt.year}, {wib_dt.strftime('%H:%M')} WIB"
+    except Exception:
+        return value
+
+# Register filter short-date with Jinja2
+templates.env.filters["indo_shortdate"] = format_indonesian_shortdate
+
+
 # Database restore and backup functions at startup and shutdown events
 @app.on_event("startup")
 def startup_event():
