@@ -319,7 +319,7 @@ async def user_view(request: Request, user_id: str):
             c.execute("""
                 SELECT * FROM bills 
                 WHERE user_id = ? AND paid = 1 
-                ORDER BY pay_period DESC 
+                ORDER BY payment_timestamp DESC 
                 LIMIT 1
             """, (user_id,))
             latest_paid = c.fetchall()
