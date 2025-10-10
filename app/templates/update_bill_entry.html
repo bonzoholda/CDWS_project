@@ -155,6 +155,13 @@
 
     <button type="submit">💾 Update Bill</button>
   </form>
+
+	<form action="/admin/delete_bill_entry" method="post" onsubmit="return confirm('Are you sure you want to delete this bill?');">
+	    <input type="hidden" name="bill_id" value="{{ bill.id }}">
+	    <button type="submit" class="btn btn-danger">Delete Bill</button>
+	</form>
+			
+		
   {% endif %}
   
   </main>
