@@ -603,6 +603,21 @@ async def update_bill_entry(
         print(f"⚠️ Error updating bill: {e}")
         return {"error": "Could not update the bill entry."}
 
+# delete bill entry route
+@app.post("/admin/delete_bill_entry")
+async def delete_bill_entry(request: Request, bill_id: int = Form(...)):
+    try:
+        check_admin_logged_in(request)  # Ensure admin is logged in
+        conn = get_db_connection()
+        conn.execute("DELETE FROM bills WHERE id = ?", (bill_id,))
+        conn.commit()
+        conn.close()
+        print(f"🗑️ Bill ID {bill_id} deleted successfully.")
+        return RedirectResponse(url="/admin/update_bill_entry", status_code=303)
+    except Exception as e:
+        print(f"⚠️ Error deleting bill: {e}")
+        return {"error": f"Could not delete bill ID {bill_id}."}
+
 
 if __name__ == "__main__":
     import uvicorn
