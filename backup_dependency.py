@@ -1,15 +1,11 @@
 from fastapi import BackgroundTasks, Depends
 # Import your existing upload function
-from drive_uploader import upload_to_drive 
+from drive_uploader import upload_to_drive
+from database_utils import DB_PATH
 import os
 from pathlib import Path
 
 # --- Configuration ---
-# Get the directory of the CURRENT file (database_utils.py)
-BASE_DIR = Path(__file__).resolve().parent
-
-# Construct the absolute path to bills.db
-DB_PATH = str(BASE_DIR / "bills.db")
 
 DRIVE_FILENAME = "bills_backup.db"
 
