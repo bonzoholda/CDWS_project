@@ -17,9 +17,9 @@ def _perform_background_backup():
         print(f"⏳ Background task: Searching for DB at path: {DB_PATH}") # 👈 Add this line
         
         # Call your existing function
-        success = upload_to_drive(DB_PATH, DRIVE_FILENAME)
+        file_id = upload_to_drive(DB_PATH, DRIVE_FILENAME)
         
-        if success:
+        if file_id:
             print("✅ Background DB backup completed successfully.")
         else:
             # If upload_to_drive returns False, log it
