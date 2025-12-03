@@ -112,6 +112,23 @@ async def login(request: Request, password: str = Form(...)):
     correct_password = os.getenv("ADMIN_PASSWORD")
 
     if password == correct_password:
+        # --- 🟢 GENIUS MODIFICATION START ---
+        print("🔑 Credentials valid. Starting Auto-Restore from Google Drive...")
+        
+        # Execute the restore logic
+        # Note: This will make the login take a few seconds to complete
+        restore_success = restore_from_drive()
+
+        if not restore_success:
+            # If restore fails, stop the login and show error
+            return templates.TemplateResponse("login.html", {
+                "request": request, 
+                "error": "CRITICAL: Database Restore Failed. Check Google Drive connection."
+            })
+        
+        print("✅ Database restored successfully. Redirecting to dashboard.")
+        # --- 🔴 GENIUS MODIFICATION END ---
+
         response = RedirectResponse(url="/admin", status_code=303)
         set_admin_cookie(response)  # Set cookie on successful login
         return response
