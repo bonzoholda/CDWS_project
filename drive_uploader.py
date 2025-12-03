@@ -18,22 +18,34 @@ creds = service_account.Credentials.from_service_account_info(
 # Hardcoded shared Google Drive folder ID
 FOLDER_ID = '1cC4D1oNqRHh-Y4v3RiI8iLmLTMyrO8Us'
 
+# In drive_uploader.py
+
 def upload_to_drive(file_path, file_name):
-    service = build('drive', 'v3', credentials=creds)
+    try:
+        service = build('drive', 'v3', credentials=creds)
 
-    file_metadata = {
-        'name': file_name,
-        'parents': [FOLDER_ID]
-    }
+        file_metadata = {
+            'name': file_name,
+            'parents': [FOLDER_ID]
+        }
 
-    media = MediaFileUpload(file_path, resumable=True)
-    uploaded_file = service.files().create(
-        body=file_metadata,
-        media_body=media,
-        fields='id'
-    ).execute()
+        media = MediaFileUpload(file_path, resumable=True)
+        uploaded_file = service.files().create(
+            body=file_metadata,
+            media_body=media,
+            fields='id'
+        ).execute()
 
-    print(f"✅ Uploaded to Google Drive with file ID: {uploaded_file.get('id')}")
+        file_id = uploaded_file.get('id')
+        print(f"✅ Uploaded to Google Drive with file ID: {file_id}")
+        
+        # 🟢 CRITICAL FIX: Explicitly return True on success
+        return True 
+
+    except Exception as e:
+        # Catch any API errors, file errors, etc., and print a detailed error
+        print(f"❌ Upload failed for {file_name}. Error: {e}")
+        return False # 🔴 Explicitly return False on failure
 
 
 
