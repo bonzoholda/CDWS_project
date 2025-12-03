@@ -10,17 +10,25 @@ DRIVE_FILENAME = "bills_backup.db"
 
 # 1. Internal Task Execution Function
 def _perform_background_backup():
-    """Executes the core, blocking upload task in a background thread."""
-    print("⏳ Background task: Starting database backup to Drive...")
-    
-    # Call your existing function
-    success = upload_to_drive(DB_PATH, DRIVE_FILENAME)
-    
-    if success:
-        print("✅ Background DB backup completed successfully.")
-    else:
-        # Important: Log the error here, as the user won't see it directly.
-        print("❌ Background DB backup failed. Check drive_uploader.py logs.")
+    """Internal function that executes the backup and handles logging/errors."""
+    try:
+        print("⏳ Background task: Starting database backup to Drive...")
+        
+        # Call your existing function
+        success = upload_to_drive(DB_PATH, DRIVE_FILENAME)
+        
+        if success:
+            print("✅ Background DB backup completed successfully.")
+        else:
+            # If upload_to_drive returns False, log it
+            print("❌ Background DB backup failed (Function returned False).")
+
+    except Exception as e:
+        # ⚠️ CRITICAL CHANGE: Catch ALL exceptions here.
+        # This prevents the ASGI application from seeing the error and logging the traceback.
+        print(f"❌ CRITICAL BACKGROUND ERROR: Database upload failed due to uncaught exception: {type(e).__name__}: {e}")
+        # Optionally, log the traceback to a dedicated log file if necessary.
+        # This keeps the main application logs clean.
 
 
 # 2. The FastAPI Dependency (The Queuer)
