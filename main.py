@@ -15,6 +15,7 @@ from drive_uploader import upload_to_drive
 from drive_uploader import restore_from_drive
 from database_utils import mark_bills_as_paid, cancel_bills_payment, ensure_payment_timestamp_column
 from database_utils import get_daily_payment_summary, get_bills_by_date, ensure_receipt_no_column_exists
+from backup_dependency import BackupOnWrite
 import pytz
 
 app = FastAPI()
@@ -142,16 +143,19 @@ async def login_page(request: Request):
 
 # Admin logout route (clear cookie and upload database)
 @app.get("/admin/logout")
-async def admin_logout(request: Request):
-    try:
-        # Upload bills.db to Google Drive as bills_backup.db
-        upload_to_drive(DB_PATH, "bills_backup.db")
-        print("✅ Database uploaded to Google Drive on logout.")
-    except Exception as e:
-        print(f"⚠️ Failed to upload to Google Drive: {e}")
-
+async def admin_logout(
+    request: Request,
+    # Inject the dependency as a parameter (where FastAPI expects it)
+    backup_trigger: None = BackupOnWrite  
+):
+    # The background task is queued here by FastAPI before execution proceeds.
+    
     response = RedirectResponse(url="/admin/login", status_code=303)
     response.delete_cookie("admin_logged_in")  # Delete cookie on logout
+    
+    # We can add a print statement to confirm the action, though the dependency already prints.
+    print("👋 Admin logging out. Redirecting.")
+    
     return response
 
 
@@ -203,6 +207,8 @@ async def restore_db_route():
 @app.post("/admin/update_payment")
 async def update_payment_route(
     request: Request,
+    # Inject the dependency here. It queues the background task instantly.
+    backup_trigger: None = BackupOnWrite,    
     bill_ids: Optional[List[int]] = Form(None)
 ):
     check_admin_logged_in(request)
@@ -213,7 +219,7 @@ async def update_payment_route(
 
 
 @app.post("/admin/update_payment_through_cart")
-async def update_payment_through_cart(request: Request, bill_ids: List[int] = Form(...)):
+async def update_payment_through_cart(request: Request, backup_trigger: None = BackupOnWrite, bill_ids: List[int] = Form(...)):
     try:
         check_admin_logged_in(request)
         mark_bills_as_paid(bill_ids)  # 🔄 Reused logic
@@ -273,6 +279,7 @@ async def shopping_cart(request: Request, receipt_ids: Optional[str] = Query(Non
 @app.post("/admin/cancel_payment")
 async def cancel_payment_route(
     request: Request,
+    backup_trigger: None = BackupOnWrite,
     bill_ids_cancel: Optional[List[int]] = Form(None)
 ):
     check_admin_logged_in(request)
@@ -363,7 +370,7 @@ async def user_view(request: Request, user_id: str):
 
 # ====upload csv route
 @app.post("/admin/upload")
-async def upload_csv(request: Request, csv_file: UploadFile = File(...)):
+async def upload_csv(request: Request, backup_trigger: None = BackupOnWrite, csv_file: UploadFile = File(...)):
     check_admin_logged_in(request)
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -580,6 +587,7 @@ async def render_update_form(request: Request, query: str = None, bill_id: int =
 @app.post("/admin/update_bill_entry")
 async def update_bill_entry(
     request: Request,
+    backup_trigger: None = BackupOnWrite, # Inject the dependency
     bill_id: int = Form(...),
     user_id: str = Form(...),
     device_id: str = Form(...),
@@ -622,7 +630,7 @@ async def update_bill_entry(
 
 # delete bill entry route
 @app.post("/admin/delete_bill_entry")
-async def delete_bill_entry(request: Request, bill_id: int = Form(...)):
+async def delete_bill_entry(request: Request, backup_trigger: None = BackupOnWrite, bill_id: int = Form(...)):
     try:
         check_admin_logged_in(request)  # Ensure admin is logged in
         conn = get_db_connection()
