@@ -2,9 +2,15 @@ from fastapi import BackgroundTasks, Depends
 # Import your existing upload function
 from drive_uploader import upload_to_drive 
 import os
+from pathlib import Path
 
 # --- Configuration ---
-DB_PATH = "bills.db"
+# Get the directory of the CURRENT file (database_utils.py)
+BASE_DIR = Path(__file__).resolve().parent
+
+# Construct the absolute path to bills.db
+DB_PATH = str(BASE_DIR / "bills.db")
+
 DRIVE_FILENAME = "bills_backup.db"
 
 
@@ -12,7 +18,7 @@ DRIVE_FILENAME = "bills_backup.db"
 def _perform_background_backup():
     """Internal function that executes the backup and handles logging/errors."""
     try:
-        print("⏳ Background task: Starting database backup to Drive...")
+        print(f"⏳ Background task: Searching for DB at path: {DB_PATH}") # 👈 Add this line
         
         # Call your existing function
         success = upload_to_drive(DB_PATH, DRIVE_FILENAME)
