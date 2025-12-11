@@ -17,6 +17,7 @@ creds = service_account.Credentials.from_service_account_info(
 
 # Hardcoded shared Google Drive folder ID
 FOLDER_ID = '1cC4D1oNqRHh-Y4v3RiI8iLmLTMyrO8Us'
+SIAM_FOLDER_ID = '17iK32icxbXDKr-0MiiYZUaUmSElbcL9F'
 
 # In drive_uploader.py
 
@@ -90,3 +91,30 @@ def restore_from_drive():
     print(f"✅ Restored database from Google Drive backup ({file_name}) to {DB_PATH}")
     return True
 
+
+def upload_to_drive_siam(file_path, file_name):
+    try:
+        service = build('drive', 'v3', credentials=creds)
+
+        file_metadata = {
+            'name': file_name,
+            'parents': [SIAM_FOLDER_ID]
+        }
+
+        media = MediaFileUpload(file_path, resumable=True)
+        uploaded_file = service.files().create(
+            body=file_metadata,
+            media_body=media,
+            fields='id'
+        ).execute()
+
+        file_id = uploaded_file.get('id')
+        print(f"✅ Uploaded to Google Drive with file ID: {file_id}")
+        
+        # 🟢 CRITICAL FIX: Explicitly return True on success
+        return True 
+
+    except Exception as e:
+        # Catch any API errors, file errors, etc., and print a detailed error
+        print(f"❌ Upload failed for {file_name}. Error: {e}")
+        return False # 🔴 Explicitly return False on failure
