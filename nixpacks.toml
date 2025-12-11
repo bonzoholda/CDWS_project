@@ -1,0 +1,6 @@
+# nixpacks.toml
+
+[phases.setup]
+# Adding 'p7zip' ensures the 7z command-line utility is installed 
+# on the underlying Linux operating system when Railway builds the image.
+packages = ["p7zip"]
